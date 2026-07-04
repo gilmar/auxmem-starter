@@ -1,0 +1,43 @@
+# __VAULT_NAME__
+
+An auxmem vault: a provider-independent work memory in plain markdown, built to be read and maintained by CLI AI agents (Claude Code, Codex, Gemini CLI) and synced with git. No provider lock-in, no proprietary formats, no plugins.
+
+This vault was created by auxmem-starter. It is auxiliary memory, not a whole brain: capture happens in your existing tools and agents, and this vault holds the durable, governed, retrievable state they write to and read from.
+
+## What is here
+- A shallow, stable folder structure optimized for agent retrieval (grep, glob, frontmatter triage).
+- A strict frontmatter schema enforced by a validator, so metadata stays clean and searchable.
+- Transparent git sync with automatic conflict quarantine.
+- todo.txt task management agents can read and write.
+- Generated Maps of Content (no Dataview, no plugins).
+
+## Working on a new machine
+Clone the repo, then install the local hook and check dependencies:
+```bash
+git clone <this-vault-repo-url> ~/__VAULT_NAME__ && cd ~/__VAULT_NAME__
+./bootstrap.sh
+```
+`bootstrap.sh` is idempotent. It creates any missing folders from the config, installs the pre-commit hook (git hooks are not cloned), generates MOCs, and validates.
+
+## Layout
+```
+AGENTS.md          canonical agent guide (CLAUDE.md and GEMINI.md point here)
+bootstrap.sh       per-machine installer (hooks, folders, validation)
+todo.txt/done.txt  task management
+.scripts/          operate-time tooling and vault.config.json (single source of truth)
+docs/              SETUP, OPERATIONS, ARCHITECTURE
+<NN>-<domain>/     subject-matter domains (defined in .scripts/vault.config.json)
+60-decisions/      ADRs + index
+70-meetings/       dated meeting and 1:1 notes
+71-log/            append-only session/work logs
+80-moc/            generated Maps of Content (agent entry points)
+90-templates/      note templates
+95-assets/         images and binaries
+99-archive/        stale content, not searched by default
+```
+
+## The one rule that matters
+The vault is the state. Models are interchangeable clients. Everything here is plain markdown, git, and open standards so that no single AI provider owns your context. Read `docs/ARCHITECTURE.md` for why each piece is built the way it is.
+
+## Seeding and importing
+Done from auxmem-starter (the tool that made this vault), not from here. See the starter's docs/IMPORTING.md.

@@ -1,0 +1,30 @@
+#!/bin/bash
+# Vault pre-commit hook. Install: cp pre-commit .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit
+# Validates staged .md files against the frontmatter schema and Obsidian-only syntax rules.
+
+set -euo pipefail
+
+# transparent sync commits bypass validation; CI is their gate
+if [ "${VAULT_AUTOSYNC:-0}" = "1" ]; then exit 0; fi
+
+VAULT_ROOT="$(git rev-parse --show-toplevel)"
+VALIDATOR="$VAULT_ROOT/.scripts/validate_vault.py"
+
+if [ ! -f "$VALIDATOR" ]; then
+    echo "pre-commit: validator not found at $VALIDATOR" >&2
+    exit 1
+fi
+
+# staged, added/copied/modified/renamed markdown files only
+mapfile -t staged < <(git diff --cached --name-only --diff-filter=ACMR -- '*.md' 'todo.txt' 'done.txt')
+
+if [ ${#staged[@]} -eq 0 ]; then
+    exit 0
+fi
+
+if ! python3 "$VALIDATOR" "${staged[@]}"; then
+    echo ""
+    echo "Commit blocked. Try:  python3 .scripts/validate_vault.py --fix --all   for the mechanical fixes,"
+    echo "then ask your agent to handle the rest (see docs/FIXING.md), or bypass once with: git commit --no-verify"
+    exit 1
+fi
