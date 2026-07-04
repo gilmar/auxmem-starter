@@ -1,10 +1,10 @@
-# auxmem
+# auxmem-starter
 
-**A tool for building provider-independent memory for AI agents, in plain markdown you own.**
+**The tool that creates and maintains auxmem vaults: provider-independent memory for AI agents, in plain markdown you own.**
 
-auxmem scaffolds and maintains *vaults*: durable, agent-readable knowledge bases made of nothing but markdown, YAML frontmatter, git, and todo.txt. No database, no SaaS, no plugins, no vendor lock-in. You create a vault once, your AI agents (Claude Code, Codex, Gemini CLI) and you both read and write it, and it stays yours across every model and vendor change that comes later.
+An *auxmem vault* is a durable, agent-readable knowledge base made of nothing but markdown, YAML frontmatter, git, and todo.txt. No database, no SaaS, no plugins, no vendor lock-in. **auxmem-starter** is this project: the scaffolding and maintenance tooling that stands a vault up, installs its git hook and validator, and keeps it healthy across template versions. You create a vault once, your AI agents (Claude Code, Codex, Gemini CLI) and you both read and write it, and it stays yours across every model and vendor change that comes later. (The CLI command is `auxmem`.)
 
-The name is short for *auxiliary memory*. A vault is not a brain. It is the durable state your agents write to and read from. Capture and reasoning happen in whatever tools you already use. The vault holds what must persist.
+*auxmem* is short for *auxiliary memory*, and it names the vault standard, not this tool. A vault is not a brain. It is the durable state your agents write to and read from. Capture and reasoning happen in whatever tools you already use. The vault holds what must persist.
 
 ---
 
