@@ -1,3 +1,5 @@
+![auxmem banner](docs/images/auxmem-banner.png)
+
 # auxmem-starter
 
 **The tool that creates and maintains auxmem vaults: provider-independent memory for AI agents, in plain markdown you own.**
