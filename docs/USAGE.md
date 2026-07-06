@@ -79,9 +79,19 @@ Each vault records the template version it was built from and keeps a pristine s
 - **Tooling** (validator, hook, gen_mocs, sync, bootstrap): replaced with the new version. Your copy is backed up first, and if you had edited it the report says so.
 - **Config** (`vault.config.json`): structured merge. Your values (name, domains, and any scalar you set) are preserved; new schema keys and new vocabulary options are added. Reported line by line.
 - **Guidance** (AGENTS.md, CLAUDE.md, GEMINI.md, README.md, docs, note templates): git 3-way merge against the snapshot. If you never edited a file, it updates cleanly. If you edited it and the template also changed it, you get either a clean merge or, where they truly collide, git conflict markers to resolve. Vaults created before versioning have no snapshot, so those files are preserved and the new version is written beside them as `<file>.new` for manual merging.
-- **Content** (your notes, todo.txt, done.txt, decisions, MOCs): never touched. MOCs are regenerated at the end.
+- **Content** (your notes, `72-tasks/todo.txt`, `72-tasks/done.txt`, decisions, MOCs): never touched. MOCs are regenerated at the end.
 
 Everything replaced or merged is backed up under `.auxmem/backups/<timestamp>/` (git-ignored, local only) before any change. Upgrade then regenerates MOCs, runs the validator, and writes an `upgrade-report-*.md` into `00-inbox/` listing every change and anything needing your review. If validation fails after upgrade, the command warns and exits non-zero so you notice.
+
+### Migrating task files to 72-tasks/ (template 1.1.0+)
+
+Task files moved from the vault root into `72-tasks/`. Upgrade updates tooling and config but does not move your content. If your vault still has root-level task files:
+```bash
+mkdir -p 72-tasks
+git mv todo.txt 72-tasks/todo.txt
+[ -f done.txt ] && git mv done.txt 72-tasks/done.txt
+./bootstrap.sh
+```
 
 ### Cutting a new template version (maintainer)
 1. Edit files under `template/`.

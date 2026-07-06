@@ -95,7 +95,7 @@ def scaffold(name, dest, domains, run_bootstrap=True):
         "__PRIMARY_DOMAIN__": primary,
         "__TODAY__": date.today().isoformat(),
     }
-    for rel in ("README.md", "todo.txt",
+    for rel in ("README.md", "72-tasks/todo.txt",
                 "60-decisions/adr-0001-vault-structure.md",
                 "60-decisions/index.md"):
         p = dest / rel

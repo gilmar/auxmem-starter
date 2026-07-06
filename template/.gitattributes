@@ -1,4 +1,4 @@
 # append-only files never conflict across devices
 71-log/*.md merge=union
 00-inbox/*.md merge=union
-done.txt merge=union
+72-tasks/done.txt merge=union

@@ -23,13 +23,13 @@ git clone <this-vault-repo-url> ~/__VAULT_NAME__ && cd ~/__VAULT_NAME__
 ```
 AGENTS.md          canonical agent guide (CLAUDE.md and GEMINI.md point here)
 bootstrap.sh       per-machine installer (hooks, folders, validation)
-todo.txt/done.txt  task management
 .scripts/          operate-time tooling and vault.config.json (single source of truth)
 docs/              SETUP, OPERATIONS, ARCHITECTURE
 <NN>-<domain>/     subject-matter domains (defined in .scripts/vault.config.json)
 60-decisions/      ADRs + index
 70-meetings/       dated meeting and 1:1 notes
 71-log/            append-only session/work logs
+72-tasks/          todo.txt and done.txt task management
 80-moc/            generated Maps of Content (agent entry points)
 90-templates/      note templates
 95-assets/         images and binaries

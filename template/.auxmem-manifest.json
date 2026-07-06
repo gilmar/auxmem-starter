@@ -1,5 +1,5 @@
 {
-  "template_version": "1.0.0",
+  "template_version": "1.1.0",
   "files": {
     ".scripts/gen_mocs.py": {
       "policy": "overwrite",
@@ -11,7 +11,7 @@
     },
     ".scripts/pre-commit": {
       "policy": "overwrite",
-      "sha256": "5cdb974ca8d5b6a00ead069e72df7ce621be23a34ad08d473834fae49bd86c7d"
+      "sha256": "54ee1672b2fae2a475372eeffcb95c63e6deba5d82fae04f20ad08c56d2729aa"
     },
     ".scripts/synthesis_status.py": {
       "policy": "overwrite",
@@ -19,7 +19,7 @@
     },
     ".scripts/validate_vault.py": {
       "policy": "overwrite",
-      "sha256": "2784fd67db6cf5378a5a65d631c8c7c754238dad633edf11724ecb6f9b5eed99"
+      "sha256": "9c0dbb8fb7e55885beab558c437120051b4365ffdfae0a5610940c984add7a80"
     },
     ".scripts/vault-sync.sh": {
       "policy": "overwrite",
@@ -31,7 +31,7 @@
     },
     ".scripts/vault.config.json": {
       "policy": "merge",
-      "sha256": "80416b476e176cd1baf0b8b0c3f0e6d39b2cee5db6bc14ec9a574c0646dc66a2"
+      "sha256": "5b6cb0bccce5a6926dc1c888691e654138333dfe616e5c3bff9d7d61d70bb4cd"
     },
     "90-templates/1on1.md": {
       "policy": "merge3",
@@ -75,7 +75,7 @@
     },
     "AGENTS.md": {
       "policy": "merge3",
-      "sha256": "3e0fea6889f1424300c877782cb4366397a3ef19084c269d7dbe1ac2fb1173b2"
+      "sha256": "bc689a21db4fdee058a73b795ca7f36d7441994a6c5bebfbb9fb8754ee51e177"
     },
     "CLAUDE.md": {
       "policy": "merge3",
@@ -87,7 +87,7 @@
     },
     "README.md": {
       "policy": "merge3",
-      "sha256": "1509aab25dc75f2b21ce7f6d2dbba3df855b2d5a4c09480b1c70c5976054f5b8"
+      "sha256": "dd450f32d21b9f9dbf9d1916186a2cd8ed52afcb0259f64522485b560756e281"
     },
     "bootstrap.sh": {
       "policy": "overwrite",
@@ -103,7 +103,7 @@
     },
     "docs/OPERATIONS.md": {
       "policy": "merge3",
-      "sha256": "ed1f20aa61aebefa7b9cf3f1f0085243aacbc15ea4421f58d0c231cde4b99c2a"
+      "sha256": "f331a486a2c43ddee5fd47ed65c7db14a0578662c8b295c92aef544ef231757c"
     },
     "docs/SETUP.md": {
       "policy": "merge3",

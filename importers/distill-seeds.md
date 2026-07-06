@@ -29,7 +29,7 @@ Target 15 to 30 seed notes total:
 - `80-moc/home-moc.md` plus one MOC per populated domain, linking every seed note.
 - `71-log/<today>-vault-bootstrap.md`: what you imported, what you skipped, what
   looked stale or contradictory and needs the user's review.
-- `todo.txt`: any clearly open commitments found in recent conversations, one task
+- `72-tasks/todo.txt`: any clearly open commitments found in recent conversations, one task
   per line in todo.txt grammar, creation date = today.
 
 ## Hard rules
@@ -50,7 +50,7 @@ Target 15 to 30 seed notes total:
    corpus. Missing detail is acceptable; fabricated detail is not.
 6. Internal links use relative markdown links. No wikilinks.
 7. Commit in logical batches with descriptive messages (seeds by domain, then
-   MOCs, then log and todo.txt). Normal commits, not --no-verify: the hook is
+   MOCs, then log and 72-tasks/todo.txt). Normal commits, not --no-verify: the hook is
    part of the bootstrap quality gate.
 
 ## Order of work

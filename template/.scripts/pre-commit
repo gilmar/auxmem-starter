@@ -16,7 +16,7 @@ if [ ! -f "$VALIDATOR" ]; then
 fi
 
 # staged, added/copied/modified/renamed markdown files only
-mapfile -t staged < <(git diff --cached --name-only --diff-filter=ACMR -- '*.md' 'todo.txt' 'done.txt')
+mapfile -t staged < <(git diff --cached --name-only --diff-filter=ACMR -- '*.md' '72-tasks/todo.txt' '72-tasks/done.txt')
 
 if [ ${#staged[@]} -eq 0 ]; then
     exit 0

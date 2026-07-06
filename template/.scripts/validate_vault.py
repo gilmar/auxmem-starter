@@ -5,7 +5,7 @@ Reads .scripts/vault.config.json for controlled vocabularies and domain folders,
 so the same script serves any vault built from this template.
 
 Usage:
-  validate_vault.py file1.md todo.txt   # validate specific files (pre-commit)
+  validate_vault.py file1.md 72-tasks/todo.txt   # validate specific files (pre-commit)
   validate_vault.py --all               # validate the whole vault (CI)
 
 Exit 0 = clean. Exit 1 = violations printed to stdout.
@@ -55,6 +55,7 @@ FM_DELIM = re.compile(r"^---\s*$", re.M)
 META_FILES = {"AGENTS.md", "CLAUDE.md", "GEMINI.md", "README.md"}
 
 # todo.txt grammar (http://todotxt.org/ spec)
+TODO_DIR = Path("72-tasks")
 TODO_FILES = {"todo.txt", "done.txt"}
 TODO_DONE = re.compile(r"^x \d{4}-\d{2}-\d{2}( \d{4}-\d{2}-\d{2})? \S.*$")
 TODO_OPEN = re.compile(r"^(\([A-Z]\) )?(\d{4}-\d{2}-\d{2} )?\S.*$")
@@ -325,7 +326,7 @@ def _collect_files(argv):
     if "--all" in argv:
         return sorted(
             p for p in list(VAULT_ROOT.rglob("*.md"))
-            + [VAULT_ROOT / f for f in ("todo.txt", "done.txt")]
+            + [VAULT_ROOT / TODO_DIR / f for f in TODO_FILES]
             if p.exists()
             and not any(part in SKIP_DIRS for part in p.relative_to(VAULT_ROOT).parts)
         )

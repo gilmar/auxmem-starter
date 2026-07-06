@@ -3,9 +3,9 @@
 How to run the vault day to day.
 
 ## The daily loop
-1. Start an agent session from the vault root. The agent reads AGENTS.md, the home MOC, todo.txt, and recent logs.
+1. Start an agent session from the vault root. The agent reads AGENTS.md, the home MOC, `72-tasks/todo.txt`, and recent logs.
 2. Work. The agent creates and edits notes, updates tasks, and records decisions.
-3. At session close the agent updates todo.txt, appends a log entry to `71-log/`, regenerates MOCs, validates, and commits.
+3. At session close the agent updates `72-tasks/todo.txt`, appends a log entry to `71-log/`, regenerates MOCs, validates, and commits.
 4. Sync runs on its timer, or you run it manually.
 
 You can also edit notes by hand in any text editor. The same rules and validator apply.
@@ -23,7 +23,7 @@ The `summary` field is the most important line. Front-load it with the concrete 
 The validator is the enforcement plane. It checks the frontmatter schema, controlled vocabularies, ISO dates, open-standard markdown only (no wikilinks, embeds, Dataview, Templater, or callouts), internal link resolution, and todo.txt grammar.
 ```bash
 python3 .scripts/validate_vault.py --all         # whole vault (CI)
-python3 .scripts/validate_vault.py path/to/note.md todo.txt   # specific files
+python3 .scripts/validate_vault.py path/to/note.md 72-tasks/todo.txt   # specific files
 ```
 The pre-commit hook runs it on staged files automatically. To bypass once (rare): `git commit --no-verify`.
 
@@ -43,12 +43,12 @@ Durable decisions go in `60-decisions/` as ADRs (MADR format; use the template).
 This keeps an honest, time-ordered decision history and prevents an accepted decision from silently contradicting the current system.
 
 ## Tasks
-Open tasks in `todo.txt`, archive in `done.txt`, todo.txt format. See AGENTS.md for the grammar and write rules. The validator enforces the grammar. Complete tasks in place, then move `x` lines to done.txt at session close. Never delete an open task; to drop one, complete it with `+cancelled`.
+Open tasks in `72-tasks/todo.txt`, archive in `72-tasks/done.txt`, todo.txt format. See AGENTS.md for the grammar and write rules. The validator enforces the grammar. Complete tasks in place, then move `x` lines to done.txt at session close. Never delete an open task; to drop one, complete it with `+cancelled`.
 
 ## Sync behavior
 The sync script (`.scripts/vault-sync.sh`) is transparent and unconditional. It commits local changes (bypassing validation, since sync must never block), pulls with rebase and autostash, and pushes. Validation is enforced by agent and human commits (via the hook) and by CI, not by sync.
 
-Append-only files (`71-log/`, `00-inbox/`, `done.txt`) use `merge=union` so two devices appending never conflict.
+Append-only files (`71-log/`, `00-inbox/`, `72-tasks/done.txt`) use `merge=union` so two devices appending never conflict.
 
 ### Conflict recovery
 On a real content conflict (same line of the same non-append file edited on two devices), the sync script does NOT merge automatically. Instead:
