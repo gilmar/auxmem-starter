@@ -34,6 +34,17 @@ The files are the product. Three commitments follow from that bet:
 
 "Authored" means accountable, not hand-typed. An agent can draft, restructure, and file a note. You author it in the sense that it is your record and your responsibility. When validation fails, the tooling helps fix it: mechanical errors auto-repair with no model, judgment errors get an agent-drafted fix you accept, and genuinely ambiguous ones ask you. The gate never weakens; the typing stays light.
 
+## Guarantees
+
+Each of these is falsifiable with the repo cloned:
+
+1. **Every note opens as plain text** with no auxmem tooling installed. Any editor, any grep, any git.
+2. **Validation is deterministic.** No model, no network, no server. Same input, same verdict, and it cannot be down.
+3. **AI assists around the gate, never inside it.** With every agent offline you can still read, write, validate, and commit.
+4. **No auxmem process rewrites your notes unattended.** No daemon, no background enrichment. The one optional scheduled job is git sync, which commits, pushes, and quarantines conflicts to a branch; it never edits note content.
+5. **Derived pages cite their sources.** The validator rejects a synthesized page with no source list, and the status reporter flags a page whose source changed after it was generated.
+6. **Sensitive personnel data does not live here, by design.** It belongs in a separate private vault on a path no agent is configured to reach. A flag is not access control; the separation is physical, and keeping it that way is your discipline, not the tool's.
+
 ## Quick start
 
 ```bash
@@ -123,9 +134,7 @@ auto-fixed 2 item(s):
 vault validation clean.
 ```
 
-Every vault carries its own operate-time tooling: a config-driven validator, a pre-commit hook, a deterministic map-of-content generator, a synthesis-status reporter, a link-graph and gap reporter, transparent git sync, and provider-agnostic Agent Skills for common workflows (session close, validation fix, synthesis, notes, ADRs, todos, weekly review, seed distillation). One config file, `.scripts/vault.config.json`, is the single source of truth for domains and the frontmatter contract. Read [`docs/ARCHITECTURE.md`](template/docs/ARCHITECTURE.md) (shipped into every vault) for why each piece is built the way it is.
-
-Sensitive personnel data does not live in the vault at all. It goes in a separate private vault on a path no agent is configured to reach. Physical separation is the only robust control; a `confidential: true` flag is not access control.
+Every vault carries its own operate-time tooling: a config-driven validator, a pre-commit hook, a deterministic map-of-content generator, a synthesis-status reporter, a link-graph and gap reporter, transparent git sync, and provider-agnostic Agent Skills for common workflows. One config file, `.scripts/vault.config.json`, is the single source of truth for domains and the frontmatter contract. Read [`docs/ARCHITECTURE.md`](template/docs/ARCHITECTURE.md) (shipped into every vault) for why each piece is built the way it is.
 
 ## How it compares
 
