@@ -70,7 +70,58 @@ See [`docs/USAGE.md`](docs/USAGE.md) for the full reference and [`docs/IMPORTING
 
 ## What a vault contains
 
-A shallow, stable folder layout optimized for how agents actually retrieve: filesystem and lexical search over descriptive filenames and frontmatter, not vector similarity. The folder numbering tells the pipeline: `00-inbox` capture, `05-sources` raw immutable intake, `10`-`50` your authored domains, `60-decisions` an ADR log, `70-meetings`, `71-log`, `80-moc` generated maps of content, `85-synthesis` derived entity and concept pages, `90-templates`, `95-assets`, `99-archive`.
+A shallow, stable folder layout optimized for how agents actually retrieve: filesystem and lexical search over descriptive filenames and frontmatter, not vector similarity.
+
+```
+my-work/
+├── AGENTS.md          agent guide; CLAUDE.md and GEMINI.md point here
+├── 00-inbox/          unsorted captures
+├── 05-sources/        raw immutable intake, the synthesis queue
+├── 10-projects/       your authored domains (10-50, named in your config)
+├── 20-governance/
+├── 60-decisions/      ADR log, append-only
+├── 70-meetings/
+├── 71-log/            dated session logs
+├── 72-tasks/          todo.txt and done.txt
+├── 80-moc/            generated maps of content
+├── 85-synthesis/      derived pages, provenance enforced
+├── 90-templates/      note templates
+├── .skills/           agent workflows (session close, synthesis, fixes)
+└── .scripts/          validator, hook, generators, one config file
+```
+
+Every note is plain markdown under a frontmatter contract. A real one:
+
+```markdown
+---
+title: ADR-0002 Postgres over DynamoDB for the billing store
+summary: Billing needs transactional integrity across invoice and ledger writes. Postgres wins over DynamoDB despite the operations cost.
+type: adr
+status: active
+domain: projects
+created: 2026-07-06
+updated: 2026-07-06
+tags: [billing, database]
+---
+## Decision
+Use Postgres. Invoice and ledger writes must commit atomically, and the team already operates it in two services.
+```
+
+The contract is enforced when a note enters the record:
+
+```
+$ python3 .scripts/validate_vault.py 20-governance/access-review.md
+20-governance/access-review.md
+  - missing required field: updated  [auto]
+  - use plural 'tags' with list syntax, not 'tag'  [auto]
+2 item(s) are auto-fixable: run  python3 .scripts/validate_vault.py --fix --all
+
+$ python3 .scripts/validate_vault.py --fix 20-governance/access-review.md
+auto-fixed 2 item(s):
+  20-governance/access-review.md: renamed 'tag' to 'tags'
+  20-governance/access-review.md: set missing 'updated' to today
+vault validation clean.
+```
 
 Every vault carries its own operate-time tooling: a config-driven validator, a pre-commit hook, a deterministic map-of-content generator, a synthesis-status reporter, a link-graph and gap reporter, transparent git sync, and provider-agnostic Agent Skills for common workflows (session close, validation fix, synthesis, notes, ADRs, todos, weekly review, seed distillation). One config file, `.scripts/vault.config.json`, is the single source of truth for domains and the frontmatter contract. Read [`docs/ARCHITECTURE.md`](template/docs/ARCHITECTURE.md) (shipped into every vault) for why each piece is built the way it is.
 
