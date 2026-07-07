@@ -134,7 +134,9 @@ auto-fixed 2 item(s):
 vault validation clean.
 ```
 
-Every vault carries its own tooling: a validator, a pre-commit hook, a map-of-content generator, synthesis and graph reporters, transparent git sync, and Agent Skills for common workflows. One config file, `.scripts/vault.config.json`, is the single source of truth for domains and the frontmatter contract. Read [`docs/ARCHITECTURE.md`](template/docs/ARCHITECTURE.md) (shipped into every vault) for why each piece is built the way it is.
+Every vault carries its own tooling: a validator, a pre-commit hook, a map-of-content generator, synthesis and graph reporters, and transparent git sync. One config file, `.scripts/vault.config.json`, is the single source of truth for domains and the frontmatter contract. Read [`docs/ARCHITECTURE.md`](template/docs/ARCHITECTURE.md) (shipped into every vault) for why each piece is built the way it is.
+
+It also ships Agent Skills in `.skills/`. These package the vault's operating discipline, like closing a session or running synthesis, as reusable workflows, so every agent follows the same procedure instead of drifting from it. Skills are convenience automation around the gate, not part of it: the validator still has the final word. They are provider-independent by the same logic as the notes. Each is plain markdown in the open SKILL.md format, so the same files work in Claude Code, Codex, Gemini CLI, and Cursor with no adapter, and `bootstrap.sh` links them into each agent's directory. Switch vendors and your workflows come with you.
 
 ## How it compares
 
