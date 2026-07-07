@@ -12,13 +12,17 @@ The bet: for governed work memory, **the files are the product, not an index of 
 
 ## The problem
 
-AI agents are amnesiac. Every session starts from zero, so the context you built up yesterday, the decisions you made, the people and systems you track, all of it evaporates. The common fixes make it worse:
+AI agents are amnesiac. Every session starts from zero, so the context you built up yesterday, the decisions you made, the people and systems you track, all of it evaporates.
 
-- **Provider memory** locks your context inside one vendor. Switch models and it is gone. You cannot read it, grep it, or move it.
-- **Vector databases and "second brain" SaaS** turn your notes into an opaque index you no longer own, with an embedding model and a server you now depend on forever.
-- **Letting an agent freely maintain a knowledge base** sounds great until it silently rewrites a fact, drifts a summary across edits, or quietly corrupts the one note you needed to trust.
+Judge any fix with the turn-it-off test: delete the tooling and see what is left. Delete every piece of auxmem tooling and the memory still works. Notes open in any editor, git still diffs them, grep still finds them. The common fixes fail the test:
 
-For personal research, some drift is fine. For work memory, decisions, governance records, stakeholder state, technical architecture, a memory that mutates behind your back is not a convenience. It is a liability.
+- **Provider memory** fails the day you switch vendors. Your context sits on their servers, in their format. You cannot read it, grep it, or move it.
+- **A vector database or "second brain" SaaS** fails with its server and its embedding model. Your notes become an opaque index you no longer own.
+- **An agent freely maintaining your knowledge base** fails silently. It rewrites a fact, drifts a summary across edits, quietly corrupts the one note you needed to trust.
+
+Worst case with auxmem, you are holding a folder of readable text.
+
+And memory corruption compounds. Wrong code fails loudly, in a test or a stack trace. A wrong note does not crash anything: it gets read, trusted, cited, and folded into later synthesis, and by the time you notice, you cannot say when it went wrong. For personal research, some drift is fine. For work memory, decisions, governance records, stakeholder state, it is a liability. So the rule is absolute: nothing rewrites your knowledge while you sleep.
 
 ## The idea
 
@@ -26,7 +30,7 @@ The files are the product. Three commitments follow from that bet:
 
 1. **Open standards only.** Everything is CommonMark, YAML frontmatter, git, and todo.txt. Any human can edit a vault in any editor. Any agent can read it with no adapter. It will still open in ten years with no server running.
 2. **Governed, not free-form.** A validator and a git hook enforce a frontmatter and structure contract. Metadata stays clean and greppable because it has to. The gate is what lets you and your agents write loosely and still end up with a trustworthy record.
-3. **Authored, not compiled.** A note enters the record under human accountability. Authoring is *AI-assisted by default and manual when you want*, but synthesis into derived pages is an explicit, provenance-checked step, never a silent runtime process. Nothing rewrites your knowledge while you sleep.
+3. **Authored, not compiled.** A note enters the record under human accountability. Authoring is *AI-assisted by default and manual when you want*, but synthesis into derived pages is an explicit, provenance-checked step, never a silent runtime process.
 
 "Authored" means accountable, not hand-typed. An agent can draft, restructure, and file a note. You author it in the sense that it is your record and your responsibility. When validation fails, the tooling helps fix it: mechanical errors auto-repair with no model, judgment errors get an agent-drafted fix you accept, and genuinely ambiguous ones ask you. The gate never weakens; the typing stays light.
 
