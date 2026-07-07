@@ -157,6 +157,8 @@ auxmem shares DNA with several recent "markdown brain" projects. They landed on 
 
 ## What auxmem is not
 
+The gate checks structure, not truth. A well-formed false statement passes it. That is exactly why authorship means a person vouches for content, why derived pages must cite sources, and why staleness is detected rather than assumed away. The division of labor is plain: agents do the high-volume work of drafting, restructuring, and searching; a person owns the one act that cannot be taken back, committing a fact to the record.
+
 It is a personal-to-team-scale system, by design. It gives up query-time retrieval quality at massive scale and autonomous enrichment, in exchange for durability, auditability, portability, and the guarantee that nothing rewrites your record behind your back. It has no vector search, no server, no daemon. If your job is answering questions over tens of thousands of pages of external material, a system like GBrain fits better. If your job is keeping a durable, trustworthy, portable work memory, auxmem fits better.
 
 It is also not a capture firehose. Capture in the tools you already use; let the vault hold what must persist.
