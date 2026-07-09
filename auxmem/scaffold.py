@@ -12,8 +12,8 @@ from pathlib import Path
 
 from .version import TEMPLATE_VERSION
 
-STARTER_ROOT = Path(__file__).resolve().parent.parent
-TEMPLATE_DIR = STARTER_ROOT / "template"
+_PKG_ROOT = Path(__file__).resolve().parent
+TEMPLATE_DIR = _PKG_ROOT / "template"
 MANIFEST_SRC = TEMPLATE_DIR / ".auxmem-manifest.json"
 
 SLUG_RE = re.compile(r"^[a-z0-9][a-z0-9-]*$")
@@ -74,6 +74,12 @@ def _substitute(path, replacements):
 
 def scaffold(name, dest, domains, run_bootstrap=True):
     """Create a vault named `name` at `dest` with the given domain map."""
+    if not TEMPLATE_DIR.is_dir():
+        raise ScaffoldError(
+            f"vault template not found at {TEMPLATE_DIR}. "
+            "The installed package is missing template data; reinstall from the repo "
+            "(python3 auxmem-cli new) or upgrade auxmem-starter."
+        )
     dest = Path(dest).expanduser().resolve()
     if dest.exists() and any(dest.iterdir()):
         raise ScaffoldError(f"destination {dest} exists and is not empty")

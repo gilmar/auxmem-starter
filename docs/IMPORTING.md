@@ -30,7 +30,7 @@ Edge cases the extractor handles: ChatGPT exports store edited and regenerated m
 Run a CLI agent from the TARGET vault, pointed at the distillation instructions in the starter:
 ```bash
 cd ~/my-work        # the target auxmem vault
-claude "Follow the instructions in /path/to/auxmem-starter/importers/distill-seeds.md.
+claude "Follow the instructions in /path/to/auxmem-starter/auxmem/importers/distill-seeds.md.
         The staging corpus is at /path/to/seed-staging."
 ```
 The agent reads the manual dumps and triage index, selects conversations, and writes 15 to 30 current-state seed notes plus ADRs, MOCs, a bootstrap log, and open tasks. It synthesizes current state (not history), never copies transcripts verbatim, marks uncertainty, and flags any sensitive personnel content to a review list outside the vault rather than importing it.

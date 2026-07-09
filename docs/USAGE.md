@@ -98,9 +98,9 @@ git mv todo.txt 72-tasks/todo.txt
 Template 1.2.0 adds `.skills/` (provider-agnostic Agent Skills) and links them into `.claude/skills`, `.codex/skills`, `.gemini/skills`, and `.cursor/skills`. After `auxmem upgrade`, run `./bootstrap.sh` once to create the symlinks. Upgrade delivers the skill files via 3-way merge; re-run bootstrap if provider dirs are missing.
 
 ### Cutting a new template version (maintainer)
-1. Edit files under `template/`.
+1. Edit files under `auxmem/template/`.
 2. Bump `auxmem/version.py` (`TEMPLATE_VERSION`).
-3. Run `python3 build_manifest.py` to regenerate `template/.auxmem-manifest.json`.
+3. Run `python3 build_manifest.py` to regenerate `auxmem/template/.auxmem-manifest.json`.
 4. Commit. Vaults adopt the change on their next `auxmem upgrade`.
 
 New files are classified automatically by path (`build_manifest.py` `policy_for`): `.scripts/` and `bootstrap.sh` are tooling, `vault.config.json` is merge, top-level guidance, `docs/*.md`, `90-templates/*.md`, and `.skills/**` are 3-way, everything else is user content and stays unmanaged.

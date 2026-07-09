@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""build_manifest.py: (maintainer tool) generate template/.auxmem-manifest.json.
+"""build_manifest.py: (maintainer tool) generate auxmem/template/.auxmem-manifest.json.
 
 Run after changing the template and bumping auxmem/version.py. The manifest
 lists every MANAGED file (tooling, config, guidance) with its upgrade policy
@@ -18,7 +18,7 @@ import sys
 from pathlib import Path
 
 STARTER_ROOT = Path(__file__).resolve().parent
-TEMPLATE = STARTER_ROOT / "template"
+TEMPLATE = STARTER_ROOT / "auxmem" / "template"
 sys.path.insert(0, str(STARTER_ROOT))
 from auxmem.version import TEMPLATE_VERSION
 
