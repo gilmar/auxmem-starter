@@ -22,8 +22,8 @@ from pathlib import Path
 
 from .version import TEMPLATE_VERSION
 
-STARTER_ROOT = Path(__file__).resolve().parent.parent
-TEMPLATE_DIR = STARTER_ROOT / "template"
+_PKG_ROOT = Path(__file__).resolve().parent
+TEMPLATE_DIR = _PKG_ROOT / "template"
 MANIFEST_SRC = TEMPLATE_DIR / ".auxmem-manifest.json"
 
 
@@ -81,6 +81,12 @@ def _merge_config(current: dict, new: dict, report: list):
 
 
 def upgrade(dest, force=False):
+    if not TEMPLATE_DIR.is_dir():
+        raise UpgradeError(
+            f"vault template not found at {TEMPLATE_DIR}. "
+            "The installed package is missing template data; reinstall from the repo "
+            "(python3 auxmem-cli new) or upgrade auxmem-starter."
+        )
     dest = _vault(dest)
     aux = dest / ".auxmem"
     old_manifest_path = aux / "manifest.json"

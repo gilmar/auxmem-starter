@@ -3,6 +3,13 @@
 Template version and CLI version are tracked independently. `auxmem upgrade`
 migrates existing vaults to newer template versions.
 
+## 1.0.1 - packaging fix
+
+CLI 1.0.1.
+
+- Ship `template/` and `importers/` inside the installed package so `uv tool install` and `pip install` can run `auxmem new`, `auxmem upgrade`, and `auxmem seed`.
+- Remove stray root-level `done.txt` from the template (tasks live in `72-tasks/`).
+
 ## 1.2.0 - agent skills
 
 Template 1.2.0.

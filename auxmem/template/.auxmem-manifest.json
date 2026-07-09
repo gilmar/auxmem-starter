@@ -127,7 +127,7 @@
     },
     "docs/ARCHITECTURE.md": {
       "policy": "merge3",
-      "sha256": "34a558984463c12813045a3c291883c920e35bb0ccde6572f41240193db08ee5"
+      "sha256": "d95b5600c228254bfc5b335eaa0d031a3b54f9c64f322d7f7905fc57af24e86a"
     },
     "docs/FIXING.md": {
       "policy": "merge3",

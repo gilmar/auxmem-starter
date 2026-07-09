@@ -1,15 +1,15 @@
 """Importer wrappers: run one-time seeding and migration against a target vault.
 
 These operations live in the starter, not in each vault. Each wrapper shells
-out to the relevant script in ../importers/, then runs the TARGET vault's own
+out to the relevant script in auxmem/importers/, then runs the TARGET vault's own
 validator and MOC generator so the result is checked against that vault's config.
 """
 
 import subprocess
 from pathlib import Path
 
-STARTER_ROOT = Path(__file__).resolve().parent.parent
-IMPORTERS = STARTER_ROOT / "importers"
+_PKG_ROOT = Path(__file__).resolve().parent
+IMPORTERS = _PKG_ROOT / "importers"
 
 
 class ImportError_(Exception):
@@ -39,6 +39,12 @@ def extract_export(export_file, staging, provider=None, since=None, min_messages
     """Stage 1 of seeding: normalize a provider export into a staging corpus.
     Staging lives OUTSIDE any vault. Distillation into notes is an agent step
     (see importers/distill-seeds.md)."""
+    if not IMPORTERS.is_dir():
+        raise ImportError_(
+            f"importers not found at {IMPORTERS}. "
+            "The installed package is missing importer scripts; reinstall from the repo "
+            "or upgrade auxmem-starter."
+        )
     cmd = ["python3", str(IMPORTERS / "seed_extract.py"), str(export_file), "--out", str(staging)]
     if provider:
         cmd += ["--provider", provider]
