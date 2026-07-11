@@ -4,6 +4,32 @@ This repo is the **AuxMem** CLI and versioned auxmem template (`auxmem/` package
 
 Use **uv** for Python environment, builds, and PyPI releases.
 
+## Git workflow
+
+**Never commit or push directly to `master`.** All work starts from an up-to-date `master`, on a short-lived branch, merged via pull request.
+
+### Branch naming ([Conventional Branch](https://conventionalbranch.org/))
+
+Format: `<type>/<description>` — lowercase, hyphens between words, no spaces or underscores.
+
+| prefix | use for |
+| --- | --- |
+| `feature/` or `feat/` | new functionality |
+| `bugfix/` or `fix/` | bug fixes |
+| `hotfix/` | urgent production fixes |
+| `release/` | release prep (e.g. `release/v0.2.0`) |
+| `chore/` | docs, deps, tooling, housekeeping |
+| `cursor/` | branches created by Cursor agents |
+
+Examples: `feature/add-import-flag`, `fix/upgrade-config-merge`, `chore/update-agents-md`, `cursor/logo-banner-refresh`.
+
+### Agent checklist
+
+1. `git checkout master && git pull origin master`
+2. `git checkout -b <type>/<short-description>`
+3. Commit; push the branch (`git push -u origin HEAD`)
+4. Open a PR to `master` — do not push to `master`
+
 ## Setup
 
 ```bash
