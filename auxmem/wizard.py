@@ -1,8 +1,8 @@
 """Interactive terminal wizard for `auxmem new`.
 
-Stdlib only. Guided steps with plain-language context, a domain preset,
-a creation preview, and live bootstrap progress. Falls back cleanly if stdin
-is not a tty (raises so the CLI can tell the user to use flags instead).
+Stdlib only. Guided steps with plain-language context, a creation preview,
+and live bootstrap progress. Falls back cleanly if stdin is not a tty (raises
+so the CLI can tell the user to use flags instead).
 """
 
 import json
@@ -14,12 +14,6 @@ from . import scaffold
 BOLD = "\033[1m"
 DIM = "\033[2m"
 RESET = "\033[0m"
-
-DEFAULT_DOMAINS = {
-    "10-projects": "projects",
-    "20-governance": "governance",
-    "30-ops": "ops",
-}
 
 STRUCTURAL_NOTES = {
     "00-inbox": "unsorted captures",
@@ -91,52 +85,14 @@ def _template_structural_folders():
     return cfg.get("structural_folders", [])
 
 
-def _collect_domains():
-    print(
-        f"{DIM}Domains are your subject-matter folders. Each note gets a domain slug "
-        f"in its frontmatter so agents know where it belongs.{RESET}\n"
-    )
-    if _yesno("Use the starter set (projects, governance, ops)?", default=True):
-        return dict(DEFAULT_DOMAINS)
-
-    print(
-        f"\n{DIM}Enter a short name per area (e.g. projects, governance). "
-        "Folders are numbered automatically (10-projects, 20-governance, ...). "
-        "For full control, type NN-folder=slug instead.{RESET}"
-    )
-    domains = {}
-    while True:
-        n = len(domains)
-        raw = input(f"  area {n + 1} (blank to finish): ").strip()
-        if not raw:
-            if domains:
-                break
-            print("  at least one domain is required.")
-            continue
-        if "=" in raw:
-            try:
-                domains.update(scaffold.parse_domains([raw]))
-            except scaffold.ScaffoldError as e:
-                print(f"  {e}")
-            continue
-        if not scaffold.SLUG_RE.match(raw):
-            print("  use lowercase letters, digits, and hyphens.")
-            continue
-        folder = f"{(n + 1) * 10}-{raw}"
-        if folder in domains:
-            print(f"  folder {folder} already added.")
-            continue
-        domains[folder] = raw
-    return domains
-
-
-def _show_preview(name, path, domains):
+def _show_preview(name, path):
     print(f"\n{BOLD}This vault will contain:{RESET}\n")
     print(f"  {DIM}name{RESET}     {name}")
     print(f"  {DIM}path{RESET}     {path}")
-    print(f"\n  {DIM}your domains{RESET}")
-    for folder, slug in domains.items():
-        print(f"    {folder}/  ({slug})")
+    print(
+        f"\n  {DIM}subject domains{RESET}  "
+        f"{DIM}none yet — your agent defines them via the setup-domains skill{RESET}"
+    )
     print(f"\n  {DIM}shared structure{RESET} (same in every vault)")
     for folder in _template_structural_folders():
         note = STRUCTURAL_NOTES.get(folder, "")
@@ -151,11 +107,12 @@ def _show_preview(name, path, domains):
 def run():
     if not sys.stdin.isatty():
         raise scaffold.ScaffoldError(
-            "no interactive terminal; use flags: auxmem new --name NAME --path PATH --domain NN-folder=slug ..."
+            "no interactive terminal; use flags: auxmem new --name NAME --path PATH "
+            "[--domain NN-folder=slug ...]"
         )
 
     _banner()
-    total = 4
+    total = 3
 
     _step(1, total, "Name your vault")
     print(
@@ -169,19 +126,15 @@ def run():
     default_path = str(Path.home() / name)
     path = _ask("Path", default=default_path)
 
-    _step(3, total, "Pick your domains")
-    print()
-    domains = _collect_domains()
-
-    _step(4, total, "Review and create")
-    _show_preview(name, path, domains)
+    _step(3, total, "Review and create")
+    _show_preview(name, path)
     if not _yesno("Create this vault?", default=True):
         print("cancelled.")
         return None
 
     print(f"\n{BOLD}Creating vault...{RESET}\n")
     result = scaffold.scaffold(
-        name, path, domains, run_bootstrap=True, stream_bootstrap=True
+        name, path, {}, run_bootstrap=True, stream_bootstrap=True
     )
 
     dest = result["dest"]
@@ -189,7 +142,7 @@ def run():
     print("Next steps:")
     print(f"  1. cd {dest}")
     print("  2. Point your agent at this folder (claude, codex, or gemini)")
-    print("     It reads AGENTS.md automatically.")
+    print("     Run the setup-domains skill — it interviews you and creates your subject folders.")
     print("  3. Optional: set a private git remote and push")
     print("     git remote add origin <url>")
     print("     git add -A && git commit -m 'initial vault' && git push -u origin main")

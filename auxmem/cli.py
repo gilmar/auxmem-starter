@@ -39,16 +39,19 @@ def cmd_upgrade(args):
 
 
 def cmd_new(args):
-    if args.name and args.path and args.domain:
+    if args.name and args.path:
         try:
-            domains = scaffold.parse_domains(args.domain)
+            domains = scaffold.parse_domains(args.domain) if args.domain else {}
             result = scaffold.scaffold(args.name, args.path, domains,
                                        run_bootstrap=not args.no_bootstrap)
         except scaffold.ScaffoldError as e:
             print(f"error: {e}", file=sys.stderr)
             return 1
         print(f"created {result['dest']}")
-        print("next: set your git remote and push (see the vault README).")
+        if domains:
+            print("next: set your git remote and push (see the vault README).")
+        else:
+            print("next: point your agent at the vault and run the setup-domains skill.")
         return 0
     # any flags missing -> interactive
     try:

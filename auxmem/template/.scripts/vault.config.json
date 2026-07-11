@@ -2,11 +2,7 @@
   "_comment": "Single source of truth for this vault. The validator, folder bootstrap, and MOC generator all read this file. Created from the auxmem-starter template; edit and re-run bootstrap.sh to adapt. Keep type/status closed; they are the retrieval contract agents rely on.",
   "name": "auxmem-vault",
   "created": "REPLACED_AT_SCAFFOLD",
-  "domains": {
-    "10-projects": "projects",
-    "20-reference": "reference-domain",
-    "30-ops": "ops"
-  },
+  "domains": {},
   "structural_folders": [
     "00-inbox",
     "60-decisions",

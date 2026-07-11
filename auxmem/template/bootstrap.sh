@@ -79,16 +79,38 @@ chmod +x .git/hooks/pre-commit
 echo "  installed"
 
 echo "== 6. generate MOCs =="
-python3 .scripts/gen_mocs.py
+if python3 - "$CFG" << 'PY'
+import json, sys
+cfg = json.load(open(sys.argv[1]))
+sys.exit(0 if cfg.get("domains") else 1)
+PY
+then
+  python3 .scripts/gen_mocs.py
+else
+  echo "  skipped (no domains yet; run the setup-domains skill first)"
+fi
 
 echo "== 7. validate =="
-if python3 .scripts/validate_vault.py --all; then
+if python3 - "$CFG" << 'PY'
+import json, sys
+cfg = json.load(open(sys.argv[1]))
+sys.exit(0 if cfg.get("domains") else 1)
+PY
+then
+  if python3 .scripts/validate_vault.py --all; then
     echo ""
     echo "Bootstrap complete. Next steps (see docs/SETUP.md):"
     echo "  - set your git remote and push"
     echo "  - optional: install the sync timer (.scripts/vault-sync.systemd)"
     echo "  - seed the vault from provider exports (docs/IMPORTING.md)"
-else
+  else
     echo "validation reported issues above; fix them, then re-run."
     exit 1
+  fi
+else
+  echo "  skipped (no domains yet; run the setup-domains skill first)"
+  echo ""
+  echo "Bootstrap complete. Next steps:"
+  echo "  - point your agent at this vault and run the setup-domains skill"
+  echo "  - then set your git remote and push (see docs/SETUP.md)"
 fi

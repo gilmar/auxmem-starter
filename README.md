@@ -59,19 +59,24 @@ auxmem new
 Interactive, or fully scriptable:
 
 ```bash
-auxmem new --name my-work --path ~/my-work \
-  --domain 10-projects=projects \
-  --domain 20-governance=governance \
-  --domain 30-ops=ops
+auxmem new --name my-work --path ~/my-work
 ```
 
-This creates the vault, installs the git hook, generates navigation, and validates. Then point your agent at it and start working. Requires Python 3.10+ and PyYAML. On WSL2, keep vaults on the Linux filesystem.
+Or pass domains explicitly when you already know the layout:
+
+```bash
+auxmem new --name my-work --path ~/my-work \
+  --domain 10-projects=projects \
+  --domain 20-governance=governance
+```
+
+This creates the vault, installs the git hook, and sets up shared folders. Point your agent at it and run the `setup-domains` skill to define subject folders (unless you passed `--domain` above). Requires Python 3.10+ and PyYAML. On WSL2, keep vaults on the Linux filesystem.
 
 ## Commands
 
 | command | what it does |
 |---|---|
-| `auxmem new` | create a vault (interactive wizard, or `--name/--path/--domain`) |
+| `auxmem new` | create a vault (interactive wizard, or `--name/--path`; optional `--domain`) |
 | `auxmem seed EXPORT.json` | normalize a Claude, ChatGPT, or Gemini export into a staging corpus |
 | `auxmem import-obsidian SRC --dest VAULT` | import an existing Obsidian vault |
 | `auxmem doctor VAULT` | validate a vault and refresh its navigation |

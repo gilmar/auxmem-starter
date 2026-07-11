@@ -111,6 +111,12 @@ def home_body(domain_files, home_domain):
 
 def main(argv):
     check = "--check" in argv
+    if not DOMAINS:
+        if check:
+            print("MOCs skipped: no domains configured.")
+            return 0
+        print("skipped MOC generation: no domains configured (run setup-domains first).")
+        return 0
     by_domain = collect()
     domain_files = {}
     planned = {}

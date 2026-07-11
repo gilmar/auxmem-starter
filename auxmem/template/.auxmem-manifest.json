@@ -1,9 +1,9 @@
 {
-  "template_version": "1.2.0",
+  "template_version": "1.3.0",
   "files": {
     ".scripts/gen_mocs.py": {
       "policy": "overwrite",
-      "sha256": "5a987fe04bdc22d73c6e5aa4a1f74f0bccced680e77a57340d48749b51f615a4"
+      "sha256": "259c4da167020b19c8a288558bccb7882baec2349e06a4829ca684f0697b6cf8"
     },
     ".scripts/graph_report.py": {
       "policy": "overwrite",
@@ -31,7 +31,7 @@
     },
     ".scripts/vault.config.json": {
       "policy": "merge",
-      "sha256": "a11484ed56f3ee2e1c782b051d7ff758b7169fdf09ef0af547f139c23e89a0f9"
+      "sha256": "9771d6531f3c4eda30c269234eca388a97ffeba7cbbdca53d76b8ded1022f540"
     },
     ".skills/adr/SKILL.md": {
       "policy": "merge3",
@@ -52,6 +52,10 @@
     ".skills/session-close/SKILL.md": {
       "policy": "merge3",
       "sha256": "b4a0d372c90810049744be0132c129f02f27b9b901dca4f7183e47995da918f8"
+    },
+    ".skills/setup-domains/SKILL.md": {
+      "policy": "merge3",
+      "sha256": "88c3375fa97fac21c11da473d033c12ad53fb7ecdc3478f536f424b2e68b8152"
     },
     ".skills/synthesize/SKILL.md": {
       "policy": "merge3",
@@ -107,7 +111,7 @@
     },
     "AGENTS.md": {
       "policy": "merge3",
-      "sha256": "28ebe25610f99eb898a8efcd3f281cf2de81f693bafc072edbcf6a22bdef154f"
+      "sha256": "f9aae9eedabc9438af0dfe41369ac85d39636973636a42398dee99a4de316b5a"
     },
     "CLAUDE.md": {
       "policy": "merge3",
@@ -123,7 +127,7 @@
     },
     "bootstrap.sh": {
       "policy": "overwrite",
-      "sha256": "f1c69217302a8c555870e8f39c0c92221d6f5a3fdbea05649d90d0ebc10648f5"
+      "sha256": "b93178ed1c423f6b12ee39ab4e287ba5e9124b9d4d1f8f174355365c9c25e18f"
     },
     "docs/ARCHITECTURE.md": {
       "policy": "merge3",
