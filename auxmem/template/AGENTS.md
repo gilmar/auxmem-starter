@@ -85,7 +85,7 @@ Do not weaken the gate; fix the note. Run `python3 .scripts/validate_vault.py --
 
 ## Skills
 
-Reusable workflows live in `.skills/` (Agent Skills standard). `bootstrap.sh` links them into `.claude/skills`, `.codex/skills`, `.gemini/skills`, and `.cursor/skills` for provider discovery. Invoke explicitly (`/skill-name`) or let the agent match by description. Skills encode this guide's workflows (session close, validation fix, synthesis, notes, ADRs, todos, weekly review, seed distillation); this file stays canonical for rules.
+Reusable workflows live in `.skills/` (Agent Skills standard). `bootstrap.sh` links them into `.claude/skills`, `.codex/skills`, `.gemini/skills`, and `.cursor/skills` for provider discovery. Invoke explicitly (`/skill-name`) or let the agent match by description. After creating a vault, run `setup-domains` first to tailor subject folders. Other skills encode this guide's workflows (session close, validation fix, synthesis, notes, ADRs, todos, weekly review, seed distillation); this file stays canonical for rules.
 
 ## Rules of thumb
 - Never invent metric, model, or system names. Check the relevant domain notes for exact names.

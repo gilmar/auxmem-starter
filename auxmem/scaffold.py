@@ -26,6 +26,8 @@ class ScaffoldError(Exception):
 
 def parse_domains(pairs):
     """pairs: list of 'NN-folder=slug' strings -> ordered dict folder->slug."""
+    if not pairs:
+        return {}
     domains = {}
     for p in pairs:
         if "=" not in p:
@@ -95,12 +97,12 @@ def scaffold(name, dest, domains, run_bootstrap=True, stream_bootstrap=False):
     )
 
     # placeholder substitution across seed content
-    primary = next(iter(domains.values()))
     repl = {
         "__VAULT_NAME__": name,
-        "__PRIMARY_DOMAIN__": primary,
         "__TODAY__": date.today().isoformat(),
     }
+    if domains:
+        repl["__PRIMARY_DOMAIN__"] = next(iter(domains.values()))
     for rel in ("README.md", "72-tasks/todo.txt",
                 "60-decisions/adr-0001-vault-structure.md",
                 "60-decisions/index.md"):

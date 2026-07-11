@@ -4,28 +4,31 @@ Full reference for the `auxmem` command. Run in place with `./auxmem-cli <cmd>` 
 
 ## auxmem new
 
-Creates a vault. Interactive when run bare; flag-driven when all of `--name`, `--path`, and at least one `--domain` are given.
+Creates a vault. Interactive when run bare; flag-driven when `--name` and `--path` are given.
 
 ### Interactive wizard
 ```bash
 auxmem new
 ```
-A guided four-step flow: name, location, domains, review. Domains default to a starter set (projects, governance, ops); you can enter short names instead and the wizard numbers the folders for you. The review step shows your domains, the shared vault structure, and the tooling that will be installed. Bootstrap progress prints live. The wizard requires a real terminal; in a pipe or CI it exits and tells you to use flags.
+A guided three-step flow: name, location, review. No subject domains are created — only shared structural folders (inbox, decisions, tasks, and so on). Your agent defines subject domains afterward using the `setup-domains` skill. Bootstrap progress prints live. The wizard requires a real terminal; in a pipe or CI it exits and tells you to use flags.
 
 ### Flag-driven (scriptable, CI-friendly)
 ```bash
+auxmem new --name my-work --path ~/my-work
+```
+Optional domains for scripts that already know the layout:
+```bash
 auxmem new --name my-work --path ~/my-work \
   --domain 10-projects=projects \
-  --domain 20-governance=governance \
-  --domain 30-ops=ops
+  --domain 20-governance=governance
 ```
 - `--name` lowercase letters, digits, hyphens.
 - `--path` where to create it; must be empty or nonexistent.
-- `--domain` repeatable; `NN-folder=slug`. Folder is `NN-lowercase-hyphen`, slug is lowercase/digits/hyphens. Order matters: the first domain becomes the "primary" used by the seed ADR and initial tasks.
+- `--domain` optional, repeatable; `NN-folder=slug`. Folder is `NN-lowercase-hyphen`, slug is lowercase/digits/hyphens. Order matters: the first domain becomes the "primary" used by the seed ADR and initial tasks. Omit to leave domains empty for the setup-domains skill.
 - `--no-bootstrap` skip folder/hook/MOC/validate setup (rarely needed).
 
 ### What creation does
-Copies the template, writes `.scripts/vault.config.json` from your inputs, substitutes the vault name and primary domain into seed content, then runs the vault's own `bootstrap.sh`: creates domain and structural folders, links provider skill directories to `.skills/`, initializes git, installs the pre-commit hook, generates MOCs, and validates. A freshly created vault passes its own validator.
+Copies the template, writes `.scripts/vault.config.json` from your inputs, substitutes the vault name (and primary domain when `--domain` is given) into seed content, then runs the vault's own `bootstrap.sh`: creates structural folders, links provider skill directories to `.skills/`, initializes git, installs the pre-commit hook, and — when domains are configured — generates MOCs and validates. A vault with no domains skips MOC generation and validation until the setup-domains skill runs.
 
 ## auxmem seed
 
@@ -105,11 +108,8 @@ Template 1.2.0 adds `.skills/` (provider-agnostic Agent Skills) and links them i
 
 New files are classified automatically by path (`build_manifest.py` `policy_for`): `.scripts/` and `bootstrap.sh` are tooling, `vault.config.json` is merge, top-level guidance, `docs/*.md`, `90-templates/*.md`, and `.skills/**` are 3-way, everything else is user content and stays unmanaged.
 
-## Adding a domain to an existing vault
+## Adding or changing domains
 
-Domains live in the vault's `.scripts/vault.config.json`, not in the starter. To add one:
-1. Edit that file's `domains` map.
-2. Update any notes using removed slugs.
-3. From the vault: `./bootstrap.sh` (creates the new folder) and `python3 .scripts/gen_mocs.py`.
-4. `python3 .scripts/validate_vault.py --all`.
-See the vault's `docs/SETUP.md` (Reconfiguring domains).
+After `auxmem new`, point your agent at the vault and run the `setup-domains` skill. It interviews you, proposes a domain map, updates `.scripts/vault.config.json`, moves or re-tags notes as needed, regenerates MOCs, validates, and commits.
+
+To change domains manually, edit the vault's `.scripts/vault.config.json` `domains` map, update any notes using removed slugs, then from the vault run `./bootstrap.sh`, `python3 .scripts/gen_mocs.py`, and `python3 .scripts/validate_vault.py --all`. See the vault's `docs/SETUP.md` (Reconfiguring domains).

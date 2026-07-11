@@ -3,6 +3,20 @@
 Template version and CLI version are tracked independently. `auxmem upgrade`
 migrates existing vaults to newer template versions.
 
+## 1.2.0 - domain bootstrap skill
+
+CLI 1.2.0.
+
+- Simplify `auxmem new` wizard to three steps (name, location, review); no preset domains.
+- Add `setup-domains` agent skill for tailoring subject folders after creation.
+
+## 1.3.0 - setup-domains skill
+
+Template 1.3.0.
+
+- New `setup-domains` skill: interview, propose domains, update config and folders, regenerate MOCs, validate, commit.
+- AGENTS.md points new vaults at `setup-domains` first.
+
 ## 1.1.0 - guided vault creation
 
 CLI 1.1.0.
