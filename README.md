@@ -6,7 +6,7 @@
 
 > **AuxMem** is the project. The **AuxMem Manager** (`auxmem` command) creates and maintains your memory folders. Each folder is an **auxmem** — what a vault is to Obsidian, an auxmem is to AuxMem, except the folder works without the app: delete the tooling and your notes are still just markdown and git.
 
-The bet: for governed work memory, **the files are the product, not an index of the product**. An auxmem is a folder of nothing but markdown, YAML frontmatter, git, and todo.txt. No database, no SaaS, no plugins. You and your AI agents (Claude Code, Codex, Gemini CLI) both read and write it, and it stays yours across every model and vendor change.
+The bet: for governed work memory, **the files are the product, not an index of the product**. An auxmem is a folder of nothing but markdown, YAML frontmatter, git, and todo.txt. No database, no SaaS, no plugins. You and your AI agents (Claude Code, Codex, Gemini CLI, Cursor) both read and write it, and it stays yours across every model and vendor change.
 
 An auxmem is not a brain: capture and reasoning happen in the tools you already use; the folder holds what must persist.
 
@@ -90,13 +90,15 @@ See [`docs/USAGE.md`](docs/USAGE.md) for the full reference and [`docs/IMPORTING
 
 A shallow, stable folder layout optimized for how agents actually retrieve: filesystem and lexical search over descriptive filenames and frontmatter, not vector similarity.
 
+New auxmems start with **structural folders only**; subject domain folders (`10-*`–`50-*`) are added by `auxmem-init` or `--domain` at creation.
+
 ```
 my-work/
 ├── AGENTS.md          agent guide; CLAUDE.md and GEMINI.md point here
 ├── 00-inbox/          unsorted captures
 ├── 05-sources/        raw immutable intake, the synthesis queue
-├── 10-projects/       your authored domains (10-50, named in your config)
-├── 20-governance/
+├── 10-projects/       example domain folder (created after init or --domain)
+├── 20-governance/     example domain folder
 ├── 60-decisions/      ADR log, append-only
 ├── 70-meetings/
 ├── 71-log/            dated session logs
@@ -104,7 +106,7 @@ my-work/
 ├── 80-moc/            generated maps of content
 ├── 85-synthesis/      derived pages, provenance enforced
 ├── 90-templates/      note templates
-├── .skills/           agent workflows (session close, synthesis, fixes)
+├── .skills/           agent workflows (auxmem-init, session close, synthesis, …)
 └── .scripts/          validator, hook, generators, one config file
 ```
 
@@ -143,7 +145,7 @@ auxmem validation clean.
 
 Every auxmem carries its own tooling: a validator, a pre-commit hook, a map-of-content generator, synthesis and graph reporters, and transparent git sync. One config file, `.scripts/auxmem.config.json`, is the single source of truth for domains and the frontmatter contract. Read [`docs/ARCHITECTURE.md`](auxmem/template/docs/ARCHITECTURE.md) (shipped into every auxmem) for why each piece is built the way it is.
 
-It also ships Agent Skills in `.skills/`. These package the auxmem's operating discipline, like closing a session or running synthesis, as reusable workflows, so every agent follows the same procedure instead of drifting from it. Skills are convenience automation around the gate, not part of it: the validator still has the final word. They are provider-independent by the same logic as the notes. Each is plain markdown in the open SKILL.md format, so the same files work in Claude Code, Codex, Gemini CLI, and Cursor with no adapter, and `bootstrap.sh` links them into each agent's directory. Switch vendors and your workflows come with you.
+It also ships Agent Skills in `.skills/`, prefixed with `auxmem-` for discoverability (e.g. `auxmem-init` for first-run setup, `auxmem-session-close`, `auxmem-synthesize`). These package the auxmem's operating discipline as reusable workflows, so every agent follows the same procedure instead of drifting from it. Skills are convenience automation around the gate, not part of it: the validator still has the final word. They are provider-independent by the same logic as the notes. Each is plain markdown in the open SKILL.md format, so the same files work in Claude Code, Codex, Gemini CLI, and Cursor with no adapter, and `bootstrap.sh` links them into each agent's directory. Switch vendors and your workflows come with you.
 
 ## How it compares
 
@@ -176,7 +178,7 @@ It is also not a capture firehose. Capture in the tools you already use; let the
 
 ## Status
 
-Building in public. The auxmem template is versioned independently of the CLI, and `auxmem upgrade` migrates existing auxmems to newer template versions with a 3-way merge that never touches your notes. Feedback and issues welcome.
+Building in public, pre-release (CLI and template version `0.0.0`; versioning resumes when explicitly bumped). The auxmem template is versioned independently of the CLI, and `auxmem upgrade` migrates existing auxmems to newer template versions with a 3-way merge that never touches your notes. Feedback and issues welcome.
 
 ## License
 
