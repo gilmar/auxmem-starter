@@ -115,7 +115,7 @@ def main(argv):
         if check:
             print("MOCs skipped: no domains configured.")
             return 0
-        print("skipped MOC generation: no domains configured (run setup-domains first).")
+        print("skipped MOC generation: no domains configured (run auxmem-init first).")
         return 0
     by_domain = collect()
     domain_files = {}

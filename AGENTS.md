@@ -26,6 +26,8 @@ uv run python auxmem-cli new --name t --path /tmp/t-test
 | Bump template version | edit `auxmem/version.py` (`TEMPLATE_VERSION`), then `build_manifest.py` |
 | Bump CLI version | edit `pyproject.toml` and `auxmem/__init__.py` (`__version__`) — keep both in sync |
 
+**Versioning is paused at 0.0.0.** Do not bump versions unless the user explicitly asks to resume versioning.
+
 After template changes, regenerate `.auxmem-manifest.json` before committing.
 
 ## Release (PyPI)

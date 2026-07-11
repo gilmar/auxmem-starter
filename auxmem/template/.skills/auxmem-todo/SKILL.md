@@ -1,5 +1,5 @@
 ---
-name: todo
+name: auxmem-todo
 description: Manage auxmem tasks in 72-tasks/todo.txt and done.txt using the todo.txt grammar. Use when adding, completing, prioritizing, or archiving auxmem tasks.
 ---
 
@@ -36,4 +36,4 @@ Lowercase `x`, completion date, creation date, preserve original priority as `pr
 - At session close, move `x` lines to `done.txt` (append-only)
 - After edits: `python3 .scripts/validate_auxmem.py --all` (validator enforces grammar)
 
-For full session wrap-up, use the `session-close` skill.
+For full session wrap-up, use the `auxmem-session-close` skill.

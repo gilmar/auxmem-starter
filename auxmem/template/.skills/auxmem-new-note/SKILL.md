@@ -1,5 +1,5 @@
 ---
-name: new-note
+name: auxmem-new-note
 description: Create a new auxmem note from 90-templates with correct frontmatter and domain. Use when adding a project doc, meeting note, stakeholder profile, reference, or any new auxmem note.
 ---
 
@@ -21,7 +21,7 @@ description: Create a new auxmem note from 90-templates with correct frontmatter
    - ADRs → `60-decisions/`
    - Meetings → `70-meetings/`
    - Sources → `05-sources/` (`type: source`, immutable intake)
-   - Synthesized → `85-synthesis/` only via `synthesize` skill
+   - Synthesized → `85-synthesis/` only via `auxmem-synthesize` skill
 
 6. **Validate** — `python3 .scripts/gen_mocs.py` then `python3 .scripts/validate_auxmem.py --all`
 

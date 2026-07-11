@@ -72,7 +72,7 @@ auxmem new --name my-work --path ~/my-work \
   --domain 20-governance=governance
 ```
 
-This creates the auxmem, installs the git hook, and sets up shared folders. Point your agent at it and run the `setup-domains` skill to define subject folders (unless you passed `--domain` above). Requires Python 3.10+ and PyYAML. On WSL2, keep auxmem folders on the Linux filesystem.
+This creates the auxmem, installs the git hook, and sets up shared folders. Point your agent at it and run the `auxmem-init` skill to finish setup (domains, optional seed/import, git remote). Pass `--domain` when the layout is already known. Requires Python 3.10+ and PyYAML. On WSL2, keep auxmem folders on the Linux filesystem.
 
 ## Commands
 

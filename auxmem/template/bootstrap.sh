@@ -86,7 +86,7 @@ PY
 then
   python3 .scripts/gen_mocs.py
 else
-  echo "  skipped (no domains yet; run the setup-domains skill first)"
+  echo "  skipped (no domains yet; run the auxmem-init skill first)"
 fi
 
 echo "== 7. validate =="
@@ -107,9 +107,9 @@ then
     exit 1
   fi
 else
-  echo "  skipped (no domains yet; run the setup-domains skill first)"
+  echo "  skipped (no domains yet; run the auxmem-init skill first)"
   echo ""
   echo "Bootstrap complete. Next steps:"
-  echo "  - point your agent at this auxmem and run the setup-domains skill"
+  echo "  - point your agent at this auxmem and run the auxmem-init skill"
   echo "  - then set your git remote and push (see docs/SETUP.md)"
 fi

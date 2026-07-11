@@ -274,7 +274,7 @@ def _write_report(dest, old_v, new_v, report, conflicts, ts):
 
 def _is_major_rebrand(old_v, new_v):
     """1.x vault layout → auxmem rename; show bootstrap/timer notes once."""
-    if old_v in (new_v, "0.1.0"):
+    if old_v in (new_v, "0.0.0"):
         return False
     if old_v in ("pre-versioning", "unknown"):
         return True

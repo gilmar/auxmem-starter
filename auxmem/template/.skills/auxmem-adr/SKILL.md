@@ -1,5 +1,5 @@
 ---
-name: adr
+name: auxmem-adr
 description: Write or supersede an auxmem architecture decision record (ADR) and update the decision log index. Use when recording a durable decision, reversing a prior decision, or when the user asks for an ADR.
 ---
 

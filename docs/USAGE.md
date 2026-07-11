@@ -10,7 +10,7 @@ Creates an auxmem. Interactive when run bare; flag-driven when `--name` and `--p
 ```bash
 auxmem new
 ```
-A guided three-step flow: name, location, review. No subject domains are created — only shared structural folders (inbox, decisions, tasks, and so on). Your agent defines subject domains afterward using the `setup-domains` skill. Bootstrap progress prints live. The wizard requires a real terminal; in a pipe or CI it exits and tells you to use flags.
+A guided three-step flow: name, location, review. No subject domains are created — only shared structural folders (inbox, decisions, tasks, and so on). Your agent finishes setup with the `auxmem-init` skill. Bootstrap progress prints live. The wizard requires a real terminal; in a pipe or CI it exits and tells you to use flags.
 
 ### Flag-driven (scriptable, CI-friendly)
 ```bash
@@ -24,11 +24,11 @@ auxmem new --name my-work --path ~/my-work \
 ```
 - `--name` lowercase letters, digits, hyphens.
 - `--path` where to create it; must be empty or nonexistent.
-- `--domain` optional, repeatable; `NN-folder=slug`. Folder is `NN-lowercase-hyphen`, slug is lowercase/digits/hyphens. Order matters: the first domain becomes the "primary" used by the seed ADR and initial tasks. Omit to leave domains empty for the setup-domains skill.
+- `--domain` optional, repeatable; `NN-folder=slug`. Folder is `NN-lowercase-hyphen`, slug is lowercase/digits/hyphens. Order matters: the first domain becomes the "primary" used by the seed ADR and initial tasks. Omit to leave domains empty for `auxmem-init` to configure.
 - `--no-bootstrap` skip folder/hook/MOC/validate setup (rarely needed).
 
 ### What creation does
-Copies the template, writes `.scripts/auxmem.config.json` from your inputs, substitutes the auxmem name (and primary domain when `--domain` is given) into seed content, then runs the auxmem's own `bootstrap.sh`: creates structural folders, links provider skill directories to `.skills/`, initializes git, installs the pre-commit hook, and — when domains are configured — generates MOCs and validates. an auxmem with no domains skips MOC generation and validation until the setup-domains skill runs.
+Copies the template, writes `.scripts/auxmem.config.json` from your inputs, substitutes the auxmem name (and primary domain when `--domain` is given) into seed content, then runs the auxmem's own `bootstrap.sh`: creates structural folders, links provider skill directories to `.skills/`, initializes git, installs the pre-commit hook, and — when domains are configured — generates MOCs and validates. An auxmem with no domains skips MOC generation and validation until `auxmem-init` runs.
 
 ## auxmem seed
 
@@ -112,6 +112,6 @@ New files are classified automatically by path (`build_manifest.py` `policy_for`
 
 ## Adding or changing domains
 
-After `auxmem new`, point your agent at the auxmem and run the `setup-domains` skill. It interviews you, proposes a domain map, updates `.scripts/auxmem.config.json`, moves or re-tags notes as needed, regenerates MOCs, validates, and commits.
+After `auxmem new`, point your agent at the auxmem and run the `auxmem-init` skill. It orients you, sets up domains (or confirms pre-set ones), and finishes first-run setup.
 
-To change domains manually, edit the auxmem's `.scripts/auxmem.config.json` `domains` map, update any notes using removed slugs, then from the auxmem run `./bootstrap.sh`, `python3 .scripts/gen_mocs.py`, and `python3 .scripts/validate_auxmem.py --all`. See the auxmem's `docs/SETUP.md` (Reconfiguring domains).
+To change domains later, run the `auxmem-setup-domains` skill or edit the auxmem's `.scripts/auxmem.config.json` `domains` map manually, update any notes using removed slugs, then from the auxmem run `./bootstrap.sh`, `python3 .scripts/gen_mocs.py`, and `python3 .scripts/validate_auxmem.py --all`. See the auxmem's `docs/SETUP.md` (Reconfiguring domains).
