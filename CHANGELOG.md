@@ -3,6 +3,13 @@
 Template version and CLI version are tracked independently. `auxmem upgrade`
 migrates existing vaults to newer template versions.
 
+## 1.2.1 - CLI help clarity
+
+CLI 1.2.1.
+
+- Print usage instead of an error when `auxmem` is invoked with no subcommand.
+- Clarify in help text which commands run outside a vault versus which take a vault path.
+
 ## 1.2.0 - domain bootstrap skill
 
 CLI 1.2.0.

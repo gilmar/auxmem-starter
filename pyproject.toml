@@ -1,6 +1,6 @@
 [project]
 name = "auxmem-starter"
-version = "1.2.0"
+version = "1.2.1"
 description = "Create and manage provider-independent, agent-readable markdown memory vaults."
 requires-python = ">=3.10"
 dependencies = ["pyyaml>=6.0"]

@@ -20,7 +20,8 @@ where to run commands
   an argument (or as --dest).
 
   Setup (no vault yet):
-    new                 create a vault at the path you choose
+    new                 create a vault at the path you choose (shared folders only);
+                        run the setup-domains skill inside the vault to add subjects
 
   Existing vault (pass the vault path):
     doctor PATH         validate and refresh navigation maps
@@ -147,12 +148,16 @@ def build_parser():
     n = sub.add_parser(
         "new",
         help="create a new vault (no existing vault needed)",
-        description="Create a new vault. Run from anywhere; writes to --path.",
+        description=(
+            "Create a new vault with shared folders only. Run from anywhere; writes to "
+            "--path. Add subject domains afterward with the setup-domains skill, or "
+            "pass --domain when the layout is already known."
+        ),
     )
     n.add_argument("--name")
     n.add_argument("--path")
     n.add_argument("--domain", action="append", metavar="NN-folder=slug",
-                   help="repeatable; e.g. --domain 10-projects=projects")
+                   help="optional; repeatable — omit to defer domains to setup-domains")
     n.add_argument("--no-bootstrap", action="store_true", help="skip folder/hook/validate setup")
     n.set_defaults(func=cmd_new)
 
