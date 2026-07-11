@@ -1,4 +1,4 @@
-# Vault Agent Guide
+# Auxmem Agent Guide
 
 This is a provider-independent work knowledge base in plain markdown. It is read and maintained by CLI agents (Claude Code, Codex, Gemini CLI). Human navigation is secondary. This file is canonical; CLAUDE.md and GEMINI.md point here.
 
@@ -15,7 +15,7 @@ This is a provider-independent work knowledge base in plain markdown. It is read
 Return metadata and summaries before full note bodies. Fetch a full body only when the summary is insufficient.
 
 ## Structure
-Domain folders are defined in `.scripts/vault.config.json`. Default set:
+Domain folders are defined in `.scripts/auxmem.config.json`. Default set:
 - `10-data-hub`, `20-governance`, `30-team`, `40-stakeholders`, `50-exec`: subject-matter domains.
 - `60-decisions`: ADRs (MADR format). Read `60-decisions/index.md` for the log.
 - `70-meetings`: dated meeting and 1:1 notes.
@@ -31,12 +31,12 @@ Domain folders are defined in `.scripts/vault.config.json`. Default set:
 Required: `title`, `summary`, `type`, `status`, `domain`, `created`, `updated`.
 Controlled `type`: project-doc, governance-finding, quality-log, adr, meeting, 1on1, stakeholder, exec-doc, moc, reference, log.
 Controlled `status`: active, in-review, done, superseded, archived.
-`domain` must be one of the domain slugs in `.scripts/vault.config.json`.
+`domain` must be one of the domain slugs in `.scripts/auxmem.config.json`.
 Use `summary` to judge relevance before reading the body. Front-load it with concrete nouns.
 
 ## Format rules (open-standard markdown only)
 - CommonMark plus GFM tables plus YAML frontmatter. Nothing else.
-- Internal links are relative markdown links: `[title](../60-decisions/adr-0001-vault-structure.md)`. NO wikilinks, NO `![[embeds]]`.
+- Internal links are relative markdown links: `[title](../60-decisions/adr-0001-auxmem-structure.md)`. NO wikilinks, NO `![[embeds]]`.
 - NO Dataview, NO Templater, NO callout syntax. MOCs are generated, not queried.
 - Prefer short atomic notes over long ones. One topic or event per note. Use H2/H3 so a note is internally chunkable.
 
@@ -44,7 +44,7 @@ Use `summary` to judge relevance before reading the body. Front-load it with con
 - Fill the full frontmatter on every note you create or edit. Set `updated` to today.
 - Decisions are immutable: to change one, write a new ADR that supersedes it, mark the old one `status: superseded`, and update `60-decisions/index.md`.
 - After adding or editing notes, run `python3 .scripts/gen_mocs.py` to refresh MOCs.
-- Validate before committing: `python3 .scripts/validate_vault.py --all`. Fix every violation.
+- Validate before committing: `python3 .scripts/validate_auxmem.py --all`. Fix every violation.
 - Commit with git after material changes. Normal commits, not `--no-verify`; the hook is the quality gate.
 - On a `sync-conflict-*.md` note in `00-inbox/`: merge the named branch, verify, delete the branch. See docs/OPERATIONS.md.
 
@@ -63,13 +63,13 @@ Write rules: append new tasks at the end; complete in place; never delete an ope
 3. Regenerate MOCs, validate, commit.
 
 ## Hard boundary: no sensitive personnel data
-This vault contains NO performance, compensation, termination, or health records about individuals, by design. If asked for them, state they live in a separate private vault you cannot access. If you encounter such content during an import, do not bring it in; flag the source file only. See docs/ARCHITECTURE.md.
+this auxmem contains NO performance, compensation, termination, or health records about individuals, by design. If asked for them, state they live in a separate private auxmem you cannot access. If you encounter such content during an import, do not bring it in; flag the source file only. See docs/ARCHITECTURE.md.
 
 ## Synthesis layer: raw vs synthesized
 
-This vault separates raw material from synthesized knowledge, and the distinction is enforced.
+this auxmem separates raw material from synthesized knowledge, and the distinction is enforced.
 - `05-sources/` holds raw, immutable intake (`type: source`). It is the synthesis queue. Read it; never rewrite its content into summaries in place.
-- `85-synthesis/` holds derived entity and concept pages (`type: entity` / `type: concept`). These are DERIVED, not authored ground truth. Every synthesized page must set `synthesis: generated`, cite a non-empty `sources:` list (vault-root-relative paths), carry `generated_at`, and a `review:` gate (needed or approved). The validator enforces this.
+- `85-synthesis/` holds derived entity and concept pages (`type: entity` / `type: concept`). These are DERIVED, not authored ground truth. Every synthesized page must set `synthesis: generated`, cite a non-empty `sources:` list (auxmem-root-relative paths), carry `generated_at`, and a `review:` gate (needed or approved). The validator enforces this.
 - Authored domain notes (10-50) are the ground truth. Never mark them `synthesis: generated`.
 
 Rules for you as an agent:
@@ -81,11 +81,11 @@ Rules for you as an agent:
 
 ## When validation fails
 
-Do not weaken the gate; fix the note. Run `python3 .scripts/validate_vault.py --json --all` and work the errors in order of their `fixable` tag: run `--fix --all` for the `auto` ones, draft `llm` ones from the note's own content and get the human's acceptance, and ask the human for `human` ones (never guess a domain, type, or unresolved source). Full protocol in docs/FIXING.md.
+Do not weaken the gate; fix the note. Run `python3 .scripts/validate_auxmem.py --json --all` and work the errors in order of their `fixable` tag: run `--fix --all` for the `auto` ones, draft `llm` ones from the note's own content and get the human's acceptance, and ask the human for `human` ones (never guess a domain, type, or unresolved source). Full protocol in docs/FIXING.md.
 
 ## Skills
 
-Reusable workflows live in `.skills/` (Agent Skills standard). `bootstrap.sh` links them into `.claude/skills`, `.codex/skills`, `.gemini/skills`, and `.cursor/skills` for provider discovery. Invoke explicitly (`/skill-name`) or let the agent match by description. After creating a vault, run `setup-domains` first to tailor subject folders. Other skills encode this guide's workflows (session close, validation fix, synthesis, notes, ADRs, todos, weekly review, seed distillation); this file stays canonical for rules.
+Reusable workflows live in `.skills/` (Agent Skills standard). `bootstrap.sh` links them into `.claude/skills`, `.codex/skills`, `.gemini/skills`, and `.cursor/skills` for provider discovery. Invoke explicitly (`/skill-name`) or let the agent match by description. After creating an auxmem, run `setup-domains` first to tailor subject folders. Other skills encode this guide's workflows (session close, validation fix, synthesis, notes, ADRs, todos, weekly review, seed distillation); this file stays canonical for rules.
 
 ## Rules of thumb
 - Never invent metric, model, or system names. Check the relevant domain notes for exact names.

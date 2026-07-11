@@ -20,8 +20,8 @@ from pathlib import Path
 import yaml
 
 SCRIPT_DIR = Path(__file__).resolve().parent
-VAULT_ROOT = SCRIPT_DIR.parent
-CONFIG = json.loads((SCRIPT_DIR / "vault.config.json").read_text(encoding="utf-8"))
+AUXMEM_ROOT = SCRIPT_DIR.parent
+CONFIG = json.loads((SCRIPT_DIR / "auxmem.config.json").read_text(encoding="utf-8"))
 SKIP = set(CONFIG.get("skip_dirs", []))
 
 
@@ -47,8 +47,8 @@ def as_date(v):
 
 def scan():
     sources, syntheses = {}, []
-    for p in sorted(VAULT_ROOT.rglob("*.md")):
-        rel = str(p.relative_to(VAULT_ROOT)).replace("\\", "/")
+    for p in sorted(AUXMEM_ROOT.rglob("*.md")):
+        rel = str(p.relative_to(AUXMEM_ROOT)).replace("\\", "/")
         if rel.split("/")[0] in SKIP:
             continue
         fm = read_fm(p)
@@ -66,8 +66,8 @@ def scan():
             })
     # attach current source update dates to each synthesis
     all_updates = dict(sources)
-    for p in sorted(VAULT_ROOT.rglob("*.md")):
-        rel = str(p.relative_to(VAULT_ROOT)).replace("\\", "/")
+    for p in sorted(AUXMEM_ROOT.rglob("*.md")):
+        rel = str(p.relative_to(AUXMEM_ROOT)).replace("\\", "/")
         if rel.split("/")[0] in SKIP or rel in all_updates:
             continue
         fm = read_fm(p)

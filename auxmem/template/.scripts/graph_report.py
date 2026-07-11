@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""graph_report.py: a deterministic view of the vault's link graph and its gaps.
+"""graph_report.py: a deterministic view of the auxmem's link graph and its gaps.
 
 No LLM, no database. The graph is computed on demand from what already exists in
 the files: `sources:` frontmatter (typed 'cites' edges from synthesized pages)
@@ -33,8 +33,8 @@ from pathlib import Path
 import yaml
 
 SCRIPT_DIR = Path(__file__).resolve().parent
-VAULT_ROOT = SCRIPT_DIR.parent
-CONFIG = json.loads((SCRIPT_DIR / "vault.config.json").read_text(encoding="utf-8"))
+AUXMEM_ROOT = SCRIPT_DIR.parent
+CONFIG = json.loads((SCRIPT_DIR / "auxmem.config.json").read_text(encoding="utf-8"))
 # 80-moc is generated navigation; excluding it keeps MOCs from dominating as hubs.
 SKIP = set(CONFIG.get("skip_dirs", [])) | {"80-moc"}
 
@@ -45,7 +45,7 @@ META_FILES = {"AGENTS.md", "CLAUDE.md", "GEMINI.md", "README.md"}
 
 
 def rel(p: Path) -> str:
-    return str(p.relative_to(VAULT_ROOT)).replace("\\", "/")
+    return str(p.relative_to(AUXMEM_ROOT)).replace("\\", "/")
 
 
 def in_scope(relpath: str) -> bool:
@@ -71,7 +71,7 @@ def split_fm(text):
 
 
 def resolve_link(target: str, from_file: Path):
-    """Resolve a markdown link target to a vault-root-relative .md path, or None."""
+    """Resolve a markdown link target to an auxmem-root-relative .md path, or None."""
     t = target.strip().split()[0]  # drop any ' "title"' suffix
     if t.startswith(EXTERNAL) or t.startswith("#"):
         return None
@@ -80,7 +80,7 @@ def resolve_link(target: str, from_file: Path):
         return None
     try:
         dest = (from_file.parent / t).resolve()
-        dest.relative_to(VAULT_ROOT)
+        dest.relative_to(AUXMEM_ROOT)
     except (ValueError, OSError):
         return None
     return rel(dest) if dest.exists() else None
@@ -90,7 +90,7 @@ def scan():
     nodes = {}          # relpath -> {type, title, tags, synthesis}
     cites = []          # (synth_page, source_path)
     links = []          # (from, to)
-    for p in sorted(VAULT_ROOT.rglob("*.md")):
+    for p in sorted(AUXMEM_ROOT.rglob("*.md")):
         r = rel(p)
         if not in_scope(r):
             continue

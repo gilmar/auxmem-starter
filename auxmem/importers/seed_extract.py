@@ -3,8 +3,8 @@
 
 Parses official data exports from Claude (claude.ai), ChatGPT, and Gemini
 (Google Takeout) into one markdown file per conversation, with frontmatter,
-under a staging directory OUTSIDE the vault. A CLI agent then distills the
-staging corpus into vault seed notes (see distill-seeds.md).
+under a staging directory OUTSIDE the auxmem. A CLI agent then distills the
+staging corpus into auxmem seed notes (see distill-seeds.md).
 
 Usage:
   seed_extract.py <export_file.json> [--out seed-staging] [--since YYYY-MM-DD]

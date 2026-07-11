@@ -19,7 +19,7 @@ Same substrate, opposite default. [His pattern](https://github.com/nashsu/llm_wi
 
 ## vs OpenBrain
 
-[OpenBrain](https://github.com/NateBJones-Projects/OB1) is database-backed and capture-oriented, strong on getting signal in from many channels through an MCP server. auxmem is file-first and governance-oriented. Its own capture path is deliberately thin because capture belongs in your existing tools; the vault holds the durable state, not the firehose. auxmem's import recipes are hardened against the real edge cases of Claude, ChatGPT, and Gemini exports (branch selection, multimodal parts, title escaping, collisions) so seeding a vault is safe on the first try.
+[OpenBrain](https://github.com/NateBJones-Projects/OB1) is database-backed and capture-oriented, strong on getting signal in from many channels through an MCP server. auxmem is file-first and governance-oriented. Its own capture path is deliberately thin because capture belongs in your existing tools; the auxmem holds the durable state, not the firehose. auxmem's import recipes are hardened against the real edge cases of Claude, ChatGPT, and Gemini exports (branch selection, multimodal parts, title escaping, collisions) so seeding an auxmem is safe on the first try.
 
 ## The shared bet, and the divergence
 

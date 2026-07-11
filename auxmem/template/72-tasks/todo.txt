@@ -1,3 +1,3 @@
-(A) __TODAY__ Set the git remote and push the first commit +__PRIMARY_DOMAIN__ @vault
-(B) __TODAY__ Install the sync timer if you want transparent git sync, see docs/SETUP.md +__PRIMARY_DOMAIN__ @vault
-(C) __TODAY__ Replace placeholder summaries in any imported notes +__PRIMARY_DOMAIN__ @vault
+(A) __TODAY__ Set the git remote and push the first commit +__PRIMARY_DOMAIN__ @auxmem
+(B) __TODAY__ Install the sync timer if you want transparent git sync, see docs/SETUP.md +__PRIMARY_DOMAIN__ @auxmem
+(C) __TODAY__ Replace placeholder summaries in any imported notes +__PRIMARY_DOMAIN__ @auxmem

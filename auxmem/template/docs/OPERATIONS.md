@@ -1,9 +1,9 @@
 # Operations
 
-How to run the vault day to day.
+How to run the auxmem day to day.
 
 ## The daily loop
-1. Start an agent session from the vault root. The agent reads AGENTS.md, the home MOC, `72-tasks/todo.txt`, and recent logs.
+1. Start an agent session from the auxmem root. The agent reads AGENTS.md, the home MOC, `72-tasks/todo.txt`, and recent logs.
 2. Work. The agent creates and edits notes, updates tasks, and records decisions.
 3. At session close the agent updates `72-tasks/todo.txt`, appends a log entry to `71-log/`, regenerates MOCs, validates, and commits.
 4. Sync runs on its timer, or you run it manually.
@@ -22,8 +22,8 @@ The `summary` field is the most important line. Front-load it with the concrete 
 ## Validation
 The validator is the enforcement plane. It checks the frontmatter schema, controlled vocabularies, ISO dates, open-standard markdown only (no wikilinks, embeds, Dataview, Templater, or callouts), internal link resolution, and todo.txt grammar.
 ```bash
-python3 .scripts/validate_vault.py --all         # whole vault (CI)
-python3 .scripts/validate_vault.py path/to/note.md 72-tasks/todo.txt   # specific files
+python3 .scripts/validate_auxmem.py --all         # whole auxmem (CI)
+python3 .scripts/validate_auxmem.py path/to/note.md 72-tasks/todo.txt   # specific files
 ```
 The pre-commit hook runs it on staged files automatically. To bypass once (rare): `git commit --no-verify`.
 
@@ -46,7 +46,7 @@ This keeps an honest, time-ordered decision history and prevents an accepted dec
 Open tasks in `72-tasks/todo.txt`, archive in `72-tasks/done.txt`, todo.txt format. See AGENTS.md for the grammar and write rules. The validator enforces the grammar. Complete tasks in place, then move `x` lines to done.txt at session close. Never delete an open task; to drop one, complete it with `+cancelled`.
 
 ## Sync behavior
-The sync script (`.scripts/vault-sync.sh`) is transparent and unconditional. It commits local changes (bypassing validation, since sync must never block), pulls with rebase and autostash, and pushes. Validation is enforced by agent and human commits (via the hook) and by CI, not by sync. The script uses bash 3.2–compatible syntax and a portable directory lock (no Linux-only `flock`).
+The sync script (`.scripts/auxmem-sync.sh`) is transparent and unconditional. It commits local changes (bypassing validation, since sync must never block), pulls with rebase and autostash, and pushes. Validation is enforced by agent and human commits (via the hook) and by CI, not by sync. The script uses bash 3.2–compatible syntax and a portable directory lock (no Linux-only `flock`).
 
 Append-only files (`71-log/`, `00-inbox/`, `72-tasks/done.txt`) use `merge=union` so two devices appending never conflict.
 
@@ -56,7 +56,7 @@ On a real content conflict (same line of the same non-append file edited on two 
 - Local main is reset to match the remote.
 - An alert note appears in `00-inbox/sync-conflict-*.md`.
 
-To recover, from the vault:
+To recover, from the auxmem:
 ```bash
 git merge sync-conflict/<host>-<timestamp>   # or cherry-pick the commits you want
 # resolve, verify, then:
@@ -70,7 +70,7 @@ Git is the safety system, especially with agents writing. Commit frequently. If 
 
 ## Health checks
 ```bash
-python3 .scripts/validate_vault.py --all     # schema and format
+python3 .scripts/validate_auxmem.py --all     # schema and format
 python3 .scripts/gen_mocs.py --check         # MOC freshness
 git status                                    # uncommitted state
 systemctl --user list-timers                  # sync scheduled (if using systemd)
@@ -78,4 +78,4 @@ systemctl --user list-timers                  # sync scheduled (if using systemd
 
 ## Graph and gap report
 
-`python3 .scripts/graph_report.py` gives a deterministic view of the vault's link graph, computed on demand from `sources:` frontmatter and markdown links. It reports hub notes (most referenced), orphan notes (no links in or out), source pairs drawn on together by multiple syntheses, and structural gaps such as tags used often with no page. Use `--note PATH` for one note's backlinks and neighbors, or `--json` for machine output. It is structural only: it surfaces islands and holes, it does not read for meaning or detect contradictions.
+`python3 .scripts/graph_report.py` gives a deterministic view of the auxmem's link graph, computed on demand from `sources:` frontmatter and markdown links. It reports hub notes (most referenced), orphan notes (no links in or out), source pairs drawn on together by multiple syntheses, and structural gaps such as tags used often with no page. Use `--note PATH` for one note's backlinks and neighbors, or `--json` for machine output. It is structural only: it surfaces islands and holes, it does not read for meaning or detect contradictions.

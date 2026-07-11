@@ -1,4 +1,4 @@
-"""Scaffold engine: create a new auxmem vault from the bundled template.
+"""Scaffold engine: create a new auxmem from the bundled template.
 
 Pure stdlib. Flag-driven and fully testable; the wizard calls into this.
 """
@@ -53,7 +53,7 @@ def build_config(name, domains, base_config):
 
 
 def write_auxmem_state(dest):
-    """Copy the manifest and a pristine snapshot of managed files into the vault.
+    """Copy the manifest and a pristine snapshot of managed files into the auxmem.
     The snapshot is the merge base for future `auxmem upgrade` 3-way merges."""
     manifest = json.loads(MANIFEST_SRC.read_text(encoding="utf-8"))
     aux = Path(dest) / ".auxmem"
@@ -75,12 +75,12 @@ def _substitute(path, replacements):
 
 
 def scaffold(name, dest, domains, run_bootstrap=True, stream_bootstrap=False):
-    """Create a vault named `name` at `dest` with the given domain map."""
+    """Create an auxmem named `name` at `dest` with the given domain map."""
     if not TEMPLATE_DIR.is_dir():
         raise ScaffoldError(
-            f"vault template not found at {TEMPLATE_DIR}. "
+            f"auxmem template not found at {TEMPLATE_DIR}. "
             "The installed package is missing template data; reinstall from the repo "
-            "(python3 auxmem-cli new) or upgrade auxmem-starter."
+            "(python3 auxmem-cli new) or upgrade AuxMem."
         )
     dest = Path(dest).expanduser().resolve()
     if dest.exists() and any(dest.iterdir()):
@@ -90,21 +90,21 @@ def scaffold(name, dest, domains, run_bootstrap=True, stream_bootstrap=False):
     shutil.copytree(TEMPLATE_DIR, dest, dirs_exist_ok=True)
 
     # write config from inputs
-    base = (TEMPLATE_DIR / ".scripts" / "vault.config.json").read_text(encoding="utf-8")
+    base = (TEMPLATE_DIR / ".scripts" / "auxmem.config.json").read_text(encoding="utf-8")
     cfg = build_config(name, domains, base)
-    (dest / ".scripts" / "vault.config.json").write_text(
+    (dest / ".scripts" / "auxmem.config.json").write_text(
         json.dumps(cfg, indent=2) + "\n", encoding="utf-8"
     )
 
     # placeholder substitution across seed content
     repl = {
-        "__VAULT_NAME__": name,
+        "__AUXMEM_NAME__": name,
         "__TODAY__": date.today().isoformat(),
     }
     if domains:
         repl["__PRIMARY_DOMAIN__"] = next(iter(domains.values()))
     for rel in ("README.md", "72-tasks/todo.txt",
-                "60-decisions/adr-0001-vault-structure.md",
+                "60-decisions/adr-0001-auxmem-structure.md",
                 "60-decisions/index.md"):
         p = dest / rel
         if p.exists():

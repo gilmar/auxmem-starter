@@ -1,9 +1,9 @@
 # Distill seed notes from the staging corpus
 
-You are bootstrapping a fresh work vault from exported AI conversation history.
-The staging corpus lives OUTSIDE the vault in `seed-staging/`. It is raw material,
-not vault content. Your output is a small set of current-state seed notes inside
-the vault, valid against the vault schema.
+You are bootstrapping a fresh work auxmem from exported AI conversation history.
+The staging corpus lives OUTSIDE the auxmem in `seed-staging/`. It is raw material,
+not auxmem content. Your output is a small set of current-state seed notes inside
+the auxmem, valid against the auxmem schema.
 
 ## Inputs, in priority order
 1. `seed-staging/manual/*.md`: self-description dumps the user requested from each
@@ -24,25 +24,25 @@ Target 15 to 30 seed notes total:
 - `40-stakeholders/`: one profile per recurring stakeholder team or delivery.
 - `50-exec/`: one note per active executive artifact or business case.
 - `60-decisions/`: one ADR per durable decision found in the corpus, MADR format,
-  numbered from ADR-0002 (ADR-0001 documents the vault itself). If a decision was
+  numbered from ADR-0002 (ADR-0001 documents the auxmem itself). If a decision was
   later reversed in the corpus, record both with supersession, not just the winner.
 - `80-moc/home-moc.md` plus one MOC per populated domain, linking every seed note.
-- `71-log/<today>-vault-bootstrap.md`: what you imported, what you skipped, what
+- `71-log/<today>-auxmem-bootstrap.md`: what you imported, what you skipped, what
   looked stale or contradictory and needs the user's review.
 - `72-tasks/todo.txt`: any clearly open commitments found in recent conversations, one task
   per line in todo.txt grammar, creation date = today.
 
 ## Hard rules
-1. Every note gets full frontmatter per the vault schema. After writing, run
-   `.scripts/validate_vault.py --all` and fix every violation before finishing.
+1. Every note gets full frontmatter per the auxmem schema. After writing, run
+   `.scripts/validate_auxmem.py --all` and fix every violation before finishing.
 2. NEVER copy transcript text verbatim. Synthesize in your own words. Transcripts
    include half-formed ideas the user later abandoned; a verbatim import launders
    drafts into facts.
 3. Sensitive personnel content (performance issues, terminations, compensation,
    health, or anything about a named individual's employment situation) does NOT
-   enter this vault. When you encounter it, skip it and add one line to
-   `seed-staging/sensitive-review.md` (outside the vault) naming only the source
-   file, so the user can route it to the private vault manually. Do not summarize
+   enter this auxmem. When you encounter it, skip it and add one line to
+   `seed-staging/sensitive-review.md` (outside the auxmem) naming only the source
+   file, so the user can route it to private storage manually. Do not summarize
    the sensitive content itself, even in that list.
 4. Mark uncertainty in the notes. If a fact appears once, in an old conversation,
    write "as of <date>" rather than asserting it as current.

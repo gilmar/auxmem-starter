@@ -14,7 +14,7 @@ Decisions are immutable. To change one, supersede it with a new ADR.
 3. Fill frontmatter: `type: adr`, `status: in-review` (or `active` when accepted), valid `domain`, full `summary`.
 4. Write MADR sections: Status, Context, Decision Drivers, Considered Options, Decision, Consequences.
 5. Append a row to `60-decisions/index.md` (newest near top).
-6. `python3 .scripts/gen_mocs.py` then `python3 .scripts/validate_vault.py --all`. Commit.
+6. `python3 .scripts/gen_mocs.py` then `python3 .scripts/validate_auxmem.py --all`. Commit.
 
 ## Supersede an existing ADR
 

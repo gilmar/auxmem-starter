@@ -1,6 +1,6 @@
 ---
 title: Decision log
-summary: Index of all architecture decision records in this vault, newest first, with status. The append-only history of durable decisions.
+summary: Index of all architecture decision records in this auxmem, newest first, with status. The append-only history of durable decisions.
 type: adr
 status: active
 domain: __PRIMARY_DOMAIN__
@@ -12,4 +12,4 @@ tags: [meta]
 
 | ADR | Title | Status |
 |---|---|---|
-| [0001](adr-0001-vault-structure.md) | Open-standard agent-readable vault | Accepted |
+| [0001](adr-0001-auxmem-structure.md) | Open-standard agent-readable auxmem | Accepted |

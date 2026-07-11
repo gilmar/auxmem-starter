@@ -32,8 +32,8 @@ echo "shellcheck clean (${count} file(s))"
 if /bin/bash --version 2>/dev/null | grep -q 'version 3\.'; then
     echo "bash 3.2 syntax check"
     /bin/bash -n auxmem/template/.scripts/pre-commit
-    /bin/bash -n auxmem/template/.scripts/vault-sync.sh
+    /bin/bash -n auxmem/template/.scripts/auxmem-sync.sh
     /bin/bash -n auxmem/template/bootstrap.sh
-    /bin/bash -n auxmem/importers/export_vault.sh
+    /bin/bash -n auxmem/importers/export_obsidian.sh
     echo "bash -n clean"
 fi

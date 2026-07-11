@@ -2,20 +2,20 @@
 """restructure_export.py: stage 2 of the Obsidian import pipeline.
 
 Takes obsidian-export output (already CommonMark: wikilinks resolved to
-relative markdown links) and restructures it into the vault:
+relative markdown links) and restructures it into the auxmem:
   - folder mapping (longest prefix) + slugified filenames
   - exact link remapping through the move table (no heuristics: paths are
     already resolved, they just need re-pointing at new locations)
-  - frontmatter retrofit to the vault schema
+  - frontmatter retrofit to the auxmem schema
   - strips Dataview blocks (any fence length) and escaped Templater tags,
     converts escaped callouts to bold blockquotes
-  - migration report as a valid vault note, including obsidian-export's own
+  - migration report as a valid auxmem note, including obsidian-export's own
     unresolved-link warnings (.export-warnings.txt)
 
 Usage:
-  restructure_export.py --src exported/ --dst ~/vault [--map map.json] [--dry-run]
+  restructure_export.py --src exported/ --dst ~/auxmem [--map map.json] [--dry-run]
 
-map.json format identical to migrate_vault.py.
+map.json format identical to migrate_obsidian.py.
 Requires: PyYAML.
 """
 
@@ -38,14 +38,14 @@ ASSET_DIR = "95-assets"
 INBOX_IMPORT = "00-inbox/import"
 MANUAL_DIR = "00-inbox/import-manual"
 
-# domain vocabulary loaded from the target vault config at runtime
+# domain vocabulary loaded from the target auxmem config at runtime
 DOMAIN_BY_PREFIX = {}
 REPORT_DOMAIN = "reference"
 
 
-def load_vault_domains(vault_config_path):
+def load_auxmem_domains(auxmem_config_path):
     global DOMAIN_BY_PREFIX, REPORT_DOMAIN, VALID_DOMAIN
-    cfg = json.loads(Path(vault_config_path).read_text(encoding="utf-8"))
+    cfg = json.loads(Path(auxmem_config_path).read_text(encoding="utf-8"))
     domains = cfg["domains"]
     DOMAIN_BY_PREFIX = {folder[:2]: slug for folder, slug in domains.items()}
     VALID_DOMAIN = set(domains.values())
@@ -99,7 +99,7 @@ def map_folder(rel_parent: str, folders: dict) -> str:
 
 
 def plan(src: Path, folders: dict):
-    moves = {}  # old vault-relative posix path (str) -> new relative Path
+    moves = {}  # old auxmem-relative posix path (str) -> new relative Path
     files = []  # (src Path, old_rel str, new_rel Path)
     taken, notes, assets, manual = set(), 0, 0, []
     for p in sorted(src.rglob("*")):
@@ -245,7 +245,7 @@ def run(src: Path, dst: Path, map_file, dry_run: bool):
           f"unmapped: {len(report['links_unmapped'])}")
     if not dry_run:
         print(f"report: {dst / '00-inbox' / 'migration-report.md'}")
-        print("next: python3 .scripts/validate_vault.py --all")
+        print("next: python3 .scripts/validate_auxmem.py --all")
 
 
 def write_report(dst: Path, r: dict):
@@ -279,10 +279,10 @@ def main():
     ap.add_argument("--dst", required=True)
     ap.add_argument("--map", dest="map_file")
     ap.add_argument("--dry-run", action="store_true")
-    ap.add_argument("--vault-config", help="target vault .scripts/vault.config.json; sets valid domains")
+    ap.add_argument("--auxmem-config", help="target auxmem .scripts/auxmem.config.json; sets valid domains")
     args = ap.parse_args()
-    if args.vault_config:
-        load_vault_domains(args.vault_config)
+    if args.auxmem_config:
+        load_auxmem_domains(args.auxmem_config)
     src, dst = Path(args.src).expanduser(), Path(args.dst).expanduser()
     if not src.is_dir():
         sys.exit(f"export directory not found: {src}")

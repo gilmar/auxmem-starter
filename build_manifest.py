@@ -8,8 +8,8 @@ and a content hash. Files not listed are user content and are never touched by
 
 Policies:
   overwrite  tooling; replaced on upgrade (backed up; warned if user-edited)
-  merge      structured JSON merge preserving user values (vault.config.json)
-  merge3     git 3-way merge against the vault's snapshot (guidance, docs, templates)
+  merge      structured JSON merge preserving user values (auxmem.config.json)
+  merge3     git 3-way merge against the auxmem's snapshot (guidance, docs, templates)
 """
 
 import hashlib
@@ -24,7 +24,7 @@ from auxmem.version import TEMPLATE_VERSION
 
 
 def policy_for(rel: str):
-    if rel == ".scripts/vault.config.json":
+    if rel == ".scripts/auxmem.config.json":
         return "merge"
     if rel.startswith(".scripts/") or rel == "bootstrap.sh":
         return "overwrite"

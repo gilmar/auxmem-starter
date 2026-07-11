@@ -1,11 +1,11 @@
 ---
 name: session-close
-description: Close an auxmem vault agent session. Completes tasks, archives done items, appends a log entry, regenerates MOCs, validates, and commits. Use at session end or when the user asks to wrap up, close out, or finish a vault session.
+description: Close an auxmem agent session. Completes tasks, archives done items, appends a log entry, regenerates MOCs, validates, and commits. Use at session end or when the user asks to wrap up, close out, or finish an auxmem session.
 ---
 
 # Session close
 
-Run from the vault root.
+Run from the auxmem root.
 
 ## Checklist
 
@@ -14,7 +14,7 @@ Run from the vault root.
 - [ ] Move x lines to 72-tasks/done.txt
 - [ ] Append 71-log/YYYY-MM-DD-session.md
 - [ ] python3 .scripts/gen_mocs.py
-- [ ] python3 .scripts/validate_vault.py --all
+- [ ] python3 .scripts/validate_auxmem.py --all
 - [ ] git commit (normal commit, not --no-verify)
 ```
 
@@ -26,6 +26,6 @@ Run from the vault root.
 
 3. **MOCs** — `python3 .scripts/gen_mocs.py`
 
-4. **Validate** — `python3 .scripts/validate_vault.py --all`. If failures remain, invoke the `fix-validation` skill.
+4. **Validate** — `python3 .scripts/validate_auxmem.py --all`. If failures remain, invoke the `fix-validation` skill.
 
 5. **Commit** — Stage material changes. Use a descriptive message. Do not use `--no-verify`; the pre-commit hook is the quality gate.

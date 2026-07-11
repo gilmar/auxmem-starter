@@ -1,14 +1,23 @@
 # Changelog
 
 Template version and CLI version are tracked independently. `auxmem upgrade`
-migrates existing vaults to newer template versions.
+migrates existing auxmems to newer template versions.
+
+## 0.1.0 - AuxMem product rename (pre-alpha)
+
+CLI 0.1.0. Template 0.1.0.
+
+- Project renamed from auxmem-starter to **AuxMem**; PyPI package `auxmem`.
+- Managed folders are **auxmems** (not vaults); internal files renamed (`auxmem.config.json`, `validate_auxmem.py`, `auxmem-sync.sh`, …).
+- `auxmem upgrade` migrates 1.x folders: renames legacy files, reports timer reinstall steps.
+- Obsidian import sources still called vaults.
 
 ## 1.2.1 - CLI help clarity
 
 CLI 1.2.1.
 
 - Print usage instead of an error when `auxmem` is invoked with no subcommand.
-- Clarify in help text which commands run outside a vault versus which take a vault path.
+- Clarify in help text which commands run outside an auxmem versus which take an auxmem path.
 
 ## 1.2.0 - domain bootstrap skill
 
@@ -22,7 +31,7 @@ CLI 1.2.0.
 Template 1.3.1.
 
 - Fix pre-commit hook on macOS bash 3.2: replace `mapfile` with a NUL-delimited read loop.
-- Make `vault-sync.sh` portable: drop Linux-only `flock`, replace GNU `date -Iseconds`.
+- Make `auxmem-sync.sh` portable: drop Linux-only `flock`, replace GNU `date -Iseconds`.
 - Document bash 3.2 / POSIX baseline; re-run `./bootstrap.sh` after upgrade to refresh the hook.
 - Add `scripts/lint-shell.sh` and CI shellcheck workflow.
 

@@ -31,11 +31,11 @@ STRUCTURAL_NOTES = {
 
 
 def _banner():
-    print(f"{BOLD}auxmem{RESET} {DIM}create a governed memory vault for your AI agents{RESET}\n")
+    print(f"{BOLD}auxmem{RESET} {DIM}create a governed memory folder for your AI agents{RESET}\n")
     print(
-        "You are about to create a folder of plain markdown notes with a validator, "
-        "a git hook, and agent skills. Your agents read and write it; nothing runs "
-        "in the background.\n"
+        "You are about to create an auxmem: a folder of plain markdown notes with a "
+        "validator, a git hook, and agent skills. Your agents read and write it; "
+        "nothing runs in the background.\n"
     )
 
 
@@ -75,25 +75,25 @@ def _yesno(prompt, default=True):
 
 def _validate_name(v):
     if not scaffold.SLUG_RE.match(v):
-        return "use lowercase letters, digits, and hyphens (e.g. my-work-vault)"
+        return "use lowercase letters, digits, and hyphens (e.g. my-work)"
     return None
 
 
 def _template_structural_folders():
-    cfg_path = scaffold.TEMPLATE_DIR / ".scripts" / "vault.config.json"
+    cfg_path = scaffold.TEMPLATE_DIR / ".scripts" / "auxmem.config.json"
     cfg = json.loads(cfg_path.read_text(encoding="utf-8"))
     return cfg.get("structural_folders", [])
 
 
 def _show_preview(name, path):
-    print(f"\n{BOLD}This vault will contain:{RESET}\n")
+    print(f"\n{BOLD}this auxmem will contain:{RESET}\n")
     print(f"  {DIM}name{RESET}     {name}")
     print(f"  {DIM}path{RESET}     {path}")
     print(
         f"\n  {DIM}subject domains{RESET}  "
         f"{DIM}none yet — your agent defines them via the setup-domains skill{RESET}"
     )
-    print(f"\n  {DIM}shared structure{RESET} (same in every vault)")
+    print(f"\n  {DIM}shared structure{RESET} (same in every auxmem)")
     for folder in _template_structural_folders():
         note = STRUCTURAL_NOTES.get(folder, "")
         suffix = f"  {DIM}{note}{RESET}" if note else ""
@@ -114,12 +114,12 @@ def run():
     _banner()
     total = 3
 
-    _step(1, total, "Name your vault")
+    _step(1, total, "Name your auxmem")
     print(
-        f"{DIM}Used as the vault label, git repo name, and in config. "
+        f"{DIM}Used as the auxmem label, git repo name, and in config. "
         "Lowercase and hyphens only.{RESET}\n"
     )
-    name = _ask("Vault name", default="my-vault", validate=_validate_name)
+    name = _ask("Auxmem name", default="my-auxmem", validate=_validate_name)
 
     _step(2, total, "Choose a location")
     print(f"{DIM}Must be empty or not exist yet.{RESET}\n")
@@ -128,24 +128,24 @@ def run():
 
     _step(3, total, "Review and create")
     _show_preview(name, path)
-    if not _yesno("Create this vault?", default=True):
+    if not _yesno("Create this auxmem?", default=True):
         print("cancelled.")
         return None
 
-    print(f"\n{BOLD}Creating vault...{RESET}\n")
+    print(f"\n{BOLD}Creating auxmem...{RESET}\n")
     result = scaffold.scaffold(
         name, path, {}, run_bootstrap=True, stream_bootstrap=True
     )
 
     dest = result["dest"]
-    print(f"\n{BOLD}Vault ready at {dest}{RESET}\n")
+    print(f"\n{BOLD}Auxmem ready at {dest}{RESET}\n")
     print("Next steps:")
     print(f"  1. cd {dest}")
     print("  2. Point your agent at this folder (claude, codex, or gemini)")
     print("     Run the setup-domains skill — it interviews you and creates your subject folders.")
     print("  3. Optional: set a private git remote and push")
     print("     git remote add origin <url>")
-    print("     git add -A && git commit -m 'initial vault' && git push -u origin main")
+    print("     git add -A && git commit -m 'initial auxmem' && git push -u origin main")
     print("  4. Optional: seed from AI exports or import Obsidian (see docs/IMPORTING.md)")
     print(f"     auxmem seed <export.json> --staging ./seed-staging")
     print(f"     auxmem import-obsidian <old-vault> --dest {dest} --map map.json")

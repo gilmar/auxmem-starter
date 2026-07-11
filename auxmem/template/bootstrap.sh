@@ -1,10 +1,10 @@
 #!/bin/bash
-# bootstrap.sh: set up a vault created from this template.
-# Idempotent. Run from the vault root: ./bootstrap.sh
+# bootstrap.sh: set up an auxmem created from this template.
+# Idempotent. Run from the auxmem root: ./bootstrap.sh
 #
 # Does:
 #   1. checks python + pyyaml
-#   2. creates domain folders from .scripts/vault.config.json
+#   2. creates domain folders from .scripts/auxmem.config.json
 #   3. initializes git if needed
 #   4. links provider skill dirs to .skills/
 #   5. installs the pre-commit hook
@@ -14,7 +14,7 @@
 
 set -euo pipefail
 cd "$(dirname "$0")"
-CFG=".scripts/vault.config.json"
+CFG=".scripts/auxmem.config.json"
 
 echo "== 1. dependencies =="
 command -v python3 >/dev/null || { echo "python3 required"; exit 1; }
@@ -96,12 +96,12 @@ cfg = json.load(open(sys.argv[1]))
 sys.exit(0 if cfg.get("domains") else 1)
 PY
 then
-  if python3 .scripts/validate_vault.py --all; then
+  if python3 .scripts/validate_auxmem.py --all; then
     echo ""
     echo "Bootstrap complete. Next steps (see docs/SETUP.md):"
     echo "  - set your git remote and push"
-    echo "  - optional: install the sync timer (.scripts/vault-sync.systemd)"
-    echo "  - seed the vault from provider exports (docs/IMPORTING.md)"
+    echo "  - optional: install the sync timer (.scripts/auxmem-sync.systemd)"
+    echo "  - seed the auxmem from provider exports (docs/IMPORTING.md)"
   else
     echo "validation reported issues above; fix them, then re-run."
     exit 1
@@ -110,6 +110,6 @@ else
   echo "  skipped (no domains yet; run the setup-domains skill first)"
   echo ""
   echo "Bootstrap complete. Next steps:"
-  echo "  - point your agent at this vault and run the setup-domains skill"
+  echo "  - point your agent at this auxmem and run the setup-domains skill"
   echo "  - then set your git remote and push (see docs/SETUP.md)"
 fi

@@ -1,12 +1,14 @@
 ![auxmem banner](docs/images/auxmem-banner.png)
 
-# auxmem-starter
+# AuxMem
 
-**Memory for AI agents, in plain markdown you own. Works with any model, survives any vendor switch, and nothing rewrites it behind your back.**
+**AuxMem (auxiliary memory) — plain-markdown memory for AI agents, with a validation gate. No database, no lock-in: delete the tool and your notes are still just markdown and git.**
 
-The bet: for governed work memory, **the files are the product, not an index of the product**. An *auxmem vault* is a knowledge base made of nothing but markdown, YAML frontmatter, git, and todo.txt. No database, no SaaS, no plugins. You and your AI agents (Claude Code, Codex, Gemini CLI) both read and write it, and it stays yours across every model and vendor change.
+> **AuxMem** is the project. The **AuxMem Manager** (`auxmem` command) creates and maintains your memory folders. Each folder is an **auxmem** — what a vault is to Obsidian, an auxmem is to AuxMem, except the folder works without the app: delete the tooling and your notes are still just markdown and git.
 
-*auxmem* is short for *auxiliary memory*, and it names the vault standard. **auxmem-starter** is this project: the `auxmem` tool that stands a vault up, installs its git hook and validator, and keeps it healthy across template versions. A vault is not a brain: capture and reasoning happen in the tools you already use; the vault holds what must persist.
+The bet: for governed work memory, **the files are the product, not an index of the product**. An auxmem is a folder of nothing but markdown, YAML frontmatter, git, and todo.txt. No database, no SaaS, no plugins. You and your AI agents (Claude Code, Codex, Gemini CLI) both read and write it, and it stays yours across every model and vendor change.
+
+An auxmem is not a brain: capture and reasoning happen in the tools you already use; the folder holds what must persist.
 
 ---
 
@@ -28,7 +30,7 @@ And memory corruption compounds. Wrong code fails loudly, in a test or a stack t
 
 The files are the product. Three commitments follow from that bet:
 
-1. **Open standards only.** Everything is CommonMark, YAML frontmatter, git, and todo.txt. Any human can edit a vault in any editor. Any agent can read it with no adapter. It will still open in ten years with no server running.
+1. **Open standards only.** Everything is CommonMark, YAML frontmatter, git, and todo.txt. Any human can edit an auxmem in any editor. Any agent can read it with no adapter. It will still open in ten years with no server running.
 2. **Governed, not free-form.** A validator and a git hook enforce a frontmatter and structure contract. Metadata stays clean and greppable because it has to. The gate is what lets you and your agents write loosely and still end up with a trustworthy record. Reading is never gated, writing always is: retrieval is plain grep and glob, and nothing enters the record without passing the hook.
 3. **Authored, not compiled.** A note enters the record under human accountability. Authoring is *AI-assisted by default and manual when you want*, but synthesis into derived pages is an explicit, provenance-checked step, never a silent runtime process.
 
@@ -43,7 +45,7 @@ Each is falsifiable with the repo cloned:
 3. **AI assists around the gate, never inside it.** With every agent offline you can still read, write, validate, and commit.
 4. **No auxmem process rewrites your notes unattended.** No daemon, no background enrichment. The one optional scheduled job is git sync, which commits, pushes, and quarantines conflicts to a branch; it never edits note content.
 5. **Derived pages cite their sources.** The validator rejects a synthesized page with no source list; the status reporter flags pages whose sources changed since generation.
-6. **Sensitive personnel data does not live here, by design.** It belongs in a separate private vault on a path no agent is configured to reach. A flag is not access control; the separation is physical, and keeping it that way is your discipline, not the tool's.
+6. **Sensitive personnel data does not live here, by design.** It belongs in a separate private auxmem on a path no agent is configured to reach. A flag is not access control; the separation is physical, and keeping it that way is your discipline, not the tool's.
 
 ## Quick start
 
@@ -70,21 +72,21 @@ auxmem new --name my-work --path ~/my-work \
   --domain 20-governance=governance
 ```
 
-This creates the vault, installs the git hook, and sets up shared folders. Point your agent at it and run the `setup-domains` skill to define subject folders (unless you passed `--domain` above). Requires Python 3.10+ and PyYAML. On WSL2, keep vaults on the Linux filesystem.
+This creates the auxmem, installs the git hook, and sets up shared folders. Point your agent at it and run the `setup-domains` skill to define subject folders (unless you passed `--domain` above). Requires Python 3.10+ and PyYAML. On WSL2, keep auxmem folders on the Linux filesystem.
 
 ## Commands
 
 | command | what it does |
 |---|---|
-| `auxmem new` | create a vault (interactive wizard, or `--name/--path`; optional `--domain`) |
+| `auxmem new` | create an auxmem (interactive wizard, or `--name/--path`; optional `--domain`) |
 | `auxmem seed EXPORT.json` | normalize a Claude, ChatGPT, or Gemini export into a staging corpus |
-| `auxmem import-obsidian SRC --dest VAULT` | import an existing Obsidian vault |
-| `auxmem doctor VAULT` | validate a vault and refresh its navigation |
-| `auxmem upgrade VAULT` | migrate a vault to the current template version, safely |
+| `auxmem import-obsidian SRC --dest PATH` | import an existing Obsidian vault |
+| `auxmem doctor PATH` | validate an auxmem and refresh its navigation |
+| `auxmem upgrade PATH` | migrate an auxmem to the current template version, safely |
 
 See [`docs/USAGE.md`](docs/USAGE.md) for the full reference and [`docs/IMPORTING.md`](docs/IMPORTING.md) for seeding and migration.
 
-## What a vault contains
+## What an auxmem contains
 
 A shallow, stable folder layout optimized for how agents actually retrieve: filesystem and lexical search over descriptive filenames and frontmatter, not vector similarity.
 
@@ -126,22 +128,22 @@ Use Postgres. Invoice and ledger writes must commit atomically, and the team alr
 The contract is enforced when a note enters the record:
 
 ```
-$ python3 .scripts/validate_vault.py 20-governance/access-review.md
+$ python3 .scripts/validate_auxmem.py 20-governance/access-review.md
 20-governance/access-review.md
   - missing required field: updated  [auto]
   - use plural 'tags' with list syntax, not 'tag'  [auto]
-2 item(s) are auto-fixable: run  python3 .scripts/validate_vault.py --fix --all
+2 item(s) are auto-fixable: run  python3 .scripts/validate_auxmem.py --fix --all
 
-$ python3 .scripts/validate_vault.py --fix 20-governance/access-review.md
+$ python3 .scripts/validate_auxmem.py --fix 20-governance/access-review.md
 auto-fixed 2 item(s):
   20-governance/access-review.md: renamed 'tag' to 'tags'
   20-governance/access-review.md: set missing 'updated' to today
-vault validation clean.
+auxmem validation clean.
 ```
 
-Every vault carries its own tooling: a validator, a pre-commit hook, a map-of-content generator, synthesis and graph reporters, and transparent git sync. One config file, `.scripts/vault.config.json`, is the single source of truth for domains and the frontmatter contract. Read [`docs/ARCHITECTURE.md`](auxmem/template/docs/ARCHITECTURE.md) (shipped into every vault) for why each piece is built the way it is.
+Every auxmem carries its own tooling: a validator, a pre-commit hook, a map-of-content generator, synthesis and graph reporters, and transparent git sync. One config file, `.scripts/auxmem.config.json`, is the single source of truth for domains and the frontmatter contract. Read [`docs/ARCHITECTURE.md`](auxmem/template/docs/ARCHITECTURE.md) (shipped into every auxmem) for why each piece is built the way it is.
 
-It also ships Agent Skills in `.skills/`. These package the vault's operating discipline, like closing a session or running synthesis, as reusable workflows, so every agent follows the same procedure instead of drifting from it. Skills are convenience automation around the gate, not part of it: the validator still has the final word. They are provider-independent by the same logic as the notes. Each is plain markdown in the open SKILL.md format, so the same files work in Claude Code, Codex, Gemini CLI, and Cursor with no adapter, and `bootstrap.sh` links them into each agent's directory. Switch vendors and your workflows come with you.
+It also ships Agent Skills in `.skills/`. These package the auxmem's operating discipline, like closing a session or running synthesis, as reusable workflows, so every agent follows the same procedure instead of drifting from it. Skills are convenience automation around the gate, not part of it: the validator still has the final word. They are provider-independent by the same logic as the notes. Each is plain markdown in the open SKILL.md format, so the same files work in Claude Code, Codex, Gemini CLI, and Cursor with no adapter, and `bootstrap.sh` links them into each agent's directory. Switch vendors and your workflows come with you.
 
 ## How it compares
 
@@ -162,7 +164,7 @@ The gate checks structure, not truth. A well-formed false statement passes it. T
 
 It is a personal-to-team-scale system, by design. It gives up retrieval quality at massive scale and autonomous enrichment, in exchange for durability, auditability, and portability. If your job is answering questions over tens of thousands of pages of external material, a system like GBrain fits better. If your job is keeping a trustworthy, portable work memory, auxmem fits better.
 
-It is also not a capture firehose. Capture in the tools you already use; let the vault hold what must persist.
+It is also not a capture firehose. Capture in the tools you already use; let the auxmem hold what must persist.
 
 ## Design and philosophy
 
@@ -174,7 +176,7 @@ It is also not a capture firehose. Capture in the tools you already use; let the
 
 ## Status
 
-Building in public. This is the initial public release. The vault template is versioned independently of the CLI, and `auxmem upgrade` migrates existing vaults to newer template versions with a 3-way merge that never touches your notes. Feedback and issues welcome.
+Building in public. The auxmem template is versioned independently of the CLI, and `auxmem upgrade` migrates existing auxmems to newer template versions with a 3-way merge that never touches your notes. Feedback and issues welcome.
 
 ## License
 

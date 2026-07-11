@@ -23,12 +23,12 @@ For each unsynthesized source and each stale page:
 2. Create or update pages in `85-synthesis/` using `90-templates/entity.md` or `concept.md`.
 3. On every synthesized page set:
    - `synthesis: generated`
-   - `sources:` — vault-root-relative paths (non-empty)
+   - `sources:` — auxmem-root-relative paths (non-empty)
    - `generated_at:` today
    - `review: needed`
 4. Make every claim traceable to a cited source. Record contradictions in "Open questions and contradictions"; do not silently resolve.
 5. Append `71-log/<today>-synthesis.md` (`type: log`): what was synthesized, from which sources, contradictions surfaced.
-6. `python3 .scripts/gen_mocs.py` then `python3 .scripts/validate_vault.py --all`. Fix failures (see `fix-validation` skill).
+6. `python3 .scripts/gen_mocs.py` then `python3 .scripts/validate_auxmem.py --all`. Fix failures (see `fix-validation` skill).
 7. Commit.
 
 ## Boundaries

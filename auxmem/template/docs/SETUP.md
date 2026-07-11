@@ -1,21 +1,21 @@
 # Setup
 
-One-time setup for a vault created from this template. Assumes Linux or WSL2. Commands use `~/vault` as the vault path; adjust as needed.
+One-time setup for an auxmem created from this template. Assumes Linux or WSL2. Commands use `~/auxmem` as the auxmem path; adjust as needed.
 
 ## 1. Prerequisites
 - Python 3.10+ with pip.
 - git.
-- A POSIX shell or bash 3.2+. Vault scripts use `#!/bin/bash` and are written for macOS default `/bin/bash` (3.2) and Linux bash; they do not require bash 4+, GNU coreutils, or `flock`.
+- A POSIX shell or bash 3.2+. Auxmem scripts use `#!/bin/bash` and are written for macOS default `/bin/bash` (3.2) and Linux bash; they do not require bash 4+, GNU coreutils, or `flock`.
 - One or more CLI agents: Claude Code, Codex CLI, or Gemini CLI.
-- Importing existing notes or seeding from AI exports is done from auxmem-starter before or after creation, not from the vault. See the starter docs/IMPORTING.md.
+- Importing existing notes or seeding from AI exports is done from AuxMem before or after creation, not from the auxmem. See the starter docs/IMPORTING.md.
 
-On WSL2, keep the vault on the Linux filesystem (`~/vault`), not `/mnt/c`, for speed. You no longer need a Windows app to hold the files.
+On WSL2, keep the auxmem on the Linux filesystem (`~/auxmem`), not `/mnt/c`, for speed. You no longer need a Windows app to hold the files.
 
 ## 2. Copy and configure
 ```bash
-cp -r vault-template ~/vault && cd ~/vault
+cp -r auxmem-template ~/auxmem && cd ~/auxmem
 ```
-Edit `.scripts/vault.config.json` if this vault needs different domains. This file is the single source of truth. The `domains` map (folder to slug) drives folder creation, the `domain` frontmatter vocabulary, and MOC generation. Keep `type` and `status` closed unless you have a reason; they are the retrieval contract agents depend on. If you change domains after notes exist, see "Reconfiguring domains" below.
+Edit `.scripts/auxmem.config.json` if this auxmem needs different domains. This file is the single source of truth. The `domains` map (folder to slug) drives folder creation, the `domain` frontmatter vocabulary, and MOC generation. Keep `type` and `status` closed unless you have a reason; they are the retrieval contract agents depend on. If you change domains after notes exist, see "Reconfiguring domains" below.
 
 ## 3. Bootstrap
 ```bash
@@ -27,13 +27,13 @@ This checks dependencies, creates domain and structural folders from the config,
 Use a private repository. This remote will hold your entire work context, so its access controls are part of your governance surface.
 ```bash
 git remote add origin <your-private-repo-url>
-git add -A && git commit -m "initial vault"
+git add -A && git commit -m "initial auxmem"
 git branch -M main
 git push -u origin main
 ```
 
 ## 5. Agent configuration
-- Claude Code: run `claude` from the vault root. It reads CLAUDE.md automatically, which imports AGENTS.md. Skills in `.skills/` are linked to `.claude/skills/`.
+- Claude Code: run `claude` from the auxmem root. It reads CLAUDE.md automatically, which imports AGENTS.md. Skills in `.skills/` are linked to `.claude/skills/`.
 - Codex CLI: reads AGENTS.md natively from the working directory. Skills are linked to `.codex/skills/`.
 - Gemini CLI: set `contextFileName: "AGENTS.md"` in settings.json, or rely on the GEMINI.md stub. Skills are linked to `.gemini/skills/`.
 - Cursor: skills are linked to `.cursor/skills/` (also reads `.claude/skills/` for compatibility).
@@ -53,29 +53,29 @@ systemd=true
 Then restart WSL (`wsl --shutdown` from Windows) and install the timer:
 ```bash
 mkdir -p ~/.config/systemd/user
-# split .scripts/vault-sync.systemd into the two unit files per its header:
-#   ~/.config/systemd/user/vault-sync.service
-#   ~/.config/systemd/user/vault-sync.timer
+# split .scripts/auxmem-sync.systemd into the two unit files per its header:
+#   ~/.config/systemd/user/auxmem-sync.service
+#   ~/.config/systemd/user/auxmem-sync.timer
 systemctl --user daemon-reload
-systemctl --user enable --now vault-sync.timer
+systemctl --user enable --now auxmem-sync.timer
 systemctl --user list-timers          # confirm it is scheduled
-journalctl --user -u vault-sync -f     # watch it run
+journalctl --user -u auxmem-sync -f     # watch it run
 ```
-If you do not want the timer, run `bash .scripts/vault-sync.sh ~/vault` manually or bind it to a shell alias.
+If you do not want the timer, run `bash .scripts/auxmem-sync.sh ~/auxmem` manually or bind it to a shell alias.
 
 ## 7. Optional: editor link support
 For link completion, go-to-definition, and rename-with-link-rewrite on plain markdown, install Marksman (an open-source markdown LSP) in VS Code, Neovim, Zed, or Helix. It replaces most of what Obsidian did for link maintenance, on standard CommonMark links.
 
 ## Reconfiguring domains (after notes exist)
 Changing `domains` in the config changes the valid `domain` vocabulary. Existing notes using an old slug will fail validation. Procedure:
-1. Edit `.scripts/vault.config.json` domains.
+1. Edit `.scripts/auxmem.config.json` domains.
 2. Update the `domain` field in any notes that used the old slugs (including seed notes in `60-decisions/`).
 3. Run `python3 .scripts/gen_mocs.py` (prunes orphaned MOCs, builds new ones).
-4. Run `python3 .scripts/validate_vault.py --all` and fix any remaining violations.
+4. Run `python3 .scripts/validate_auxmem.py --all` and fix any remaining violations.
 5. Run `./bootstrap.sh` to create the new domain folders.
 
 ## Verify the install
 ```bash
-python3 .scripts/validate_vault.py --all   # should print "vault validation clean."
+python3 .scripts/validate_auxmem.py --all   # should print "auxmem validation clean."
 git commit --allow-empty -m "test"          # hook should run
 ```
