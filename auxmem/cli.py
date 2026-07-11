@@ -21,7 +21,7 @@ where to run commands
 
   Setup (no auxmem yet):
     new                 create an auxmem at the path you choose (shared folders only);
-                        run the setup-domains skill inside the folder to add subjects
+                        run the auxmem-init skill inside the folder to finish setup
 
   Existing auxmem (pass the folder path):
     doctor PATH         validate and refresh navigation maps
@@ -72,10 +72,11 @@ def cmd_new(args):
             print(f"error: {e}", file=sys.stderr)
             return 1
         print(f"created {result['dest']}")
+        print("next: point your agent at the auxmem and run the auxmem-init skill.")
         if domains:
-            print("next: set your git remote and push (see the auxmem README).")
+            print("      (domains are pre-configured; init will confirm and finish setup)")
         else:
-            print("next: point your agent at the auxmem and run the setup-domains skill.")
+            print("      (init will interview you and set up subject domains)")
         return 0
     # any flags missing -> interactive
     try:
@@ -151,14 +152,14 @@ def build_parser():
         help="create a new auxmem (no existing auxmem needed)",
         description=(
             "Create a new auxmem with shared folders only. Run from anywhere; writes to "
-            "--path. Add subject domains afterward with the setup-domains skill, or "
-            "pass --domain when the layout is already known."
+            "--path. Finish setup with the auxmem-init skill, or pass --domain when the "
+            "layout is already known."
         ),
     )
     n.add_argument("--name")
     n.add_argument("--path")
     n.add_argument("--domain", action="append", metavar="NN-folder=slug",
-                   help="optional; repeatable — omit to defer domains to setup-domains")
+                   help="optional; repeatable — omit to defer domains to auxmem-init")
     n.add_argument("--no-bootstrap", action="store_true", help="skip folder/hook/validate setup")
     n.set_defaults(func=cmd_new)
 

@@ -1,11 +1,11 @@
 ---
-name: setup-domains
-description: Tailor auxmem domain folders after creation or when reorganizing. Interviews the user, proposes domains, updates auxmem.config.json and folders, regenerates MOCs, validates, and commits. Use right after auxmem new, when restructuring subject areas, or when the user asks to set up or change auxmem domains.
+name: auxmem-setup-domains
+description: Tailor or reorganize auxmem domain folders. Interviews the user, proposes domains, updates auxmem.config.json and folders, regenerates MOCs, validates, and commits. Use when restructuring subject areas, changing the domain map, or when invoked by auxmem-init for new auxmems without pre-set domains.
 ---
 
 # Setup domains
 
-Run from the auxmem root. New auxmems start with **no subject domains** — only shared structural folders. This skill is the required first step after `auxmem new`: interview the user, propose domains, write the config, create folders, fix seed placeholders, validate, and commit.
+Run from the auxmem root. New auxmems reach this workflow via `auxmem-init`. Use directly when reorganizing subject areas or changing the domain map after init.
 
 ## Interview
 
@@ -32,7 +32,7 @@ Present the full map. Get explicit approval before changing anything. Do not gue
    - `72-tasks/todo.txt`
 4. `./bootstrap.sh` (creates new domain folders, idempotent)
 5. `python3 .scripts/gen_mocs.py`
-6. `python3 .scripts/validate_auxmem.py --all`. Fix failures with the `fix-validation` skill.
+6. `python3 .scripts/validate_auxmem.py --all`. Fix failures with the `auxmem-fix-validation` skill.
 7. Commit with a message describing the domain map.
 
 ## Rules

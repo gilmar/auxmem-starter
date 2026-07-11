@@ -1,5 +1,5 @@
 {
-  "template_version": "0.1.0",
+  "template_version": "0.0.0",
   "files": {
     ".scripts/auxmem-sync.sh": {
       "policy": "overwrite",
@@ -15,7 +15,7 @@
     },
     ".scripts/gen_mocs.py": {
       "policy": "overwrite",
-      "sha256": "c4ee094995725e83b97e5e7b2d43e7d467a4348158b331b1b012655229227e83"
+      "sha256": "a59a64d66af43c0576ae1f9f4941c9973313d29d4186b9bc0e6ae878eba61ba0"
     },
     ".scripts/graph_report.py": {
       "policy": "overwrite",
@@ -33,41 +33,45 @@
       "policy": "overwrite",
       "sha256": "e6e048aece8d6a6bb3f82a1be47c8c5ed2e02e2cbd460dbe02718cbd6ee8122f"
     },
-    ".skills/adr/SKILL.md": {
+    ".skills/auxmem-adr/SKILL.md": {
       "policy": "merge3",
-      "sha256": "e8c70dce54a064f71c259ad0a7ea52963f0703ad4c79d83430826c4cd8d428c3"
+      "sha256": "a26158e0be2538f2c5a2f7bf4d7f6ce3072993097644f9f267bff240d7e2e35f"
     },
-    ".skills/distill-seeds/SKILL.md": {
+    ".skills/auxmem-distill-seeds/SKILL.md": {
       "policy": "merge3",
-      "sha256": "257f88ecd709be5b7a96e0af990ca736dd25d28504c7b20c7657b28bd046e6ba"
+      "sha256": "c346e351aaf6ab9c2406ba71a86aae464ccacc7ec139fc2ee5fee5fe051c1b8b"
     },
-    ".skills/fix-validation/SKILL.md": {
+    ".skills/auxmem-fix-validation/SKILL.md": {
       "policy": "merge3",
-      "sha256": "23d56df8ff233bd5863673faf1ee1c9ca4b46da226e715e1767818ca2d8b417e"
+      "sha256": "029b9221e0187bdb760475b4a7bb73a2f709dbe11133c03d8e5fe4b8cf5b6950"
     },
-    ".skills/new-note/SKILL.md": {
+    ".skills/auxmem-init/SKILL.md": {
       "policy": "merge3",
-      "sha256": "6162c3fee4e3911ddb642a3d0210a96d2c703b1db2ff1dc6ea571b9e7c591134"
+      "sha256": "33d9ebfe071dc1758504a76e60ebb300be8187f8cf40431486cab6a85fa665ad"
     },
-    ".skills/session-close/SKILL.md": {
+    ".skills/auxmem-new-note/SKILL.md": {
       "policy": "merge3",
-      "sha256": "eeecd870c80168811d55693531dd2d05f1daefe060818806b959fd8268262fde"
+      "sha256": "15400dce1d832fdbe407c06cfc720a395f2878317338f802333203f4438d20fb"
     },
-    ".skills/setup-domains/SKILL.md": {
+    ".skills/auxmem-session-close/SKILL.md": {
       "policy": "merge3",
-      "sha256": "72cec7f4a84a045aa5d8348868364a0e9634b0c510e3c9b8c8559126f97a8865"
+      "sha256": "c9a478cf029a28870a4656ebb657bb7e3689b8f59f503632dd3417fbccae6901"
     },
-    ".skills/synthesize/SKILL.md": {
+    ".skills/auxmem-setup-domains/SKILL.md": {
       "policy": "merge3",
-      "sha256": "aa926f09ffbe128667781a52985ad7c18b699227e94afe1af07bd694ad61b658"
+      "sha256": "a87fb242596032fd109376cd47649b24698fb169a82b26f705e6f68ced8e8444"
     },
-    ".skills/todo/SKILL.md": {
+    ".skills/auxmem-synthesize/SKILL.md": {
       "policy": "merge3",
-      "sha256": "f61a2c0fe80572dcf5a018a0c291d8ec18796708f8c5d5d1c7ed534bd5177f23"
+      "sha256": "75b31068795657dda36205ffe0ce7a2c8c60ebc9299f9e0581a0a90b4130166f"
     },
-    ".skills/weekly-review/SKILL.md": {
+    ".skills/auxmem-todo/SKILL.md": {
       "policy": "merge3",
-      "sha256": "590d3d8f42222d9d201fe912f0e0d6a499f6cec9c61969c5a128b2e7e6c614e8"
+      "sha256": "4714cda2dea7e527c9d5a2193331d681da84240793ce4a320ecd35e09d0e3ff6"
+    },
+    ".skills/auxmem-weekly-review/SKILL.md": {
+      "policy": "merge3",
+      "sha256": "13df7fc37cb8718e25fde03a8dc1fd307af97c214b4a21a67e3bf1e5dc116878"
     },
     "90-templates/1on1.md": {
       "policy": "merge3",
@@ -111,7 +115,7 @@
     },
     "AGENTS.md": {
       "policy": "merge3",
-      "sha256": "111e72ac4c10336df99619b12520e47a1dca1e0b9055a802334432aabddca6d5"
+      "sha256": "2e233582ebbe47b7a813043257748b5901d7ec0c3849cddc43cc7a5cea754117"
     },
     "CLAUDE.md": {
       "policy": "merge3",
@@ -127,7 +131,7 @@
     },
     "bootstrap.sh": {
       "policy": "overwrite",
-      "sha256": "5f2c3d6662074937935d58b4649961f022477723235bc90793c48f6344c240f1"
+      "sha256": "01d0b68a051c8e096e3f7fdb373cc7922d5653c1394cfa5bbbdb220ab12eea37"
     },
     "docs/ARCHITECTURE.md": {
       "policy": "merge3",
@@ -143,7 +147,7 @@
     },
     "docs/SETUP.md": {
       "policy": "merge3",
-      "sha256": "301c6a2fe2282bd4d1d829d31bef5e96349eb26669a59674e95611c255701f09"
+      "sha256": "7b5f6b9c01ac201bd3e34315dd1c6cda9b0bbd7436f90083b8f2844d4536143f"
     },
     "docs/SYNTHESIS.md": {
       "policy": "merge3",

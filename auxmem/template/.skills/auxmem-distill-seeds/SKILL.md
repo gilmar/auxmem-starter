@@ -1,5 +1,5 @@
 ---
-name: distill-seeds
+name: auxmem-distill-seeds
 description: Distill AI provider export staging corpus into seed notes inside an auxmem. Use when bootstrapping an auxmem from seed-staging, provider exports, or conversation history imports.
 ---
 

@@ -38,7 +38,7 @@ git push -u origin main
 - Gemini CLI: set `contextFileName: "AGENTS.md"` in settings.json, or rely on the GEMINI.md stub. Skills are linked to `.gemini/skills/`.
 - Cursor: skills are linked to `.cursor/skills/` (also reads `.claude/skills/` for compatibility).
 
-Invoke skills explicitly (`/skill-name`) or let the agent match by description. Available workflows: session close, validation fix, synthesis, new note, ADR, todo management, weekly review, seed distillation.
+After `auxmem new`, run the `auxmem-init` skill first to finish setup. Invoke skills explicitly (`/auxmem-skill-name`) or let the agent match by description. Available workflows: init, domain setup, session close, validation fix, synthesis, new note, ADR, todo management, weekly review, seed distillation.
 
 Prefer running one agent as the writer and others as readers, to reduce write-conflict and convention-drift risk across models.
 

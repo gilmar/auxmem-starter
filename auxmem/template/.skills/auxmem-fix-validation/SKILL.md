@@ -1,5 +1,5 @@
 ---
-name: fix-validation
+name: auxmem-fix-validation
 description: Fix auxmem auxmem validation failures using the tiered protocol (auto, llm, human). Use when validate_auxmem.py fails, the pre-commit hook rejects a commit, or the user asks to fix auxmem validation errors.
 ---
 

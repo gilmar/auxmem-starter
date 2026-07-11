@@ -1,5 +1,5 @@
 ---
-name: synthesize
+name: auxmem-synthesize
 description: Run the governed auxmem synthesis loop over 05-sources into 85-synthesis entity and concept pages with provenance. Use when synthesizing sources, refreshing stale synthesized pages, or when synthesis_status.py reports queue or staleness.
 ---
 
@@ -28,7 +28,7 @@ For each unsynthesized source and each stale page:
    - `review: needed`
 4. Make every claim traceable to a cited source. Record contradictions in "Open questions and contradictions"; do not silently resolve.
 5. Append `71-log/<today>-synthesis.md` (`type: log`): what was synthesized, from which sources, contradictions surfaced.
-6. `python3 .scripts/gen_mocs.py` then `python3 .scripts/validate_auxmem.py --all`. Fix failures (see `fix-validation` skill).
+6. `python3 .scripts/gen_mocs.py` then `python3 .scripts/validate_auxmem.py --all`. Fix failures (see `auxmem-fix-validation` skill).
 7. Commit.
 
 ## Boundaries

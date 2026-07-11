@@ -1,5 +1,5 @@
 ---
-name: weekly-review
+name: auxmem-weekly-review
 description: Run a guided weekly review of an auxmem using graph gaps, open tasks, and recent logs. Use for weekly review, retrospective, or auxmem health check at week end.
 ---
 

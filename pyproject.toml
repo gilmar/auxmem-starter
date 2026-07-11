@@ -1,6 +1,6 @@
 [project]
 name = "auxmem"
-version = "0.1.0"
+version = "0.0.0"
 description = "AuxMem Manager: create and maintain provider-independent, agent-readable markdown memory (auxmems)."
 requires-python = ">=3.10"
 dependencies = ["pyyaml>=6.0"]

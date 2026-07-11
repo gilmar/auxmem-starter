@@ -1,0 +1,23 @@
+---
+description: AuxMem versioning is paused at 0.0.0 until the user explicitly resumes it
+alwaysApply: true
+---
+
+# Versioning paused
+
+CLI and template versions are **0.0.0**. No auxmems have been created under a numbered release.
+
+## Do not bump versions unless the user explicitly asks to resume versioning
+
+When making template or CLI changes, do **not** bump `TEMPLATE_VERSION`, `pyproject.toml` version, or `__version__`. Regenerate the manifest only if template managed files changed (keeps `template_version` at `0.0.0`).
+
+## When the user says to resume versioning
+
+1. Ask which version to start at (or propose the next sensible semver if they do not specify).
+2. Bump all three in sync:
+   - `auxmem/version.py` (`TEMPLATE_VERSION`)
+   - `pyproject.toml` (`version`)
+   - `auxmem/__init__.py` (`__version__`)
+3. Run `uv run python build_manifest.py`
+4. Add a `CHANGELOG.md` entry for the release
+5. Remove or update this rule if versioning is no longer paused

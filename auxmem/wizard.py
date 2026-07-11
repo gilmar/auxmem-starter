@@ -91,7 +91,7 @@ def _show_preview(name, path):
     print(f"  {DIM}path{RESET}     {path}")
     print(
         f"\n  {DIM}subject domains{RESET}  "
-        f"{DIM}none yet — your agent defines them via the setup-domains skill{RESET}"
+        f"{DIM}none yet — auxmem-init will define them with you{RESET}"
     )
     print(f"\n  {DIM}shared structure{RESET} (same in every auxmem)")
     for folder in _template_structural_folders():
@@ -142,7 +142,7 @@ def run():
     print("Next steps:")
     print(f"  1. cd {dest}")
     print("  2. Point your agent at this folder (claude, codex, or gemini)")
-    print("     Run the setup-domains skill — it interviews you and creates your subject folders.")
+    print("     Run the auxmem-init skill — it interviews you, sets up domains, and finishes setup.")
     print("  3. Optional: set a private git remote and push")
     print("     git remote add origin <url>")
     print("     git add -A && git commit -m 'initial auxmem' && git push -u origin main")

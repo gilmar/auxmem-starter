@@ -1,5 +1,5 @@
 ---
-name: session-close
+name: auxmem-session-close
 description: Close an auxmem agent session. Completes tasks, archives done items, appends a log entry, regenerates MOCs, validates, and commits. Use at session end or when the user asks to wrap up, close out, or finish an auxmem session.
 ---
 
@@ -26,6 +26,6 @@ Run from the auxmem root.
 
 3. **MOCs** — `python3 .scripts/gen_mocs.py`
 
-4. **Validate** — `python3 .scripts/validate_auxmem.py --all`. If failures remain, invoke the `fix-validation` skill.
+4. **Validate** — `python3 .scripts/validate_auxmem.py --all`. If failures remain, invoke the `auxmem-fix-validation` skill.
 
 5. **Commit** — Stage material changes. Use a descriptive message. Do not use `--no-verify`; the pre-commit hook is the quality gate.
