@@ -17,7 +17,6 @@ Stdlib only. Run once per export file; safe to re-run (files overwritten).
 import argparse
 import json
 import re
-import sys
 from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path

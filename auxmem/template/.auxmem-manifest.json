@@ -19,7 +19,7 @@
     },
     ".scripts/graph_report.py": {
       "policy": "overwrite",
-      "sha256": "fa8d2670bbab37fbb0c534d93cdfd6b73d7944de7b97e6a80563f481f39deb6d"
+      "sha256": "22b676cd97e06628fc35d007247fa5869be48190c7f941e75632a3388d5574dc"
     },
     ".scripts/pre-commit": {
       "policy": "overwrite",

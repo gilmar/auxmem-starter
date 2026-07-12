@@ -11,7 +11,8 @@ import argparse
 import sys
 from pathlib import Path
 
-from . import scaffold, wizard, importers, upgrade as upgrade_mod
+from . import importers, scaffold, wizard
+from . import upgrade as upgrade_mod
 
 EPILOG = """
 where to run commands

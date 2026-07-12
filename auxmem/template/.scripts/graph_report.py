@@ -26,7 +26,6 @@ import json
 import re
 import sys
 from collections import defaultdict
-from datetime import date
 from itertools import combinations
 from pathlib import Path
 

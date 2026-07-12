@@ -33,8 +33,9 @@ Examples: `feature/add-import-flag`, `fix/upgrade-config-merge`, `chore/update-a
 ## Setup
 
 ```bash
-uv sync          # create .venv and install the package (editable)
+uv sync --group dev   # install package + pytest, ruff, etc.
 uv run auxmem --help
+bash scripts/check_repo.sh   # full verification (tests, lint, build, smoke)
 ```
 
 Run without installing globally:
@@ -47,6 +48,7 @@ uv run python auxmem-cli new --name t --path /tmp/t-test
 
 | task | command |
 | --- | --- |
+| Full repository check | `bash scripts/check_repo.sh` |
 | Regenerate template manifest | `uv run python build_manifest.py` |
 | Shell lint | `bash scripts/lint-shell.sh` |
 | Bump template version | edit `auxmem/version.py` (`TEMPLATE_VERSION`), then `build_manifest.py` |

@@ -147,6 +147,6 @@ def run():
     print("     git remote add origin <url>")
     print("     git add -A && git commit -m 'initial auxmem' && git push -u origin main")
     print("  4. Optional: seed from AI exports or import Obsidian (see docs/IMPORTING.md)")
-    print(f"     auxmem seed <export.json> --staging ./seed-staging")
+    print("     auxmem seed <export.json> --staging ./seed-staging")
     print(f"     auxmem import-obsidian <old-vault> --dest {dest} --map map.json")
     return result
