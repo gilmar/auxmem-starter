@@ -5,13 +5,13 @@ from __future__ import annotations
 import json
 import re
 
-from auxmem import __version__
-from auxmem.version import CONFORMANCE_VERSION, TEMPLATE_VERSION
+from koinome import __version__
+from koinome.version import CONFORMANCE_VERSION, TEMPLATE_VERSION
 from tests.helpers import REPO_ROOT
 
-MANIFEST = REPO_ROOT / "auxmem" / "template" / ".auxmem-manifest.json"
+MANIFEST = REPO_ROOT / "koinome" / "template" / ".koinome-manifest.json"
 PYPROJECT = REPO_ROOT / "pyproject.toml"
-VERSION_MODULE = REPO_ROOT / "auxmem" / "version.py"
+VERSION_MODULE = REPO_ROOT / "koinome" / "version.py"
 
 
 def _read_pyproject_version() -> str:

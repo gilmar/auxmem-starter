@@ -6,7 +6,7 @@ import subprocess
 
 import pytest
 
-from auxmem.exit_codes import CONFLICT, OK, OPERATION_FAILED
+from koinome.exit_codes import CONFLICT, OK, OPERATION_FAILED
 from tests.helpers import (
     REPO_ROOT,
     attach_bare_remote,
@@ -19,13 +19,13 @@ from tests.helpers import (
     run_cmd,
     run_git,
     run_sync,
-    scaffold_auxmem,
+    scaffold_corpus,
     write_note,
 )
 
 VALID_FM = dict(
     title="Sync note",
-    summary="Concrete nouns for sync integrity tests in this auxmem folder.",
+    summary="Concrete nouns for sync integrity tests in this corpus folder.",
     type="project-doc",
     status="active",
     domain="projects",
@@ -36,8 +36,8 @@ VALID_FM = dict(
 
 @pytest.fixture
 def synced_auxmem(tmp_path, bare_remote):
-    dest = tmp_path / "auxmem"
-    scaffold_auxmem(dest)
+    dest = tmp_path / "corpus"
+    scaffold_corpus(dest)
     commit_all_valid(dest)
     attach_bare_remote(dest, bare_remote)
     return dest
@@ -47,15 +47,15 @@ def _note(rel: str, body: str = "Body.", **fm) -> str:
     return note_with_fm(body, **{**VALID_FM, **fm})
 
 
-def _add_valid_note(auxmem, rel: str, body: str = "Body.") -> None:
-    write_note(auxmem, rel, _note(rel, body=body))
-    gen_mocs(auxmem)
-    git_add(auxmem, "-A")
+def _add_valid_note(corpus, rel: str, body: str = "Body.") -> None:
+    write_note(corpus, rel, _note(rel, body=body))
+    gen_mocs(corpus)
+    git_add(corpus, "-A")
 
 
 def test_sync_script_delegates_to_python():
     proc = subprocess.run(
-        ["/bin/bash", "-n", "auxmem/template/.scripts/auxmem-sync.sh"],
+        ["/bin/bash", "-n", "koinome/template/.scripts/koinome-sync.sh"],
         cwd=REPO_ROOT,
         capture_output=True,
         text=True,
@@ -103,7 +103,7 @@ def test_sync_uses_current_branch(synced_auxmem, bare_remote):
 
 
 def test_sync_lock_contention(synced_auxmem):
-    lock = synced_auxmem / ".git" / "auxmem-sync.lock"
+    lock = synced_auxmem / ".git" / "koinome-sync.lock"
     lock.mkdir()
     try:
         result = run_sync(synced_auxmem)
@@ -115,7 +115,7 @@ def test_sync_lock_contention(synced_auxmem):
 
 def test_sync_rebase_conflict_quarantines(tmp_path, bare_remote):
     primary = tmp_path / "primary"
-    scaffold_auxmem(primary)
+    scaffold_corpus(primary)
     write_note(primary, "10-projects/shared.md", _note("10-projects/shared.md", body="line one\n"))
     commit_all_valid(primary, "seed")
     attach_bare_remote(primary, bare_remote)

@@ -1,33 +1,33 @@
 # Evaluation methodology
 
-AuxMem evaluation separates **deterministic guarantees** (validator, conformance, staleness detection) from **model-dependent outcomes** (agent context recovery). AuxMem does not claim to improve model intelligence — it measures portability, provenance, auditability, and failure detection.
+Koinome evaluation separates **deterministic guarantees** (validator, conformance, staleness detection) from **model-dependent outcomes** (agent context recovery). Koinome does not claim to improve model intelligence — it measures portability, provenance, auditability, and failure detection.
 
 ## Deterministic evaluation
 
-Run on all reference auxmems:
+Run on all reference corpora:
 
 ```bash
-uv run python -m auxmem.evaluation
+uv run python -m koinome.evaluation
 ```
 
 Included in the release gate via `bash scripts/check_release.sh`.
 
 | check | what it proves |
 | --- | --- |
-| validation | reference auxmem passes `validate_auxmem.py --all` |
-| conformance | `check_auxmem.py` passes (validation + MOC freshness) |
+| validation | reference corpus passes `validate_corpus.py --all` |
+| conformance | `check_corpus.py` passes (validation + MOC freshness) |
 | moc-freshness | generated MOCs are current |
 | synthesis-signals | `synthesis_status.py` reports stale syntheses and review queue |
 | superseded-adr | one superseded ADR and one active successor exist |
 | unresolved-contradiction | synthesis pages document conflicts without resolving them |
 | broken-link-detection | validator rejects a probe note with a broken internal link |
 | recovery-deletion | deleting a linked ADR surfaces broken links on re-validation |
-| upgrade-preservation | `auxmem upgrade --dry-run` reports up-to-date on fresh references |
+| upgrade-preservation | `koinome upgrade --dry-run` reports up-to-date on fresh references |
 | plain-text-readability | every `.md` file is UTF-8 text without tooling |
 
 ### Not covered deterministically here
 
-- **Sync conflict quarantine** — covered by `tests/test_sync.py` on ephemeral auxmems.
+- **Sync conflict quarantine** — covered by `tests/test_sync.py` on ephemeral corpora.
 - **Agent provider behavior** — manual or scripted agent runs using `examples/evaluation/agent_prompts.md`.
 
 ## Agent-assisted evaluation

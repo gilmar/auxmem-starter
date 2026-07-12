@@ -20,7 +20,7 @@ while IFS= read -r script; do
     if ! shellcheck -s bash "$script"; then
         failed=1
     fi
-done < <(find auxmem/template auxmem/importers -type f \( -name '*.sh' -o -name 'pre-commit' \) | sort)
+done < <(find koinome/template koinome/importers -type f \( -name '*.sh' -o -name 'pre-commit' \) | sort)
 
 if [ "$failed" -ne 0 ]; then
     exit 1
@@ -31,8 +31,8 @@ echo "shellcheck clean (${count} file(s))"
 # smoke-test syntax under macOS-style bash 3.2 if available
 if /bin/bash --version 2>/dev/null | grep -q 'version 3\.'; then
     echo "bash 3.2 syntax check"
-    /bin/bash -n auxmem/template/.scripts/pre-commit
-    /bin/bash -n auxmem/template/.scripts/auxmem-sync.sh
-    /bin/bash -n auxmem/template/bootstrap.sh
+    /bin/bash -n koinome/template/.scripts/pre-commit
+    /bin/bash -n koinome/template/.scripts/koinome-sync.sh
+    /bin/bash -n koinome/template/bootstrap.sh
     echo "bash -n clean"
 fi

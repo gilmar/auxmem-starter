@@ -2,13 +2,13 @@
 
 ## How to read this file
 
-AuxMem tracks **three coordinated versions**:
+Koinome tracks **three coordinated versions**:
 
 | version | where | meaning |
 | --- | --- | --- |
-| **CLI** | `pyproject.toml`, `auxmem/__init__.py` | AuxMem Manager package (PyPI) |
-| **Template** | `auxmem/version.py`, manifest `template_version` | Auxmem folder tooling/guidance (`auxmem upgrade`) |
-| **Conformance** | `auxmem/version.py`, manifest `conformance_version` | Validator and `check_auxmem` contract |
+| **CLI** | `pyproject.toml`, `koinome/__init__.py` | Koinome CLI package (PyPI) |
+| **Template** | `koinome/version.py`, manifest `template_version` | corpus folder tooling/guidance (`koinome upgrade`) |
+| **Conformance** | `koinome/version.py`, manifest `conformance_version` | Validator and `check_corpus` contract |
 
 A template or conformance change that alters what constitutes a valid note is **compatibility-relevant**. See `docs/COMPATIBILITY.md`.
 
@@ -30,7 +30,7 @@ Reliability and release-hardening work on `master` after the version reset:
 - Transactional upgrade with manifest verification
 - Bootstrap/packaging safety (no system Python mutation, skill refresh, wheel coverage)
 - Release and compatibility discipline (AUX-011)
-- Reference auxmems and deterministic evaluation harness (AUX-012)
+- Reference corpora and deterministic evaluation harness (AUX-012)
 - Removed `auxmem import-obsidian` and all Obsidian migration tooling
 
 Verify with `bash scripts/check_release.sh` before any publish.
@@ -42,14 +42,14 @@ The entries below describe early development **before** the `0.0.0` pause. They 
 ### 1.3.1 — portable shell scripts (template)
 
 - Fix pre-commit hook on macOS bash 3.2: replace `mapfile` with a NUL-delimited read loop.
-- Make `auxmem-sync.sh` portable: drop Linux-only `flock`, replace GNU `date -Iseconds`.
+- Make `koinome-sync.sh` portable: drop Linux-only `flock`, replace GNU `date -Iseconds`.
 - Document bash 3.2 / POSIX baseline; re-run `./bootstrap.sh` after upgrade to refresh the hook.
 - Add `scripts/lint-shell.sh` and CI shellcheck workflow.
 
 ### 1.3.0 — setup-domains skill (template)
 
 - New `setup-domains` skill: interview, propose domains, update config and folders, regenerate MOCs, validate, commit.
-- AGENTS.md points new auxmems at `setup-domains` first.
+- AGENTS.md points new corpora at `setup-domains` first.
 
 ### 1.2.0 — agent skills (template)
 
@@ -60,26 +60,26 @@ The entries below describe early development **before** the `0.0.0` pause. They 
 ### 1.2.1 — CLI help clarity (CLI)
 
 - Print usage instead of an error when `auxmem` is invoked with no subcommand.
-- Clarify in help text which commands run outside an auxmem versus which take an auxmem path.
+- Clarify in help text which commands run outside a corpus versus which take a corpus path.
 
 ### 1.2.0 — domain bootstrap skill (CLI)
 
-- Simplify `auxmem new` wizard to three steps (name, location, review); no preset domains.
+- Simplify `koinome new` wizard to three steps (name, location, review); no preset domains.
 - Add `setup-domains` agent skill for tailoring subject folders after creation.
 
 ### 1.1.0 — guided auxmem creation (CLI)
 
-- Rework `auxmem new` interactive wizard: plain-language steps, domain preset, creation preview, live bootstrap progress, agent-oriented next steps.
+- Rework `koinome new` interactive wizard: plain-language steps, domain preset, creation preview, live bootstrap progress, agent-oriented next steps.
 
 ### 1.0.1 — packaging fix (CLI)
 
-- Ship `template/` and `importers/` inside the installed package so `uv tool install` and `pip install` can run `auxmem new`, `auxmem upgrade`, and `auxmem seed`.
+- Ship `template/` and `importers/` inside the installed package so `uv tool install` and `pip install` can run `koinome new`, `koinome upgrade`, and `koinome seed`.
 - Remove stray root-level `done.txt` from the template (tasks live in `72-tasks/`).
 
 ### 1.0.0 — initial public experiment (CLI + template)
 
 Early public experiment before governance hardening:
 
-- `auxmem new`, `auxmem seed`, `auxmem doctor`, `auxmem upgrade`
+- `koinome new`, `koinome seed`, `koinome doctor`, `koinome upgrade`
 - Governed auxmem: config-driven validator, pre-commit hook, generated MOCs, git sync with conflict quarantine
 - Synthesis layer with provenance and staleness detection

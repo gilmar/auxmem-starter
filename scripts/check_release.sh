@@ -35,12 +35,12 @@ fi
 if [ -n "$TARGET_VERSION" ]; then
     RELEASE_ARGS+=(--target-version "$TARGET_VERSION")
 fi
-uv run python -m auxmem.release_check "${RELEASE_ARGS[@]}"
+uv run python -m koinome.release_check "${RELEASE_ARGS[@]}"
 
 echo "== compatibility smoke =="
 bash scripts/compatibility_smoke.sh
 
-echo "== reference auxmem evaluation =="
-uv run python -m auxmem.evaluation
+echo "== reference corpus evaluation =="
+uv run python -m koinome.evaluation
 
 echo "check_release.sh: all release checks passed"

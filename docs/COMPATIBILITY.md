@@ -1,6 +1,6 @@
 # Compatibility matrix
 
-AuxMem support claims are limited to environments verified by the procedures below.
+Koinome support claims are limited to environments verified by the procedures below.
 **Status** meanings:
 
 | status | meaning |
@@ -31,18 +31,18 @@ bash scripts/check_release.sh
 
 | environment | status | OS | Python | skill-discovery path | instruction-file path | last verified | smoke procedure | known limitations |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Claude Code | expected | macOS 14+, Linux | 3.10+ (validator) | `.claude/skills/` | `CLAUDE.md`, `AGENTS.md` | 2026-07-12 | Manual: open auxmem, run `auxmem-init` skill, create one note | Skill discovery version-dependent; symlink vs copy per `bootstrap.sh` |
-| Codex CLI | expected | macOS 14+, Linux | 3.10+ | `.codex/skills/` | `AGENTS.md` | 2026-07-12 | Manual: same as Claude with Codex pointed at auxmem root | Provider CLI version not pinned in CI |
+| Claude Code | expected | macOS 14+, Linux | 3.10+ (validator) | `.claude/skills/` | `CLAUDE.md`, `AGENTS.md` | 2026-07-12 | Manual: open corpus, run `koinome-init` skill, create one note | Skill discovery version-dependent; symlink vs copy per `bootstrap.sh` |
+| Codex CLI | expected | macOS 14+, Linux | 3.10+ | `.codex/skills/` | `AGENTS.md` | 2026-07-12 | Manual: same as Claude with Codex pointed at corpus root | Provider CLI version not pinned in CI |
 | Gemini CLI | expected | macOS 14+, Linux | 3.10+ | `.gemini/skills/` | `GEMINI.md`, `AGENTS.md` | 2026-07-12 | Manual: same with Gemini CLI | Provider CLI version not pinned in CI |
 | Cursor | expected | macOS 14+, Linux | 3.10+ | `.cursor/skills/` (also reads `.claude/skills/`) | `AGENTS.md` | 2026-07-12 | Manual: open folder in Cursor, invoke a template skill | Cursor agent behavior is model-dependent |
 
 ### Agent-assisted smoke (manual, same for all providers)
 
-1. Scaffold: `auxmem new --name compat --path /tmp/compat-test`
-2. Point the agent at the auxmem root.
-3. Run the `auxmem-init` skill (or confirm pre-set domains).
-4. Create one note via `auxmem-new-note` skill; commit passes pre-commit hook.
-5. Run `auxmem doctor /tmp/compat-test` — exit 0.
+1. Scaffold: `koinome new --name compat --path /tmp/compat-test`
+2. Point the agent at the corpus root.
+3. Run the `koinome-init` skill (or confirm pre-set domains).
+4. Create one note via `koinome-new-note` skill; commit passes pre-commit hook.
+5. Run `koinome doctor /tmp/compat-test` — exit 0.
 
 Record the provider CLI version and date in this table when re-verifying.
 
@@ -52,7 +52,7 @@ Record the provider CLI version and date in this table when re-verifying.
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | macOS | tested | macOS 14+ (CI: macos-latest) | 3.10, 3.12, 3.13 | n/a (deterministic) | 2026-07-12 | `bash scripts/check_repo.sh` on macOS | None for core CLI/template |
 | Linux | tested | Ubuntu (CI: ubuntu-latest) | 3.10, 3.12, 3.13 | n/a | 2026-07-12 | `bash scripts/check_repo.sh` on Linux | None for core CLI/template |
-| WSL2 | expected | Ubuntu on WSL2 | 3.10+ | n/a | 2026-07-12 | Keep auxmem on Linux filesystem (`~/auxmem`); run `compatibility_smoke.sh` | `/mnt/c/` paths are slow; see template `docs/SETUP.md` |
+| WSL2 | expected | Ubuntu on WSL2 | 3.10+ | n/a | 2026-07-12 | Keep corpus on Linux filesystem (`~/my-corpus`); run `compatibility_smoke.sh` | `/mnt/c/` paths are slow; see template `docs/SETUP.md` |
 
 ## Package install paths
 
@@ -67,9 +67,9 @@ Record the provider CLI version and date in this table when re-verifying.
 
 | artifact | source | compatibility impact |
 | --- | --- | --- |
-| CLI | `pyproject.toml`, `auxmem/__init__.py` | Package install and command surface |
-| Template | `auxmem/version.py`, manifest `template_version` | `auxmem upgrade` behavior |
-| Conformance | `auxmem/version.py`, manifest `conformance_version` | What notes pass `validate_auxmem.py` / `check_auxmem.py` |
+| CLI | `pyproject.toml`, `koinome/__init__.py` | Package install and command surface |
+| Template | `koinome/version.py`, manifest `template_version` | `koinome upgrade` behavior |
+| Conformance | `koinome/version.py`, manifest `conformance_version` | What notes pass `validate_corpus.py` / `check_corpus.py` |
 
 Bump conformance when validator rules change what constitutes a valid note. Document the change in `CHANGELOG.md` and re-run `bash scripts/check_release.sh` before publishing.
 

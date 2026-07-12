@@ -4,9 +4,9 @@
 Exports the repository index to a temporary directory (never the working tree),
 then runs full-record validation and MOC freshness checks against that snapshot.
 
-Used by the pre-commit hook. Read-only with respect to the auxmem working tree.
+Used by the pre-commit hook. Read-only with respect to the corpus working tree.
 
-Exit 0 = staged snapshot is conformant (or no auxmem paths staged).
+Exit 0 = staged snapshot is conformant (or no corpus paths staged).
 Exit 1 = validation or MOC check failed.
 """
 
@@ -19,7 +19,7 @@ import tempfile
 from pathlib import Path
 
 SCRIPT_DIR = Path(__file__).resolve().parent
-AUXMEM_ROOT = SCRIPT_DIR.parent
+CORPUS_ROOT = SCRIPT_DIR.parent
 
 _STAGED_PATHS = ("*.md", "72-tasks/todo.txt", "72-tasks/done.txt")
 
@@ -29,8 +29,8 @@ def _run(cmd: list[str], *, cwd: Path) -> tuple[int, str, str]:
     return proc.returncode, proc.stdout, proc.stderr
 
 
-def staged_auxmem_changes(root: Path) -> bool:
-    """Return True when the index includes auxmem note or task changes."""
+def staged_corpus_changes(root: Path) -> bool:
+    """Return True when the index includes corpus note or task changes."""
     proc = subprocess.run(
         [
             "git",
@@ -64,15 +64,15 @@ def check_snapshot(root: Path) -> tuple[int, str]:
     if not (root / ".git").exists():
         return 1, "check_staged_snapshot: not a git repository"
 
-    if not staged_auxmem_changes(root):
+    if not staged_corpus_changes(root):
         return 0, ""
 
-    tmp = Path(tempfile.mkdtemp(prefix="auxmem-staged-"))
+    tmp = Path(tempfile.mkdtemp(prefix="corpus-staged-"))
     try:
         materialize_index(root, tmp)
 
         val_rc, val_out, val_err = _run(
-            [sys.executable, ".scripts/validate_auxmem.py", "--all"],
+            [sys.executable, ".scripts/validate_corpus.py", "--all"],
             cwd=tmp,
         )
         if val_rc != 0:
@@ -92,7 +92,7 @@ def check_snapshot(root: Path) -> tuple[int, str]:
 
 def main(argv: list[str] | None = None) -> int:
     _ = argv
-    rc, message = check_snapshot(AUXMEM_ROOT)
+    rc, message = check_snapshot(CORPUS_ROOT)
     if message:
         print(message)
     return rc

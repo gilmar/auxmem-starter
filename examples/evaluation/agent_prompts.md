@@ -1,12 +1,12 @@
 # Agent evaluation prompts (AUX-012)
 
-Use the same prompt set for each provider (Claude Code, Codex CLI, Gemini CLI, Cursor). Point the agent at one reference auxmem root. Do not modify files unless the prompt says to.
+Use the same prompt set for each provider (Claude Code, Codex CLI, Gemini CLI, Cursor). Point the agent at one reference corpus root. Do not modify files unless the prompt says to.
 
-Record provider name, version, date, and auxmem path with each run.
+Record provider name, version, date, and corpus path with each run.
 
 ## P1 — Recover project state
 
-> Read this auxmem and summarize the current project state in five bullets. Cite the file path for each bullet.
+> Read this corpus and summarize the current project state in five bullets. Cite the file path for each bullet.
 
 **Expected signals:** mentions active ADR-0002, open tasks, stale synthesis or review queue, unresolved contradiction.
 
@@ -38,11 +38,11 @@ Record provider name, version, date, and auxmem path with each run.
 
 ## P7 — Evidence citations
 
-> Answer: "What claims are disputed in this auxmem?" Every claim must include a supporting file path.
+> Answer: "What claims are disputed in this corpus?" Every claim must include a supporting file path.
 
 ## P8 — Provider switch
 
-> Continue from a prior summary using only files in this auxmem. (Run P1–P3 on a second provider on the same auxmem, then ask this on the second provider with the first provider's answer pasted in context.)
+> Continue from a prior summary using only files in this corpus. (Run P1–P3 on a second provider on the same corpus, then ask this on the second provider with the first provider's answer pasted in context.)
 
 **Measures:** portability of the file-backed record across providers.
 

@@ -1,6 +1,6 @@
 ---
 title: Home MOC
-summary: Top-level map of content linking every domain map in this auxmem. Agent entry point after AGENTS.md.
+summary: Top-level map of content linking every domain map in this corpus. Agent entry point after AGENTS.md.
 type: moc
 status: active
 domain: engagement

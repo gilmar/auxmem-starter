@@ -17,7 +17,7 @@ SKIP = {
 MECHANICAL = [
     (".scripts/vault.config.json", ".scripts/auxmem.config.json"),
     ("vault.config.json", "auxmem.config.json"),
-    ("validate_vault.py", "validate_auxmem.py"),
+    ("validate_vault.py", "validate_corpus.py"),
     ("vault-sync.sh", "auxmem-sync.sh"),
     ("vault-sync.systemd", "auxmem-sync.systemd"),
     ("vault-sync.service", "auxmem-sync.service"),

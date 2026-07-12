@@ -1,10 +1,10 @@
-"""Pytest fixtures for AuxMem repository tests."""
+"""Pytest fixtures for Koinome repository tests."""
 
 from __future__ import annotations
 
 import pytest
 
-from tests.helpers import REPO_ROOT, create_bare_remote, init_git_repo, scaffold_auxmem
+from tests.helpers import REPO_ROOT, create_bare_remote, init_git_repo, scaffold_corpus
 
 
 @pytest.fixture(scope="session")
@@ -13,18 +13,18 @@ def repo_root():
 
 
 @pytest.fixture
-def tmp_auxmem(tmp_path):
-    """Fresh scaffolded auxmem with default domains and bootstrap completed."""
-    dest = tmp_path / "auxmem"
-    scaffold_auxmem(dest)
+def tmp_corpus(tmp_path):
+    """Fresh scaffolded corpus with default domains and bootstrap completed."""
+    dest = tmp_path / "corpus"
+    scaffold_corpus(dest)
     return dest
 
 
 @pytest.fixture
-def tmp_auxmem_git(tmp_auxmem):
-    """Scaffolded auxmem with an initialized git repository."""
-    init_git_repo(tmp_auxmem)
-    return tmp_auxmem
+def tmp_corpus_git(tmp_corpus):
+    """Scaffolded corpus with an initialized git repository."""
+    init_git_repo(tmp_corpus)
+    return tmp_corpus
 
 
 @pytest.fixture
@@ -33,8 +33,8 @@ def bare_remote(tmp_path):
 
 
 @pytest.fixture
-def validator_auxmem(tmp_path):
-    """Scaffolded auxmem with domains for validator-focused tests."""
-    dest = tmp_path / "validator-auxmem"
-    scaffold_auxmem(dest)
+def validator_corpus(tmp_path):
+    """Scaffolded corpus with domains for validator-focused tests."""
+    dest = tmp_path / "validator-corpus"
+    scaffold_corpus(dest)
     return dest

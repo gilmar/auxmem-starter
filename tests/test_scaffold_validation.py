@@ -1,13 +1,13 @@
-"""Scratch auxmem lifecycle checks used by the repository gate."""
+"""Scratch corpus lifecycle checks used by the repository gate."""
 
 from __future__ import annotations
 
-from tests.helpers import init_git_repo, read_auxmem_config, run_auxmem, run_git, validate_auxmem
+from tests.helpers import init_git_repo, read_corpus_config, run_git, run_koinome, validate_corpus
 
 
 def test_scratch_auxmem_has_domains_and_git(tmp_path):
     dest = tmp_path / "scratch"
-    run_auxmem(
+    run_koinome(
         [
             "new",
             "--name",
@@ -20,7 +20,7 @@ def test_scratch_auxmem_has_domains_and_git(tmp_path):
             "20-governance=governance",
         ]
     )
-    cfg = read_auxmem_config(dest)
+    cfg = read_corpus_config(dest)
     assert cfg["domains"] == {
         "10-projects": "projects",
         "20-governance": "governance",
@@ -32,7 +32,7 @@ def test_scratch_auxmem_has_domains_and_git(tmp_path):
 
 def test_scratch_auxmem_validation_clean(tmp_path):
     dest = tmp_path / "scratch"
-    run_auxmem(
+    run_koinome(
         [
             "new",
             "--name",
@@ -43,5 +43,5 @@ def test_scratch_auxmem_validation_clean(tmp_path):
             "10-projects=projects",
         ]
     )
-    result = validate_auxmem(dest)
+    result = validate_corpus(dest)
     assert result.returncode == 0, result.stdout + result.stderr

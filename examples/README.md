@@ -1,6 +1,6 @@
-# Reference AuxMems
+# Reference corpora
 
-Sanitized, fictional auxmems that demonstrate governed work memory patterns. All content is synthetic — no real client, employer, or personal data.
+Sanitized, fictional corpora that demonstrate governed work memory patterns. All content is synthetic — no real client, employer, or personal data.
 
 ## Examples
 
@@ -34,7 +34,7 @@ Commit the output after template changes. Git history is recreated by the build 
 Deterministic checks:
 
 ```bash
-uv run python -m auxmem.evaluation
+uv run python -m koinome.evaluation
 ```
 
 Agent-assisted prompts and scoring: [`evaluation/`](evaluation/) and [`docs/EVALUATION.md`](../docs/EVALUATION.md).

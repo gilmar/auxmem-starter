@@ -1,6 +1,6 @@
 # Agent evaluation scoring rubric
 
-Score each prompt **per provider** and **per reference auxmem**. Results are comparative and model-dependent — they do not gate releases unless paired with a deterministic regression.
+Score each prompt **per provider** and **per reference corpus**. Results are comparative and model-dependent — they do not gate releases unless paired with a deterministic regression.
 
 ## Per-prompt grades
 
@@ -16,7 +16,7 @@ Score each prompt **per provider** and **per reference auxmem**. Results are com
 | --- | --- |
 | Context recovery | Can the agent reconstruct current state from files alone? |
 | Provenance | Are claims tied to paths or frontmatter sources? |
-| Portability | Does a second provider reach the same conclusions from the same auxmem? |
+| Portability | Does a second provider reach the same conclusions from the same corpus? |
 | Auditability | Does the agent distinguish superseded vs active decisions? |
 | Failure detection | Does the agent surface stale synthesis and open contradictions? |
 
@@ -32,4 +32,4 @@ Score each prompt **per provider** and **per reference auxmem**. Results are com
 
 Use [`RESULTS.md`](RESULTS.md) as the public log. Include negative results and provider-specific limitations.
 
-**Do not** claim AuxMem improves model intelligence. Report whether the **file-backed record** made recovery and auditing easier or harder compared to ad-hoc chat context.
+**Do not** claim Koinome improves model intelligence. Report whether the **file-backed record** made recovery and auditing easier or harder compared to ad-hoc chat context.

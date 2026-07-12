@@ -10,7 +10,7 @@ from tests.helpers import REPO_ROOT
 
 
 def _manifest_text() -> str:
-    path = REPO_ROOT / "auxmem" / "template" / ".auxmem-manifest.json"
+    path = REPO_ROOT / "koinome" / "template" / ".koinome-manifest.json"
     return path.read_text(encoding="utf-8")
 
 
@@ -26,7 +26,7 @@ def test_manifest_is_fresh():
     after = _manifest_text()
     assert before == after, (
         "template manifest is stale; run `uv run python build_manifest.py` and commit "
-        "auxmem/template/.auxmem-manifest.json"
+        "koinome/template/.koinome-manifest.json"
     )
 
 
@@ -37,4 +37,4 @@ def test_manifest_lists_managed_files():
     for rel, meta in manifest["files"].items():
         assert meta.get("policy") in {"overwrite", "merge", "merge3"}, rel
         assert meta.get("sha256"), rel
-        assert (REPO_ROOT / "auxmem" / "template" / rel).is_file(), rel
+        assert (REPO_ROOT / "koinome" / "template" / rel).is_file(), rel

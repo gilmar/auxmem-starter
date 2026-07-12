@@ -8,7 +8,7 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 
 echo "== compatibility smoke: fresh scaffold =="
-uv run python -m auxmem.release_check --scaffold-smoke
+uv run python -m koinome.release_check --scaffold-smoke
 
 echo "== compatibility smoke: wheel install =="
 bash scripts/smoke_install.sh
