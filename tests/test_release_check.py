@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 
-from auxmem import release_check
+from koinome import release_check
 from tests.helpers import REPO_ROOT
 
 
@@ -38,10 +38,10 @@ def test_release_check_refuses_publish_zero_zero_zero():
 
 
 def test_manifest_conformance_version_matches_source():
-    from auxmem.version import CONFORMANCE_VERSION
+    from koinome.version import CONFORMANCE_VERSION
 
     manifest = json.loads(
-        (REPO_ROOT / "auxmem" / "template" / ".auxmem-manifest.json").read_text(encoding="utf-8")
+        (REPO_ROOT / "koinome" / "template" / ".koinome-manifest.json").read_text(encoding="utf-8")
     )
     assert manifest["conformance_version"] == CONFORMANCE_VERSION
 

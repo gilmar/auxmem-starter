@@ -1,13 +1,13 @@
 #!/bin/bash
-# bootstrap.sh: set up an auxmem created from this template.
-# Idempotent. Run from the auxmem root: ./bootstrap.sh
+# bootstrap.sh: set up a corpus created from this template.
+# Idempotent. Run from the corpus root: ./bootstrap.sh
 #
 # Options:
 #   --refresh-skills   re-copy provider skill dirs that were copied (not symlinked)
 #
 # Does:
 #   1. checks python + pyyaml (does not auto-install into system Python)
-#   2. creates domain folders from .scripts/auxmem.config.json
+#   2. creates domain folders from .scripts/koinome.config.json
 #   3. initializes git if needed
 #   4. links provider skill dirs to .skills/
 #   5. installs the pre-commit hook
@@ -17,7 +17,7 @@
 
 set -euo pipefail
 cd "$(dirname "$0")"
-CFG=".scripts/auxmem.config.json"
+CFG=".scripts/koinome.config.json"
 REFRESH_SKILLS=0
 
 while [ $# -gt 0 ]; do
@@ -43,9 +43,9 @@ PyYAML is required but not available to this python3.
 Bootstrap does not install packages into system Python automatically.
 Use one of these supported paths:
 
-  # Recommended: install AuxMem (includes PyYAML)
-  uv tool install auxmem
-  pipx install auxmem
+  # Recommended: install Koinome (includes PyYAML)
+  uv tool install koinome
+  pipx install koinome
 
   # Or a project virtual environment
   python3 -m venv .venv
@@ -64,7 +64,7 @@ echo "ok"
 
 if [ "$REFRESH_SKILLS" = "1" ]; then
     echo "== refresh copied provider skills =="
-    if [ -f .auxmem/skills-copies ]; then
+    if [ -f .koinome/skills-copies ]; then
         refreshed=0
         while IFS= read -r provider_dir || [ -n "${provider_dir:-}" ]; do
             [ -z "$provider_dir" ] && continue
@@ -80,12 +80,12 @@ if [ "$REFRESH_SKILLS" = "1" ]; then
             cp -R .skills "$provider_dir"
             echo "  refreshed $provider_dir from .skills (copy)"
             refreshed=1
-        done < .auxmem/skills-copies
+        done < .koinome/skills-copies
         if [ "$refreshed" = "0" ]; then
             echo "  no copied skill directories were refreshed"
         fi
     else
-        echo "  no .auxmem/skills-copies (provider dirs were symlinked or not yet bootstrapped)"
+        echo "  no .koinome/skills-copies (provider dirs were symlinked or not yet bootstrapped)"
     fi
     echo ""
     echo "Skill refresh complete. Re-run ./bootstrap.sh without --refresh-skills for a full pass."
@@ -115,8 +115,8 @@ else
 fi
 
 echo "== 4. provider skill symlinks =="
-mkdir -p .auxmem
-SKILLS_COPIES=".auxmem/skills-copies"
+mkdir -p .koinome
+SKILLS_COPIES=".koinome/skills-copies"
 touch "$SKILLS_COPIES"
 record_skill_copy() {
     local provider_dir="$1"
@@ -162,7 +162,7 @@ link_skills .cursor/skills
 echo "== 5. pre-commit hook =="
 cp .scripts/pre-commit .git/hooks/pre-commit
 chmod +x .git/hooks/pre-commit
-echo "  installed (re-run ./bootstrap.sh after auxmem upgrade to refresh the hook)"
+echo "  installed (re-run ./bootstrap.sh after koinome upgrade to refresh the hook)"
 
 echo "== 6. generate MOCs =="
 if python3 - "$CFG" << 'PY'
@@ -173,7 +173,7 @@ PY
 then
   python3 .scripts/gen_mocs.py
 else
-  echo "  skipped (no domains yet; run the auxmem-init skill first)"
+  echo "  skipped (no domains yet; run the corpus-init skill first)"
 fi
 
 echo "== 7. validate =="
@@ -183,20 +183,20 @@ cfg = json.load(open(sys.argv[1]))
 sys.exit(0 if cfg.get("domains") else 1)
 PY
 then
-  if python3 .scripts/validate_auxmem.py --all; then
+  if python3 .scripts/validate_corpus.py --all; then
     echo ""
     echo "Bootstrap complete. Next steps (see docs/SETUP.md):"
     echo "  - set your git remote and push"
-    echo "  - optional: install the sync timer (.scripts/auxmem-sync.systemd)"
-    echo "  - seed the auxmem from provider exports (docs/IMPORTING.md)"
+    echo "  - optional: install the sync timer (.scripts/koinome-sync.systemd)"
+    echo "  - seed the corpus from provider exports (docs/IMPORTING.md)"
   else
     echo "validation reported issues above; fix them, then re-run."
     exit 1
   fi
 else
-  echo "  skipped (no domains yet; run the auxmem-init skill first)"
+  echo "  skipped (no domains yet; run the corpus-init skill first)"
   echo ""
   echo "Bootstrap complete. Next steps:"
-  echo "  - point your agent at this auxmem and run the auxmem-init skill"
+  echo "  - point your agent at this corpus and run the corpus-init skill"
   echo "  - then set your git remote and push (see docs/SETUP.md)"
 fi

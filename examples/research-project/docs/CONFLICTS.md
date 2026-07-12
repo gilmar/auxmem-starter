@@ -1,6 +1,6 @@
 # Conflicting sources
 
-How to handle contradictory evidence in an auxmem. Configuration (domains, types, statuses) still comes only from `.scripts/auxmem.config.json`; this document covers content conflicts between notes, transcripts, and synthesis sources.
+How to handle contradictory evidence in a corpus. Configuration (domains, types, statuses) still comes only from `.scripts/koinome.config.json`; this document covers content conflicts between notes, transcripts, and synthesis sources.
 
 ## Policy
 
@@ -21,4 +21,4 @@ How to handle contradictory evidence in an auxmem. Configuration (domains, types
 
 - `docs/SYNTHESIS.md` — synthesis provenance and review gates
 - `AGENTS.md` — agent write rules
-- `.scripts/auxmem.config.json` — schema and controlled vocabularies (not content-truth rules)
+- `.scripts/koinome.config.json` — schema and controlled vocabularies (not content-truth rules)

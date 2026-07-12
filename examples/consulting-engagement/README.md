@@ -1,8 +1,8 @@
 # northwind-engagement
 
-an auxmem: a provider-independent work memory in plain markdown, built to be read and maintained by CLI AI agents (Claude Code, Codex, Gemini CLI) and synced with git. No provider lock-in, no proprietary formats, no plugins.
+a corpus: a provider-independent work memory in plain markdown, built to be read and maintained by CLI AI agents (Claude Code, Codex, Gemini CLI) and synced with git. No provider lock-in, no proprietary formats, no plugins.
 
-this auxmem was created by AuxMem. It is auxiliary memory, not a whole brain: capture happens in your existing tools and agents, and this auxmem holds the durable, governed, retrievable state they write to and read from.
+this corpus was created by Koinome. It is durable knowledge, not a whole brain: capture happens in your existing tools and agents, and this corpus holds the durable, governed, retrievable state they write to and read from.
 
 ## What is here
 - A shallow, stable folder structure optimized for agent retrieval (grep, glob, frontmatter triage).
@@ -15,7 +15,7 @@ this auxmem was created by AuxMem. It is auxiliary memory, not a whole brain: ca
 ## Working on a new machine
 Clone the repo, then install the local hook and check dependencies:
 ```bash
-git clone <this-auxmem-repo-url> ~/northwind-engagement && cd ~/northwind-engagement
+git clone <this-corpus-repo-url> ~/northwind-engagement && cd ~/northwind-engagement
 ./bootstrap.sh
 ```
 `bootstrap.sh` is idempotent. It creates any missing folders from the config, links provider skill directories, installs the pre-commit hook (git hooks are not cloned), generates MOCs, and validates.
@@ -25,9 +25,9 @@ git clone <this-auxmem-repo-url> ~/northwind-engagement && cd ~/northwind-engage
 AGENTS.md          canonical agent guide (CLAUDE.md and GEMINI.md point here)
 .skills/           provider-agnostic Agent Skills (workflows for agents)
 bootstrap.sh       per-machine installer (hooks, folders, validation)
-.scripts/          operate-time tooling and auxmem.config.json (single source of truth)
+.scripts/          operate-time tooling and koinome.config.json (single source of truth)
 docs/              SETUP, OPERATIONS, ARCHITECTURE
-<NN>-<domain>/     subject-matter domains (defined in .scripts/auxmem.config.json)
+<NN>-<domain>/     subject-matter domains (defined in .scripts/koinome.config.json)
 60-decisions/      ADRs + index
 70-meetings/       dated meeting and 1:1 notes
 71-log/            append-only session/work logs
@@ -39,7 +39,7 @@ docs/              SETUP, OPERATIONS, ARCHITECTURE
 ```
 
 ## The one rule that matters
-the auxmem is the state. Models are interchangeable clients. Everything here is plain markdown, git, and open standards so that no single AI provider owns your context. Read `docs/ARCHITECTURE.md` for why each piece is built the way it is.
+the corpus is the state. Models are interchangeable clients. Everything here is plain markdown, git, and open standards so that no single AI provider owns your context. Read `docs/ARCHITECTURE.md` for why each piece is built the way it is.
 
 ## Seeding and importing
-Done from AuxMem (the tool that made this auxmem), not from here. See the starter's docs/IMPORTING.md.
+Done from Koinome (the tool that made this corpus), not from here. See the starter's docs/IMPORTING.md.

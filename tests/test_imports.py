@@ -10,7 +10,7 @@ import pytest
 from tests.helpers import REPO_ROOT
 
 FIXTURES = REPO_ROOT / "tests" / "fixtures" / "imports"
-SEED_EXTRACT = REPO_ROOT / "auxmem" / "importers" / "seed_extract.py"
+SEED_EXTRACT = REPO_ROOT / "koinome" / "importers" / "seed_extract.py"
 
 
 def _seed(args: list[str], *, staging: str) -> subprocess.CompletedProcess:

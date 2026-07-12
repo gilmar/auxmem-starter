@@ -1,4 +1,4 @@
-"""Failure propagation for auxmem CLI operations (AUX-007)."""
+"""Failure propagation for corpus CLI operations (AUX-007)."""
 
 from __future__ import annotations
 
@@ -6,9 +6,9 @@ import stat
 
 import pytest
 
-from auxmem import exit_codes
-from auxmem.cli import main
-from tests.helpers import note_with_fm, scaffold_auxmem, write_note
+from koinome import exit_codes
+from koinome.cli import main
+from tests.helpers import note_with_fm, scaffold_corpus, write_note
 
 VALID_FM = dict(
     title="Test note",
@@ -24,7 +24,7 @@ VALID_FM = dict(
 @pytest.fixture
 def doctor_auxmem(tmp_path):
     dest = tmp_path / "doctor"
-    scaffold_auxmem(dest)
+    scaffold_corpus(dest)
     return dest
 
 
@@ -52,7 +52,7 @@ def test_doctor_returns_operation_failed_when_moc_fails(doctor_auxmem):
 
 
 def test_validate_and_moc_reports_moc_phase(doctor_auxmem):
-    from auxmem import importers
+    from koinome import importers
 
     moc = doctor_auxmem / ".scripts/gen_mocs.py"
     moc.write_text("#!/usr/bin/env python3\nimport sys\nsys.exit(2)\n")
@@ -63,7 +63,7 @@ def test_validate_and_moc_reports_moc_phase(doctor_auxmem):
 
 
 def test_validate_and_moc_reports_validation_phase(doctor_auxmem):
-    from auxmem import importers
+    from koinome import importers
 
     write_note(
         doctor_auxmem,
@@ -76,10 +76,10 @@ def test_validate_and_moc_reports_validation_phase(doctor_auxmem):
 
 
 def test_upgrade_returns_non_conformant_when_validation_fails(tmp_path, monkeypatch):
-    from auxmem import upgrade as upgrade_mod
+    from koinome import upgrade as upgrade_mod
 
     dest = tmp_path / "upgrade-target"
-    scaffold_auxmem(dest)
+    scaffold_corpus(dest)
     write_note(
         dest,
         "10-projects/bad.md",
@@ -93,10 +93,10 @@ def test_upgrade_returns_non_conformant_when_validation_fails(tmp_path, monkeypa
             "to": "0.0.0",
             "changes": ["test change"],
             "conflicts": [],
-            "backup": str(dest / ".auxmem/backups/test"),
+            "backup": str(dest / ".koinome/backups/test"),
             "post_exit_code": exit_codes.NON_CONFORMANT,
             "post_phase": "validation",
-            "post_detail": "auxmem validation failed.",
+            "post_detail": "corpus validation failed.",
         }
 
     monkeypatch.setattr(upgrade_mod, "upgrade", fake_upgrade)
@@ -105,10 +105,10 @@ def test_upgrade_returns_non_conformant_when_validation_fails(tmp_path, monkeypa
 
 
 def test_upgrade_returns_operation_failed_when_moc_fails(tmp_path, monkeypatch):
-    from auxmem import upgrade as upgrade_mod
+    from koinome import upgrade as upgrade_mod
 
     dest = tmp_path / "upgrade-target"
-    scaffold_auxmem(dest)
+    scaffold_corpus(dest)
 
     def fake_upgrade(path, force=False, dry_run=False):
         return {
@@ -117,7 +117,7 @@ def test_upgrade_returns_operation_failed_when_moc_fails(tmp_path, monkeypatch):
             "to": "0.0.0",
             "changes": [],
             "conflicts": [],
-            "backup": str(dest / ".auxmem/backups/test"),
+            "backup": str(dest / ".koinome/backups/test"),
             "post_exit_code": exit_codes.OPERATION_FAILED,
             "post_phase": "MOC generation",
             "post_detail": "moc broke",

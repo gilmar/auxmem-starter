@@ -3,14 +3,14 @@ name: shellcheck
 on:
   push:
     paths:
-      - 'auxmem/template/**'
-      - 'auxmem/importers/**'
+      - 'koinome/template/**'
+      - 'koinome/importers/**'
       - 'scripts/lint-shell.sh'
       - '.github/workflows/shellcheck.yml'
   pull_request:
     paths:
-      - 'auxmem/template/**'
-      - 'auxmem/importers/**'
+      - 'koinome/template/**'
+      - 'koinome/importers/**'
       - 'scripts/lint-shell.sh'
       - '.github/workflows/shellcheck.yml'
 

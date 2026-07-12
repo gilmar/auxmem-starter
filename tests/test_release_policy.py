@@ -7,13 +7,13 @@ import re
 
 import pytest
 
-from auxmem import __version__
-from auxmem.version import CONFORMANCE_VERSION, TEMPLATE_VERSION
+from koinome import __version__
+from koinome.version import CONFORMANCE_VERSION, TEMPLATE_VERSION
 from tests.helpers import REPO_ROOT
 
 PYPROJECT = REPO_ROOT / "pyproject.toml"
 RELEASE_DOC = REPO_ROOT / "docs" / "RELEASE.md"
-MANIFEST = REPO_ROOT / "auxmem" / "template" / ".auxmem-manifest.json"
+MANIFEST = REPO_ROOT / "koinome" / "template" / ".koinome-manifest.json"
 MISTAKEN_PYPI_VERSION = "2.0.0"
 
 

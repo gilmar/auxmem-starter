@@ -13,13 +13,13 @@ from tests.helpers import (
     note_with_fm,
     run_git,
     run_staged_snapshot_check,
-    scaffold_auxmem,
+    scaffold_corpus,
     write_note,
 )
 
 VALID_FM = dict(
     title="Target note",
-    summary="Concrete nouns for staged snapshot gate tests in this auxmem.",
+    summary="Concrete nouns for staged snapshot gate tests in this corpus.",
     type="project-doc",
     status="active",
     domain="projects",
@@ -30,8 +30,8 @@ VALID_FM = dict(
 
 @pytest.fixture
 def git_auxmem(tmp_path):
-    dest = tmp_path / "auxmem"
-    scaffold_auxmem(dest)
+    dest = tmp_path / "corpus"
+    scaffold_corpus(dest)
     init_git_repo(dest)
     run_git(["add", "-A"], cwd=dest)
     run_git(["commit", "-m", "initial"], cwd=dest)
@@ -42,7 +42,7 @@ def _note(rel: str, body: str = "Body.", **fm) -> str:
     return note_with_fm(body, **{**VALID_FM, **fm})
 
 
-def test_no_staged_auxmem_changes_passes(git_auxmem):
+def test_no_staged_corpus_changes_passes(git_auxmem):
     result = run_staged_snapshot_check(git_auxmem)
     assert result.returncode == 0, result.stdout + result.stderr
 
@@ -185,7 +185,7 @@ def test_filename_with_spaces(git_auxmem):
 
 def test_pre_commit_hook_bash_syntax():
     proc = subprocess.run(
-        ["/bin/bash", "-n", "auxmem/template/.scripts/pre-commit"],
+        ["/bin/bash", "-n", "koinome/template/.scripts/pre-commit"],
         cwd=REPO_ROOT,
         capture_output=True,
         text=True,

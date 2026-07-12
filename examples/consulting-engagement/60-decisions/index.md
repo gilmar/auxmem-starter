@@ -1,6 +1,6 @@
 ---
 title: Decision log
-summary: Index of all architecture decision records in this auxmem, newest first, with status. The append-only history of durable decisions.
+summary: Index of all architecture decision records in this corpus, newest first, with status. The append-only history of durable decisions.
 type: adr
 status: active
 domain: engagement
@@ -12,4 +12,4 @@ tags: [meta]
 
 | ADR | Title | Status |
 |---|---|---|
-| [0001](adr-0001-auxmem-structure.md) | Open-standard agent-readable auxmem | Accepted |
+| [0001](adr-0001-corpus-structure.md) | Open-standard agent-readable corpus | Accepted |

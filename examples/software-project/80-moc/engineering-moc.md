@@ -12,10 +12,10 @@ updated: 2026-07-12
 
 ## adr
 
-- [ADR-0001 Open-standard agent-readable auxmem](../60-decisions/adr-0001-auxmem-structure.md): Records the decision to build this auxmem as a provider-independent, plain-markdown knowledge base optimized for CLI agent retrieval, governed by a validator.
+- [ADR-0001 Open-standard agent-readable corpus](../60-decisions/adr-0001-corpus-structure.md): Records the decision to build this corpus as a provider-independent, plain-markdown knowledge base optimized for CLI agent retrieval, governed by a validator.
 - [ADR-0001 Monolith stack](../60-decisions/adr-0001-monolith-stack.md) (superseded): Original decision to ship the payments API as a single monolith for speed to market.
 - [ADR-0002 Service boundaries](../60-decisions/adr-0002-service-boundaries.md): Accepted decision to split the payments platform into checkout, ledger, and reconciliation services.
-- [Decision log](../60-decisions/index.md): Index of all architecture decision records in this auxmem, newest first, with status. The append-only history of durable decisions.
+- [Decision log](../60-decisions/index.md): Index of all architecture decision records in this corpus, newest first, with status. The append-only history of durable decisions.
 
 ## entity
 

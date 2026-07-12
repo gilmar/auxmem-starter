@@ -1,7 +1,7 @@
 #!/bin/bash
 # check_repo.sh: single local verification entry point for maintainers and CI.
 # Covers Python tests, static checks, shell lint, package build, wheel smoke,
-# manifest freshness, and scratch auxmem validation.
+# manifest freshness, and scratch corpus validation.
 
 set -euo pipefail
 
@@ -28,6 +28,6 @@ bash scripts/smoke_install.sh
 
 echo "== manifest freshness =="
 uv run python build_manifest.py
-git diff --exit-code -- auxmem/template/.auxmem-manifest.json
+git diff --exit-code -- koinome/template/.koinome-manifest.json
 
 echo "check_repo.sh: all checks passed"

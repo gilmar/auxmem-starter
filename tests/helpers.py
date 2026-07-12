@@ -1,4 +1,4 @@
-"""Shared helpers for AuxMem repository tests."""
+"""Shared helpers for Koinome repository tests."""
 
 from __future__ import annotations
 
@@ -46,20 +46,20 @@ def run_cmd(
     return CommandResult(proc.returncode, proc.stdout, proc.stderr)
 
 
-def run_auxmem(
+def run_koinome(
     args: list[str],
     *,
     cwd: Path | None = None,
     env: dict[str, str] | None = None,
 ) -> CommandResult:
-    return run_cmd([sys.executable, "-m", "auxmem.cli", *args], cwd=cwd, env=env)
+    return run_cmd([sys.executable, "-m", "koinome.cli", *args], cwd=cwd, env=env)
 
 
 def run_git(args: list[str], *, cwd: Path) -> CommandResult:
     return run_cmd(["git", *args], cwd=cwd)
 
 
-def init_git_repo(path: Path, *, user_name: str = "auxmem-test", user_email: str = "test@auxmem") -> None:
+def init_git_repo(path: Path, *, user_name: str = "koinome-test", user_email: str = "test@koinome") -> None:
     run_git(["init", "-q"], cwd=path)
     run_git(["config", "user.name", user_name], cwd=path)
     run_git(["config", "user.email", user_email], cwd=path)
@@ -71,10 +71,10 @@ def create_bare_remote(path: Path) -> Path:
     return path
 
 
-def scaffold_auxmem(
+def scaffold_corpus(
     dest: Path,
     *,
-    name: str = "test-auxmem",
+    name: str = "test-corpus",
     domains: list[str] | None = None,
     no_bootstrap: bool = False,
 ) -> Path:
@@ -83,24 +83,24 @@ def scaffold_auxmem(
         args.extend(["--domain", domain])
     if no_bootstrap:
         args.append("--no-bootstrap")
-    result = run_auxmem(args)
+    result = run_koinome(args)
     if result.returncode != 0:
         raise RuntimeError(
-            f"auxmem new failed ({result.returncode}):\n"
+            f"koinome new failed ({result.returncode}):\n"
             f"stdout:\n{result.stdout}\nstderr:\n{result.stderr}"
         )
     return dest.resolve()
 
 
-def validate_auxmem(path: Path) -> CommandResult:
+def validate_corpus(path: Path) -> CommandResult:
     return run_cmd(
-        [sys.executable, ".scripts/validate_auxmem.py", "--all"],
+        [sys.executable, ".scripts/validate_corpus.py", "--all"],
         cwd=path,
     )
 
 
 def run_validator(args: list[str], *, cwd: Path) -> CommandResult:
-    return run_cmd([sys.executable, ".scripts/validate_auxmem.py", *args], cwd=cwd)
+    return run_cmd([sys.executable, ".scripts/validate_corpus.py", *args], cwd=cwd)
 
 
 def run_staged_snapshot_check(path: Path) -> CommandResult:
@@ -108,11 +108,11 @@ def run_staged_snapshot_check(path: Path) -> CommandResult:
 
 
 def run_conformance_check(path: Path, *extra_args: str) -> CommandResult:
-    return run_cmd([sys.executable, ".scripts/check_auxmem.py", *extra_args], cwd=path)
+    return run_cmd([sys.executable, ".scripts/check_corpus.py", *extra_args], cwd=path)
 
 
 def run_sync(path: Path, *, env: dict[str, str] | None = None) -> CommandResult:
-    return run_cmd([sys.executable, ".scripts/auxmem_sync.py", str(path)], cwd=path, env=env)
+    return run_cmd([sys.executable, ".scripts/koinome_sync.py", str(path)], cwd=path, env=env)
 
 
 def gen_mocs(path: Path) -> CommandResult:
@@ -131,11 +131,11 @@ def commit_all_valid(path: Path, message: str = "initial") -> None:
         )
 
 
-def attach_bare_remote(auxmem: Path, remote: Path, *, remote_name: str = "origin") -> str:
-    branch = run_git(["rev-parse", "--abbrev-ref", "HEAD"], cwd=auxmem).stdout.strip()
-    if run_git(["remote", "get-url", remote_name], cwd=auxmem).returncode != 0:
-        run_git(["remote", "add", remote_name, str(remote)], cwd=auxmem)
-    push = run_git(["push", "-u", remote_name, branch], cwd=auxmem)
+def attach_bare_remote(corpus: Path, remote: Path, *, remote_name: str = "origin") -> str:
+    branch = run_git(["rev-parse", "--abbrev-ref", "HEAD"], cwd=corpus).stdout.strip()
+    if run_git(["remote", "get-url", remote_name], cwd=corpus).returncode != 0:
+        run_git(["remote", "add", remote_name, str(remote)], cwd=corpus)
+    push = run_git(["push", "-u", remote_name, branch], cwd=corpus)
     if push.returncode != 0:
         raise RuntimeError(f"push failed:\n{push.stdout}\n{push.stderr}")
     return branch
@@ -174,8 +174,8 @@ def git_add(path: Path, *rel_paths: str) -> CommandResult:
     return run_git(["add", *rel_paths], cwd=path)
 
 
-def write_note(auxmem: Path, rel: str, content: str) -> Path:
-    path = auxmem / rel
+def write_note(corpus: Path, rel: str, content: str) -> Path:
+    path = corpus / rel
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(content, encoding="utf-8")
     return path
@@ -194,13 +194,13 @@ def note_with_fm(body: str = "Body text.", **fields) -> str:
     return "\n".join(lines) + "\n"
 
 
-def read_auxmem_config(path: Path) -> dict:
-    cfg_path = path / ".scripts" / "auxmem.config.json"
+def read_corpus_config(path: Path) -> dict:
+    cfg_path = path / ".scripts" / "koinome.config.json"
     return json.loads(cfg_path.read_text(encoding="utf-8"))
 
 
 def newest_wheel(dist_dir: Path) -> Path:
-    wheels = sorted(dist_dir.glob("auxmem-*.whl"), key=lambda p: p.stat().st_mtime)
+    wheels = sorted(dist_dir.glob("koinome-*.whl"), key=lambda p: p.stat().st_mtime)
     if not wheels:
         raise FileNotFoundError(f"no wheel found under {dist_dir}")
     return wheels[-1]

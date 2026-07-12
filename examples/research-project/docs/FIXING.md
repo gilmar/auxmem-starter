@@ -2,7 +2,7 @@
 
 The validator is a gate, not a wall. When it fails, most of the work is repair, and most of that repair should not fall on you by hand. This is the protocol an AI agent follows to help fix failures while keeping you accountable for the content.
 
-Run `python3 .scripts/validate_auxmem.py --json --all` to get machine-readable errors. Each error carries a `fixable` tag: `auto`, `llm`, or `human`. Fix in that order.
+Run `python3 .scripts/validate_corpus.py --json --all` to get machine-readable errors. Each error carries a `fixable` tag: `auto`, `llm`, or `human`. Fix in that order.
 
 ## Tier 1: auto (no model, no human)
 
@@ -10,7 +10,7 @@ Mechanical errors with a single correct repair: a missing `updated` or `created`
 
 Fix them deterministically:
 ```bash
-python3 .scripts/validate_auxmem.py --fix --all
+python3 .scripts/validate_corpus.py --fix --all
 ```
 This rewrites only frontmatter, never the body, and only for the unambiguous cases. It reports exactly what it changed. No judgment is involved, so no one needs to review the meaning, only that the command ran.
 
@@ -26,7 +26,7 @@ Rules for the agent:
 
 ## Tier 3: human (ask, do not guess)
 
-Errors where the correct value is a genuine decision, not a derivation: a `type` or `domain` not in the vocabulary, a `sources:` path that does not resolve, a duplicate frontmatter key, a link or source path that escapes the auxmem root, a banned wikilink whose target is ambiguous.
+Errors where the correct value is a genuine decision, not a derivation: a `type` or `domain` not in the vocabulary, a `sources:` path that does not resolve, a duplicate frontmatter key, a link or source path that escapes the corpus root, a banned wikilink whose target is ambiguous.
 
 Rules for the agent:
 - Do not pick a domain or type on the human's behalf. Ask, offering the valid options from the config.

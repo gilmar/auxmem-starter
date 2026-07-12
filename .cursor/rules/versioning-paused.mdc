@@ -1,11 +1,11 @@
 ---
-description: AuxMem versioning is paused at 0.0.0 until the user explicitly resumes it
+description: Koinome versioning is paused at 0.0.0 until the user explicitly resumes it
 alwaysApply: true
 ---
 
 # Versioning paused
 
-CLI and template versions are **0.0.0**. No auxmems have been created under a numbered release.
+CLI and template versions are **0.0.0**. No corpora have been created under a numbered release.
 
 ## Do not bump versions unless the user explicitly asks to resume versioning
 

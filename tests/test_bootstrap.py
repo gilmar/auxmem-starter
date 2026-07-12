@@ -9,9 +9,9 @@ import sys
 
 import pytest
 
-from tests.helpers import REPO_ROOT, scaffold_auxmem, validate_auxmem
+from tests.helpers import REPO_ROOT, scaffold_corpus, validate_corpus
 
-TEMPLATE_BOOTSTRAP = REPO_ROOT / "auxmem" / "template" / "bootstrap.sh"
+TEMPLATE_BOOTSTRAP = REPO_ROOT / "koinome" / "template" / "bootstrap.sh"
 
 
 def run_bootstrap(dest, *extra_args: str, env: dict[str, str] | None = None) -> subprocess.CompletedProcess:
@@ -46,8 +46,8 @@ def test_bootstrap_does_not_auto_install_packages():
 def test_bootstrap_fails_without_pyyaml(tmp_path):
     venv = tmp_path / "nopyyaml"
     subprocess.run([sys.executable, "-m", "venv", str(venv)], check=True)
-    dest = tmp_path / "auxmem"
-    scaffold_auxmem(dest, no_bootstrap=True)
+    dest = tmp_path / "corpus"
+    scaffold_corpus(dest, no_bootstrap=True)
     env = os.environ.copy()
     env["PATH"] = f"{venv / 'bin'}:{env['PATH']}"
     result = run_bootstrap(dest, env=env)
@@ -58,8 +58,8 @@ def test_bootstrap_fails_without_pyyaml(tmp_path):
 
 
 def test_bootstrap_is_idempotent(tmp_path):
-    dest = tmp_path / "auxmem"
-    scaffold_auxmem(dest, no_bootstrap=True)
+    dest = tmp_path / "corpus"
+    scaffold_corpus(dest, no_bootstrap=True)
     first = run_bootstrap(dest)
     second = run_bootstrap(dest)
     assert first.returncode == 0, first.stdout + first.stderr
@@ -68,17 +68,17 @@ def test_bootstrap_is_idempotent(tmp_path):
 
 
 def test_bootstrap_with_spaces_in_path(tmp_path):
-    dest = tmp_path / "my auxmem"
-    scaffold_auxmem(dest, name="space-test", no_bootstrap=True)
+    dest = tmp_path / "my corpus"
+    scaffold_corpus(dest, name="space-test", no_bootstrap=True)
     result = run_bootstrap(dest)
     assert result.returncode == 0, result.stdout + result.stderr
-    validation = validate_auxmem(dest)
+    validation = validate_corpus(dest)
     assert validation.returncode == 0, validation.stdout + validation.stderr
 
 
 def test_bootstrap_skips_existing_provider_skill_dir(tmp_path):
-    dest = tmp_path / "auxmem"
-    scaffold_auxmem(dest, no_bootstrap=True)
+    dest = tmp_path / "corpus"
+    scaffold_corpus(dest, no_bootstrap=True)
     user_skill = dest / ".claude" / "skills" / "my-skill" / "SKILL.md"
     user_skill.parent.mkdir(parents=True)
     user_skill.write_text("user content\n", encoding="utf-8")
@@ -89,18 +89,18 @@ def test_bootstrap_skips_existing_provider_skill_dir(tmp_path):
 
 
 def test_refresh_skills_updates_copied_provider_dir(tmp_path):
-    dest = tmp_path / "auxmem"
-    scaffold_auxmem(dest, no_bootstrap=True)
+    dest = tmp_path / "corpus"
+    scaffold_corpus(dest, no_bootstrap=True)
     provider = dest / ".claude" / "skills"
     shutil.copytree(dest / ".skills", provider)
-    (dest / ".auxmem").mkdir(exist_ok=True)
-    (dest / ".auxmem" / "skills-copies").write_text(".claude/skills\n", encoding="utf-8")
+    (dest / ".koinome").mkdir(exist_ok=True)
+    (dest / ".koinome" / "skills-copies").write_text(".claude/skills\n", encoding="utf-8")
     marker = "<!-- refresh-marker -->"
-    skill_md = dest / ".skills" / "auxmem-init" / "SKILL.md"
+    skill_md = dest / ".skills" / "koinome-init" / "SKILL.md"
     skill_md.write_text(skill_md.read_text(encoding="utf-8") + f"\n{marker}\n", encoding="utf-8")
     result = run_bootstrap(dest, "--refresh-skills")
     assert result.returncode == 0, result.stdout + result.stderr
-    assert marker in (provider / "auxmem-init" / "SKILL.md").read_text(encoding="utf-8")
+    assert marker in (provider / "koinome-init" / "SKILL.md").read_text(encoding="utf-8")
 
 
 @pytest.mark.parametrize(
@@ -108,8 +108,8 @@ def test_refresh_skills_updates_copied_provider_dir(tmp_path):
     [".claude/skills", ".codex/skills", ".gemini/skills", ".cursor/skills"],
 )
 def test_bootstrap_links_or_copies_provider_skills(tmp_path, provider_dir: str):
-    dest = tmp_path / "auxmem"
-    scaffold_auxmem(dest, no_bootstrap=True)
+    dest = tmp_path / "corpus"
+    scaffold_corpus(dest, no_bootstrap=True)
     result = run_bootstrap(dest)
     assert result.returncode == 0, result.stdout + result.stderr
     path = dest / provider_dir

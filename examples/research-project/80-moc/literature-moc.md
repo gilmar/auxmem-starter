@@ -12,8 +12,8 @@ updated: 2026-07-12
 
 ## adr
 
-- [ADR-0001 Open-standard agent-readable auxmem](../60-decisions/adr-0001-auxmem-structure.md): Records the decision to build this auxmem as a provider-independent, plain-markdown knowledge base optimized for CLI agent retrieval, governed by a validator.
-- [Decision log](../60-decisions/index.md): Index of all architecture decision records in this auxmem, newest first, with status. The append-only history of durable decisions.
+- [ADR-0001 Open-standard agent-readable corpus](../60-decisions/adr-0001-corpus-structure.md): Records the decision to build this corpus as a provider-independent, plain-markdown knowledge base optimized for CLI agent retrieval, governed by a validator.
+- [Decision log](../60-decisions/index.md): Index of all architecture decision records in this corpus, newest first, with status. The append-only history of durable decisions.
 
 ## concept
 

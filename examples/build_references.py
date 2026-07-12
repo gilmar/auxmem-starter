@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Materialize sanitized reference auxmems under examples/ (AUX-012).
+"""Materialize sanitized reference corpora under examples/ (AUX-012).
 
 Run after template changes:
   uv run python examples/build_references.py
@@ -20,8 +20,8 @@ from tests.helpers import (  # noqa: E402
     init_git_repo,
     note_with_fm,
     run_git,
-    scaffold_auxmem,
-    validate_auxmem,
+    scaffold_corpus,
+    validate_corpus,
     write_note,
 )
 
@@ -46,16 +46,16 @@ def _commit(dest: Path, message: str) -> None:
 
 def _finalize(dest: Path, *, git_history: bool = True) -> None:
     gen_mocs(dest)
-    validation = validate_auxmem(dest)
+    validation = validate_corpus(dest)
     if validation.returncode != 0:
         raise RuntimeError(
-            f"reference auxmem failed validation:\n{validation.stdout}\n{validation.stderr}"
+            f"reference corpus failed validation:\n{validation.stdout}\n{validation.stderr}"
         )
     if git_history:
         if (dest / ".git").exists():
             shutil.rmtree(dest / ".git")
         init_git_repo(dest)
-        _commit(dest, "Initial reference auxmem content")
+        _commit(dest, "Initial reference corpus content")
         _commit(dest, "Add superseding ADR and synthesis layer")
     # Do not ship .git inside examples/ — history is reproducible via build script.
     if (dest / ".git").exists():
@@ -65,7 +65,7 @@ def _finalize(dest: Path, *, git_history: bool = True) -> None:
 def build_software_project(dest: Path) -> None:
     if dest.exists():
         shutil.rmtree(dest)
-    scaffold_auxmem(
+    scaffold_corpus(
         dest,
         name="payments-platform",
         domains=["10-engineering=engineering", "20-product=product"],
@@ -226,7 +226,7 @@ def build_software_project(dest: Path) -> None:
 def build_consulting_engagement(dest: Path) -> None:
     if dest.exists():
         shutil.rmtree(dest)
-    scaffold_auxmem(
+    scaffold_corpus(
         dest,
         name="northwind-engagement",
         domains=["10-engagement=engagement", "20-client=client"],
@@ -381,7 +381,7 @@ def build_consulting_engagement(dest: Path) -> None:
 def build_research_project(dest: Path) -> None:
     if dest.exists():
         shutil.rmtree(dest)
-    scaffold_auxmem(
+    scaffold_corpus(
         dest,
         name="cell-count-ml",
         domains=["10-literature=literature", "20-experiments=experiments"],
@@ -534,9 +534,9 @@ def main() -> int:
         dest = EXAMPLES / name
         print(f"building {dest}...")
         BUILDERS[name](dest)
-        cfg = json.loads((dest / ".scripts/auxmem.config.json").read_text(encoding="utf-8"))
+        cfg = json.loads((dest / ".scripts/koinome.config.json").read_text(encoding="utf-8"))
         print(f"  ok: {cfg['name']} domains={list(cfg['domains'].keys())}")
-    print("reference auxmems materialized")
+    print("reference corpora materialized")
     return 0
 
 

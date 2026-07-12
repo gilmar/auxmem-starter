@@ -9,22 +9,22 @@ import pytest
 
 from tests.helpers import REPO_ROOT, build_wheel, wheel_members
 
-TEMPLATE_ROOT = REPO_ROOT / "auxmem" / "template"
-IMPORTERS_ROOT = REPO_ROOT / "auxmem" / "importers"
+TEMPLATE_ROOT = REPO_ROOT / "koinome" / "template"
+IMPORTERS_ROOT = REPO_ROOT / "koinome" / "importers"
 
 REQUIRED_WHEEL_PREFIXES = (
-    "auxmem/template/.auxmem-manifest.json",
-    "auxmem/template/.gitignore",
-    "auxmem/template/.gitattributes",
-    "auxmem/template/bootstrap.sh",
-    "auxmem/template/.scripts/validate_auxmem.py",
-    "auxmem/template/.scripts/check_auxmem.py",
-    "auxmem/template/.scripts/auxmem.config.json",
-    "auxmem/template/.scripts/gen_mocs.py",
-    "auxmem/template/.scripts/pre-commit",
-    "auxmem/template/.github/workflows/auxmem-check.yml",
-    "auxmem/template/.skills/auxmem-init/SKILL.md",
-    "auxmem/importers/seed_extract.py",
+    "koinome/template/.koinome-manifest.json",
+    "koinome/template/.gitignore",
+    "koinome/template/.gitattributes",
+    "koinome/template/bootstrap.sh",
+    "koinome/template/.scripts/validate_corpus.py",
+    "koinome/template/.scripts/check_corpus.py",
+    "koinome/template/.scripts/koinome.config.json",
+    "koinome/template/.scripts/gen_mocs.py",
+    "koinome/template/.scripts/pre-commit",
+    "koinome/template/.github/workflows/koinome-check.yml",
+    "koinome/template/.skills/koinome-init/SKILL.md",
+    "koinome/importers/seed_extract.py",
 )
 
 
@@ -46,7 +46,7 @@ def test_wheel_contains_all_template_skills(built_wheel):
     assert skill_files, "expected template skills in source tree"
     missing = []
     for skill in skill_files:
-        wheel_path = "auxmem/" + skill.relative_to(REPO_ROOT / "auxmem").as_posix()
+        wheel_path = "koinome/" + skill.relative_to(REPO_ROOT / "koinome").as_posix()
         if wheel_path not in members:
             missing.append(wheel_path)
     assert not missing, f"missing skill files in wheel: {missing}"
@@ -58,7 +58,7 @@ def test_wheel_contains_importer_scripts(built_wheel):
     assert importer_files, "expected importer scripts in source tree"
     missing = []
     for script in importer_files:
-        wheel_path = "auxmem/" + script.relative_to(REPO_ROOT / "auxmem").as_posix()
+        wheel_path = "koinome/" + script.relative_to(REPO_ROOT / "koinome").as_posix()
         if wheel_path not in members:
             missing.append(wheel_path)
     assert not missing, f"missing importer scripts in wheel: {missing}"
@@ -67,9 +67,9 @@ def test_wheel_contains_importer_scripts(built_wheel):
 def test_wheel_includes_dot_directories(built_wheel):
     members = wheel_members(built_wheel)
     dot_prefixes = (
-        "auxmem/template/.scripts/",
-        "auxmem/template/.skills/",
-        "auxmem/template/.github/",
+        "koinome/template/.scripts/",
+        "koinome/template/.skills/",
+        "koinome/template/.github/",
     )
     for prefix in dot_prefixes:
         assert any(m.startswith(prefix) for m in members), f"wheel missing files under {prefix}"
@@ -77,7 +77,7 @@ def test_wheel_includes_dot_directories(built_wheel):
 
 def test_bootstrap_sh_is_executable_in_wheel(built_wheel):
     with zipfile.ZipFile(built_wheel) as zf:
-        info = zf.getinfo("auxmem/template/bootstrap.sh")
+        info = zf.getinfo("koinome/template/bootstrap.sh")
         unix_mode = info.external_attr >> 16
         assert unix_mode & 0o111, f"bootstrap.sh not executable in wheel: {oct(unix_mode)}"
 
@@ -85,14 +85,14 @@ def test_bootstrap_sh_is_executable_in_wheel(built_wheel):
 def test_package_data_sources_exist():
     """Every explicitly listed package-data glob must resolve to at least one file."""
     required_paths = [
-        TEMPLATE_ROOT / ".auxmem-manifest.json",
+        TEMPLATE_ROOT / ".koinome-manifest.json",
         TEMPLATE_ROOT / ".gitignore",
         TEMPLATE_ROOT / ".gitattributes",
         TEMPLATE_ROOT / "bootstrap.sh",
-        TEMPLATE_ROOT / ".scripts" / "validate_auxmem.py",
-        TEMPLATE_ROOT / ".scripts" / "auxmem.config.json",
-        TEMPLATE_ROOT / ".scripts" / "check_auxmem.py",
-        TEMPLATE_ROOT / ".github" / "workflows" / "auxmem-check.yml",
+        TEMPLATE_ROOT / ".scripts" / "validate_corpus.py",
+        TEMPLATE_ROOT / ".scripts" / "koinome.config.json",
+        TEMPLATE_ROOT / ".scripts" / "check_corpus.py",
+        TEMPLATE_ROOT / ".github" / "workflows" / "koinome-check.yml",
     ]
     missing = [str(p.relative_to(REPO_ROOT)) for p in required_paths if not p.is_file()]
     assert not missing, f"missing source package-data files: {missing}"

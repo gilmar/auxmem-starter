@@ -1,24 +1,24 @@
 [project]
-name = "auxmem"
+name = "koinome"
 version = "0.0.0"
-description = "AuxMem Manager: create and maintain provider-independent, agent-readable markdown memory (auxmems)."
+description = "Koinome CLI: create and maintain provider-independent, agent-readable markdown corpora."
 requires-python = ">=3.10"
 dependencies = ["pyyaml>=6.0"]
 
 [project.scripts]
-auxmem = "auxmem.cli:main"
+koinome = "koinome.cli:main"
 
 [build-system]
 requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
-packages = ["auxmem"]
+packages = ["koinome"]
 
 [tool.setuptools.package-data]
-auxmem = [
+koinome = [
   "template/**",
-  "template/.auxmem-manifest.json",
+  "template/.koinome-manifest.json",
   "template/.gitignore",
   "template/.gitattributes",
   "template/.scripts/*",

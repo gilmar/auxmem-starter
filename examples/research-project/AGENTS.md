@@ -1,4 +1,4 @@
-# Auxmem Agent Guide
+# Corpus Agent Guide
 
 This is a provider-independent work knowledge base in plain markdown. It is read and maintained by CLI agents (Claude Code, Codex, Gemini CLI). Human navigation is secondary. This file is canonical; CLAUDE.md and GEMINI.md point here.
 
@@ -15,9 +15,9 @@ This is a provider-independent work knowledge base in plain markdown. It is read
 Return metadata and summaries before full note bodies. Fetch a full body only when the summary is insufficient.
 
 ## Structure
-Folder layout is defined in `.scripts/auxmem.config.json`. Read the current `domains` map and `structural_folders` list at session start (or whenever unsure). Never infer domain folder names or slugs from examples in other repos or older docs.
+Folder layout is defined in `.scripts/koinome.config.json`. Read the current `domains` map and `structural_folders` list at session start (or whenever unsure). Never infer domain folder names or slugs from examples in other repos or older docs.
 
-- **Subject domains:** keys in `domains` (e.g. `10-projects`) map to slug values used in frontmatter and tasks. These are auxmem-specific.
+- **Subject domains:** keys in `domains` (e.g. `10-projects`) map to slug values used in frontmatter and tasks. These are corpus-specific.
 - **Structural folders:** shared paths such as inbox, decisions, tasks, MOCs, templates, and archive — exact list is in `structural_folders`.
 
 Common structural folders (confirm against config):
@@ -32,14 +32,14 @@ Common structural folders (confirm against config):
 - `00-inbox`: unsorted captures and import output.
 
 ## Frontmatter (every note has it)
-Required fields, controlled vocabularies (`vocab.type`, `vocab.status`), and `min_summary_len` are defined in `.scripts/auxmem.config.json`. Never infer types, statuses, or domain slugs from examples — read the config.
+Required fields, controlled vocabularies (`vocab.type`, `vocab.status`), and `min_summary_len` are defined in `.scripts/koinome.config.json`. Never infer types, statuses, or domain slugs from examples — read the config.
 
 `domain` must be one of the slug values in `domains`.
 Use `summary` to judge relevance before reading the body. Front-load it with concrete nouns and meet the configured minimum length.
 
 ## Format rules (open-standard markdown only)
 - CommonMark plus GFM tables plus YAML frontmatter. Nothing else.
-- Internal links are relative markdown links: `[title](../60-decisions/adr-0001-auxmem-structure.md)`. NO wikilinks, NO `![[embeds]]`.
+- Internal links are relative markdown links: `[title](../60-decisions/adr-0001-corpus-structure.md)`. NO wikilinks, NO `![[embeds]]`.
 - NO Dataview, NO Templater, NO callout syntax. MOCs are generated, not queried.
 - Prefer short atomic notes over long ones. One topic or event per note. Use H2/H3 so a note is internally chunkable.
 
@@ -47,7 +47,7 @@ Use `summary` to judge relevance before reading the body. Front-load it with con
 - Fill the full frontmatter on every note you create or edit. Set `updated` to today.
 - Decisions are immutable: to change one, write a new ADR that supersedes it, mark the old one `status: superseded`, and update `60-decisions/index.md`.
 - After adding or editing notes, run `python3 .scripts/gen_mocs.py` to refresh MOCs.
-- Validate before committing: `python3 .scripts/validate_auxmem.py --all`. Fix every violation.
+- Validate before committing: `python3 .scripts/validate_corpus.py --all`. Fix every violation.
 - Commit with git after material changes. Normal commits, not `--no-verify`; the hook is the quality gate.
 - On a `sync-conflict-*.md` note in `00-inbox/`: merge the named branch, verify, delete the branch. See docs/OPERATIONS.md.
 
@@ -66,13 +66,13 @@ Write rules: append new tasks at the end; complete in place; never delete an ope
 3. Regenerate MOCs, validate, commit.
 
 ## Hard boundary: no sensitive personnel data
-this auxmem contains NO performance, compensation, termination, or health records about individuals, by design. If asked for them, state they live in a separate private auxmem you cannot access. If you encounter such content during an import, do not bring it in; flag the source file only. See docs/ARCHITECTURE.md.
+this corpus contains NO performance, compensation, termination, or health records about individuals, by design. If asked for them, state they live in a separate private corpus you cannot access. If you encounter such content during an import, do not bring it in; flag the source file only. See docs/ARCHITECTURE.md.
 
 ## Synthesis layer: raw vs synthesized
 
-this auxmem separates raw material from synthesized knowledge, and the distinction is enforced.
+this corpus separates raw material from synthesized knowledge, and the distinction is enforced.
 - `05-sources/` holds raw, immutable intake (`type: source`). It is the synthesis queue. Read it; never rewrite its content into summaries in place.
-- `85-synthesis/` holds derived entity and concept pages (`type: entity` / `type: concept`). These are DERIVED, not authored ground truth. Every synthesized page must set `synthesis: generated`, cite a non-empty `sources:` list (auxmem-root-relative paths), carry `generated_at`, and a `review:` gate (needed or approved). The validator enforces this.
+- `85-synthesis/` holds derived entity and concept pages (`type: entity` / `type: concept`). These are DERIVED, not authored ground truth. Every synthesized page must set `synthesis: generated`, cite a non-empty `sources:` list (corpus-root-relative paths), carry `generated_at`, and a `review:` gate (needed or approved). The validator enforces this.
 - Authored domain notes (10-50) are the ground truth. Never mark them `synthesis: generated`.
 
 Rules for you as an agent:
@@ -84,11 +84,11 @@ Rules for you as an agent:
 
 ## When validation fails
 
-Do not weaken the gate; fix the note. Run `python3 .scripts/validate_auxmem.py --json --all` and work the errors in order of their `fixable` tag: run `--fix --all` for the `auto` ones, draft `llm` ones from the note's own content and get the human's acceptance, and ask the human for `human` ones (never guess a domain, type, or unresolved source). Full protocol in docs/FIXING.md.
+Do not weaken the gate; fix the note. Run `python3 .scripts/validate_corpus.py --json --all` and work the errors in order of their `fixable` tag: run `--fix --all` for the `auto` ones, draft `llm` ones from the note's own content and get the human's acceptance, and ask the human for `human` ones (never guess a domain, type, or unresolved source). Full protocol in docs/FIXING.md.
 
 ## Skills
 
-Reusable workflows live in `.skills/` (Agent Skills standard). `bootstrap.sh` links them into `.claude/skills`, `.codex/skills`, `.gemini/skills`, and `.cursor/skills` for provider discovery. Invoke explicitly (`/auxmem-skill-name`) or let the agent match by description. After creating an auxmem, run `auxmem-init` first to finish setup. Other skills encode this guide's workflows (session close, validation fix, synthesis, notes, ADRs, todos, weekly review, seed distillation, domain changes); this file stays canonical for rules.
+Reusable workflows live in `.skills/` (Agent Skills standard). `bootstrap.sh` links them into `.claude/skills`, `.codex/skills`, `.gemini/skills`, and `.cursor/skills` for provider discovery. Invoke explicitly (`/koinome-skill-name`) or let the agent match by description. After creating a corpus, run `koinome-init` first to finish setup. Other skills encode this guide's workflows (session close, validation fix, synthesis, notes, ADRs, todos, weekly review, seed distillation, domain changes); this file stays canonical for rules.
 
 ## When sources conflict
 Do not silently resolve contradictory sources. Retain both claims and their provenance; compare authority, scope, effective date, and explicit supersession; mark unresolved contradictions for review. Recency is one signal, never automatic authority. Never mark synthesized pages `review: approved` while a material contradiction remains. Full policy: `docs/CONFLICTS.md`. For single-source uncertainty, use "as of YYYY-MM-DD".
