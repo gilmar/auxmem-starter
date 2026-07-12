@@ -50,6 +50,7 @@ INTERNAL_LINK = re.compile(
     r"\[[^\]]*\]\((?!https?://|mailto:|#)([^)#]+?\.(?:md|pdf|png|jpg|jpeg|svg|csv))(#[^)]*)?\)"
 )
 FM_DELIM = re.compile(r"^---\s*$", re.M)
+ISO_DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 
 # root-level meta files are not auxmem notes; they document the auxmem
 META_FILES = {"AGENTS.md", "CLAUDE.md", "GEMINI.md", "README.md"}
@@ -61,7 +62,78 @@ TODO_DONE = re.compile(r"^x \d{4}-\d{2}-\d{2}( \d{4}-\d{2}-\d{2})? \S.*$")
 TODO_OPEN = re.compile(r"^(\([A-Z]\) )?(\d{4}-\d{2}-\d{2} )?\S.*$")
 TODO_BAD_PRI = re.compile(r"^\((?![A-Z]\) )[^)]*\)")
 TODO_KV_DATE = re.compile(r"\b(due|t):(\S+)")
-ISO_DATE = re.compile(r"\d{4}-\d{2}-\d{2}$")
+
+
+# ----------------------------------------------------------- YAML loader ---
+
+
+class _RejectDuplicateKeysLoader(yaml.SafeLoader):
+    pass
+
+
+def _yaml_mapping_no_dupes(loader, node):
+    loader.flatten_mapping(node)
+    mapping = {}
+    for key_node, value_node in node.value:
+        key = loader.construct_object(key_node)
+        if key in mapping:
+            raise yaml.constructor.ConstructorError(
+                None, None, f"duplicate mapping key: {key!r}", key_node.start_mark
+            )
+        mapping[key] = loader.construct_object(value_node)
+    return mapping
+
+
+_RejectDuplicateKeysLoader.add_constructor(
+    yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,
+    _yaml_mapping_no_dupes,
+)
+
+
+# ------------------------------------------------------------- path utils ---
+
+
+def resolves_within_root(path: Path, root: Path) -> bool:
+    """Return True when path resolves to a location inside root (follows symlinks)."""
+    root_resolved = root.resolve()
+    try:
+        path.resolve(strict=False).relative_to(root_resolved)
+        return True
+    except ValueError:
+        return False
+
+
+def parse_iso_date(val) -> date | None:
+    """Parse a YAML date or ISO date string; return None when invalid or impossible."""
+    if isinstance(val, date):
+        return val
+    if not isinstance(val, str) or not ISO_DATE_RE.fullmatch(val.strip()):
+        return None
+    try:
+        return date.fromisoformat(val.strip())
+    except ValueError:
+        return None
+
+
+def resolve_note_target(raw: str, source: Path, root: Path) -> Path:
+    """Resolve a markdown internal-link path relative to source and auxmem root."""
+    decoded = raw.split("#", 1)[0].replace("%20", " ")
+    if not decoded:
+        return source
+    if decoded.startswith("/"):
+        return root / decoded.lstrip("/")
+    candidate = Path(decoded)
+    if candidate.is_absolute():
+        return candidate
+    return source.parent / decoded
+
+
+def resolve_source_target(raw: str, root: Path) -> Path:
+    """Resolve a synthesis source path (auxmem-root-relative, no leading slash)."""
+    if Path(raw).is_absolute():
+        return Path(raw)
+    return root / raw
+
 
 # ------------------------------------------------------------- validation ---
 
@@ -73,8 +145,11 @@ def split_frontmatter(text):
     if len(parts) < 3:
         return None, "unterminated frontmatter block"
     try:
-        fm = yaml.safe_load(parts[1])
+        fm = yaml.load(parts[1], Loader=_RejectDuplicateKeysLoader)
     except yaml.YAMLError as e:
+        msg = str(e).strip()
+        if "duplicate mapping key" in msg:
+            return None, f"frontmatter has duplicate key ({msg})"
         return None, f"frontmatter is not valid YAML ({e.__class__.__name__})"
     if not isinstance(fm, dict):
         return None, "frontmatter is not a mapping"
@@ -98,14 +173,12 @@ def check_frontmatter(fm):
             f"summary too short ({len(summary.strip())} chars, min {MIN_SUMMARY_LEN}); "
             "front-load concrete nouns an agent would grep for"
         )
-    for field in ("created", "updated"):
+    for field in ("created", "updated", "generated_at"):
         val = fm.get(field)
         if val is None:
             continue
-        if isinstance(val, date):
-            continue
-        if not (isinstance(val, str) and re.fullmatch(r"\d{4}-\d{2}-\d{2}", val)):
-            errors.append(f"{field}: '{val}' is not an ISO date (YYYY-MM-DD)")
+        if not parse_iso_date(val):
+            errors.append(f"{field}: '{val}' is not a valid ISO date (YYYY-MM-DD)")
     if "tag" in fm:
         errors.append("use plural 'tags' with list syntax, not 'tag'")
     if fm.get("tags") is not None and not isinstance(fm.get("tags"), list):
@@ -131,6 +204,8 @@ def check_synthesis(fm):
 
     if is_synth_type and synth != "generated":
         errors.append(f"type '{typ}' is a derived synthesis; it must set 'synthesis: generated'")
+    if synth == "generated" and not is_synth_type:
+        errors.append("authored notes must not set synthesis: generated; only entity/concept pages are derived")
     if synth is not None and synth != "generated":
         errors.append("synthesis: only value is 'generated' (or omit the field for authored notes)")
 
@@ -139,7 +214,7 @@ def check_synthesis(fm):
         if review not in REVIEW_VALUES:
             errors.append(f"synthesized page needs review: {' or '.join(sorted(REVIEW_VALUES))}")
         gen = fm.get("generated_at")
-        if not (isinstance(gen, date) or (isinstance(gen, str) and re.fullmatch(r"\d{4}-\d{2}-\d{2}", gen))):
+        if not parse_iso_date(gen):
             errors.append("synthesized page needs generated_at: YYYY-MM-DD")
         sources = fm.get("sources")
         if not isinstance(sources, list) or not sources:
@@ -149,8 +224,21 @@ def check_synthesis(fm):
                 if not isinstance(s, str):
                     errors.append(f"source entry must be a path string, got {type(s).__name__}")
                     continue
-                if not (AUXMEM_ROOT / s).exists():
-                    errors.append(f"sources: path does not resolve -> {s}")
+                errors.extend(_check_source_path(s))
+    return errors
+
+
+def _check_source_path(raw: str) -> list[str]:
+    errors = []
+    if Path(raw).is_absolute():
+        errors.append(f"sources: absolute path not allowed -> {raw}")
+        return errors
+    target = resolve_source_target(raw, AUXMEM_ROOT)
+    if not resolves_within_root(target, AUXMEM_ROOT):
+        errors.append(f"sources: path escapes auxmem root -> {raw}")
+        return errors
+    if not target.exists():
+        errors.append(f"sources: path does not resolve -> {raw}")
     return errors
 
 
@@ -167,11 +255,18 @@ def check_syntax(text):
 def check_links(text, path):
     errors = []
     for m in INTERNAL_LINK.finditer(text):
-        raw = m.group(1).replace("%20", " ")
-        target = (AUXMEM_ROOT / raw.lstrip("/")) if raw.startswith("/") else (path.parent / raw)
-        if not target.resolve().exists():
-            line = text.count("\n", 0, m.start()) + 1
-            errors.append(f"line {line}: broken internal link -> {m.group(1)}")
+        raw = m.group(1)
+        decoded = raw.replace("%20", " ")
+        line = text.count("\n", 0, m.start()) + 1
+        if Path(decoded).is_absolute() and not decoded.startswith("/"):
+            errors.append(f"line {line}: absolute filesystem path not allowed -> {raw}")
+            continue
+        target = resolve_note_target(raw, path, AUXMEM_ROOT)
+        if not resolves_within_root(target, AUXMEM_ROOT):
+            errors.append(f"line {line}: link escapes auxmem root -> {raw}")
+            continue
+        if not target.exists():
+            errors.append(f"line {line}: broken internal link -> {raw}")
     return errors
 
 
@@ -197,7 +292,7 @@ def check_todo(path):
             if path.name == "done.txt":
                 errors.append(f"line {n}: done.txt must contain only completed (x) tasks")
         for key, val in TODO_KV_DATE.findall(line):
-            if not ISO_DATE.match(val):
+            if not parse_iso_date(val):
                 errors.append(f"line {n}: {key}: value must be YYYY-MM-DD, got '{val}'")
     return errors
 
@@ -232,7 +327,7 @@ def classify(err: str) -> str:
     if err.startswith("missing required field: updated") \
        or err.startswith("missing required field: created") \
        or err.startswith("use plural 'tags'") \
-       or "is not an ISO date" in err \
+       or "is not a valid ISO date" in err \
        or err.startswith("tags must be a YAML list"):
         return "auto"
     if err.startswith("summary too short") \
@@ -243,6 +338,12 @@ def classify(err: str) -> str:
     if "not in controlled vocabulary" in err \
        or err.startswith("missing required field: domain") \
        or "sources: path does not resolve" in err \
+       or "sources: path escapes auxmem root" in err \
+       or "sources: absolute path not allowed" in err \
+       or "link escapes auxmem root" in err \
+       or "absolute filesystem path not allowed" in err \
+       or "authored notes must not set synthesis: generated" in err \
+       or "duplicate key" in err \
        or "wikilink" in err or "embed" in err:
         return "human"
     return "llm"
@@ -264,14 +365,16 @@ def autofix_frontmatter(fm: dict) -> tuple[dict, list]:
     if fm.get("tags") is not None and not isinstance(fm["tags"], list):
         fm["tags"] = [fm["tags"]]
         changes.append("wrapped 'tags' in a list")
-    # zero-pad ISO-ish dates
-    for field in ("created", "updated"):
+    # zero-pad ISO-ish dates when the result is a real calendar date
+    for field in ("created", "updated", "generated_at"):
         v = fm.get(field)
         if isinstance(v, str):
             m = re.fullmatch(r"(\d{4})-(\d{1,2})-(\d{1,2})", v.strip())
             if m and (len(m.group(2)) < 2 or len(m.group(3)) < 2):
-                fm[field] = f"{m.group(1)}-{int(m.group(2)):02d}-{int(m.group(3)):02d}"
-                changes.append(f"normalized {field} date format")
+                normalized = f"{m.group(1)}-{int(m.group(2)):02d}-{int(m.group(3)):02d}"
+                if parse_iso_date(normalized):
+                    fm[field] = normalized
+                    changes.append(f"normalized {field} date format")
     # fill maintenance dates: updated defaults to today; created to updated-or-today
     if not fm.get("updated"):
         fm["updated"] = fm.get("created") or today

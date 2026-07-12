@@ -26,7 +26,7 @@ Rules for the agent:
 
 ## Tier 3: human (ask, do not guess)
 
-Errors where the correct value is a genuine decision, not a derivation: a `type` or `domain` not in the vocabulary, a `sources:` path that does not resolve, a banned wikilink whose target is ambiguous.
+Errors where the correct value is a genuine decision, not a derivation: a `type` or `domain` not in the vocabulary, a `sources:` path that does not resolve, a duplicate frontmatter key, a link or source path that escapes the auxmem root, a banned wikilink whose target is ambiguous.
 
 Rules for the agent:
 - Do not pick a domain or type on the human's behalf. Ask, offering the valid options from the config.
@@ -39,4 +39,4 @@ The gate never weakens. What changes is who absorbs the friction: Tier 1 absorbs
 
 ## What never gets auto-fixed
 
-The fixer will not touch a malformed or absent frontmatter block, will not choose a controlled-vocabulary value, will not resolve a broken link, and will not edit note bodies. Those are either judgment calls or signs something is wrong that a silent rewrite would hide.
+The fixer will not touch a malformed or absent frontmatter block, will not choose a controlled-vocabulary value, will not resolve a broken link, will not rewrite duplicate-key YAML, and will not edit note bodies. Those are either judgment calls or signs something is wrong that a silent rewrite would hide.

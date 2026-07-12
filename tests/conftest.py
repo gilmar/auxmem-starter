@@ -30,3 +30,11 @@ def tmp_auxmem_git(tmp_auxmem):
 @pytest.fixture
 def bare_remote(tmp_path):
     return create_bare_remote(tmp_path / "remote.git")
+
+
+@pytest.fixture
+def validator_auxmem(tmp_path):
+    """Scaffolded auxmem with domains for validator-focused tests."""
+    dest = tmp_path / "validator-auxmem"
+    scaffold_auxmem(dest)
+    return dest

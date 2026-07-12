@@ -31,7 +31,7 @@
     },
     ".scripts/validate_auxmem.py": {
       "policy": "overwrite",
-      "sha256": "e6e048aece8d6a6bb3f82a1be47c8c5ed2e02e2cbd460dbe02718cbd6ee8122f"
+      "sha256": "77ca0629f1f2f2704f43eae6ccbfdd8cb67763a88e6a80714ccbbd017a57c5c6"
     },
     ".skills/auxmem-adr/SKILL.md": {
       "policy": "merge3",
@@ -139,7 +139,7 @@
     },
     "docs/FIXING.md": {
       "policy": "merge3",
-      "sha256": "c8edde302c75ac638d607ecf661a9642507219c9f8a77dd225040c2912a8ddc7"
+      "sha256": "0f16c6c7a26794a6e94c4f1a31d8508080c7e7b237390da578fb987944c0928b"
     },
     "docs/OPERATIONS.md": {
       "policy": "merge3",

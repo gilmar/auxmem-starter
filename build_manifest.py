@@ -49,6 +49,8 @@ def build():
         if not p.is_file():
             continue
         rel = str(p.relative_to(TEMPLATE)).replace("\\", "/")
+        if "__pycache__" in rel.split("/") or rel.endswith(".pyc"):
+            continue
         pol = policy_for(rel)
         if pol:
             files[rel] = {"policy": pol, "sha256": sha256(p)}

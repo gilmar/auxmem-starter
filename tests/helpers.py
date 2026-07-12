@@ -99,6 +99,30 @@ def validate_auxmem(path: Path) -> CommandResult:
     )
 
 
+def run_validator(args: list[str], *, cwd: Path) -> CommandResult:
+    return run_cmd([sys.executable, ".scripts/validate_auxmem.py", *args], cwd=cwd)
+
+
+def write_note(auxmem: Path, rel: str, content: str) -> Path:
+    path = auxmem / rel
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(content, encoding="utf-8")
+    return path
+
+
+def note_with_fm(body: str = "Body text.", **fields) -> str:
+    lines = ["---"]
+    for key, val in fields.items():
+        if isinstance(val, list):
+            inner = ", ".join(str(v) for v in val)
+            lines.append(f"{key}: [{inner}]")
+        else:
+            lines.append(f"{key}: {val}")
+    lines.append("---")
+    lines.append(body)
+    return "\n".join(lines) + "\n"
+
+
 def read_auxmem_config(path: Path) -> dict:
     cfg_path = path / ".scripts" / "auxmem.config.json"
     return json.loads(cfg_path.read_text(encoding="utf-8"))
