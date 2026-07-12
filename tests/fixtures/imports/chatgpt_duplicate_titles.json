@@ -1,0 +1,34 @@
+[
+  {
+    "title": "Duplicate title",
+    "create_time": 1719859200.0,
+    "update_time": 1719859300.0,
+    "current_node": "c1",
+    "mapping": {
+      "c1": {
+        "id": "c1",
+        "message": {
+          "author": {"role": "user"},
+          "content": {"content_type": "text", "parts": ["First thread"]}
+        },
+        "parent": null
+      }
+    }
+  },
+  {
+    "title": "Duplicate title",
+    "create_time": 1719859400.0,
+    "update_time": 1719859500.0,
+    "current_node": "c2",
+    "mapping": {
+      "c2": {
+        "id": "c2",
+        "message": {
+          "author": {"role": "user"},
+          "content": {"content_type": "text", "parts": ["Second thread"]}
+        },
+        "parent": null
+      }
+    }
+  }
+]

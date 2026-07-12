@@ -1,0 +1,27 @@
+[
+  {
+    "title": "Branched edit",
+    "create_time": 1719859200.0,
+    "update_time": 1719859300.0,
+    "current_node": "win",
+    "mapping": {
+      "root": {"id": "root", "message": null, "parent": null},
+      "old": {
+        "id": "old",
+        "parent": "root",
+        "message": {
+          "author": {"role": "user"},
+          "content": {"content_type": "text", "parts": ["abandoned draft"]}
+        }
+      },
+      "win": {
+        "id": "win",
+        "parent": "root",
+        "message": {
+          "author": {"role": "user"},
+          "content": {"content_type": "text", "parts": ["surviving branch"]}
+        }
+      }
+    }
+  }
+]

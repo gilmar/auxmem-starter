@@ -27,7 +27,7 @@ import re
 import shutil
 import sys
 from datetime import datetime, timezone
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 import yaml
 
@@ -48,12 +48,17 @@ REPORT_DOMAIN = "reference"
 
 def load_auxmem_domains(auxmem_config_path):
     """Read the target auxmem's config: build prefix->slug map and a report domain."""
-    global DOMAIN_BY_PREFIX, REPORT_DOMAIN, VALID_DOMAIN
+    global DOMAIN_BY_PREFIX, REPORT_DOMAIN, VALID_DOMAIN, VALID_TYPES, VALID_STATUS
     cfg = json.loads(Path(auxmem_config_path).read_text(encoding="utf-8"))
     domains = cfg["domains"]                       # folder -> slug
     DOMAIN_BY_PREFIX = {folder[:2]: slug for folder, slug in domains.items()}
     VALID_DOMAIN = set(domains.values())
     REPORT_DOMAIN = next(iter(domains.values()))   # first domain, guaranteed valid
+    vocab = cfg.get("vocab") or {}
+    if vocab.get("type"):
+        VALID_TYPES = set(vocab["type"])
+    if vocab.get("status"):
+        VALID_STATUS = set(vocab["status"])
 TYPE_BY_PREFIX = {
     "60": "adr", "70": "meeting", "80": "moc",
 }
@@ -93,6 +98,9 @@ def load_map(path):
 
 def map_folder(rel_parent: str, folders: dict) -> str:
     """Longest-prefix folder mapping; unmapped -> inbox import area."""
+    rel_parent = rel_parent.replace("\\", "/").strip("/.")
+    if ".." in PurePosixPath(rel_parent).parts:
+        raise ValueError(f"invalid folder path in source vault: {rel_parent!r}")
     best, best_len = None, -1
     for old, new in folders.items():
         if (rel_parent == old or rel_parent.startswith(old + "/")) and len(old) > best_len:
@@ -107,10 +115,15 @@ def map_folder(rel_parent: str, folders: dict) -> str:
 # ------------------------------------------------------------------ pass 1 --
 
 
+def _safe_dest_rel(rel: Path) -> bool:
+    parts = PurePosixPath(str(rel).replace("\\", "/")).parts
+    return ".." not in parts and not any(p == "" for p in parts)
+
+
 def plan(src: Path, folders: dict, exclude: set):
     moves = {}          # src Path -> dst relative Path
     stem_index = {}     # lowercase old stem -> list of dst relative Paths
-    report = {"manual": [], "assets": 0, "notes": 0}
+    report = {"manual": [], "assets": 0, "notes": 0, "rejected": [], "renamed": 0}
     taken = set()
 
     for p in sorted(src.rglob("*")):
@@ -137,10 +150,14 @@ def plan(src: Path, folders: dict, exclude: set):
             report["manual"].append(str(rel))
 
         dst_rel = Path(new_dir) / new_name
+        if not _safe_dest_rel(dst_rel):
+            report["rejected"].append(str(rel))
+            continue
         n = 2
         while dst_rel in taken:
             dst_rel = Path(new_dir) / f"{Path(new_name).stem}-{n}{Path(new_name).suffix}"
             n += 1
+            report["renamed"] += 1
         taken.add(dst_rel)
         moves[p] = dst_rel
         stem_index.setdefault(p.stem.lower(), []).append(dst_rel)
@@ -210,13 +227,13 @@ def transform_body(text: str, dst_rel: Path, stem_index: dict, report: dict) -> 
     return WIKILINK.sub(replace_link, text)
 
 
-def migrate(src: Path, dst: Path, map_file, dry_run: bool):
+def migrate(src: Path, dst: Path, map_file, dry_run: bool, *, report_json: Path | None = None) -> dict:
     folders, exclude, default_domain = load_map(map_file)
     moves, stem_index, plan_report = plan(src, folders, exclude)
     report = {
         **plan_report, "links_rewritten": 0, "dataview_stripped": 0,
         "templater_stripped": 0, "links_unresolved": [], "links_ambiguous": [],
-        "fm_warnings": [],
+        "fm_warnings": [], "skipped": 0, "imported": 0,
     }
 
     for p, dst_rel in moves.items():
@@ -227,6 +244,7 @@ def migrate(src: Path, dst: Path, map_file, dry_run: bool):
         out.parent.mkdir(parents=True, exist_ok=True)
         if p.suffix.lower() != ".md":
             shutil.copy2(p, out)
+            report["imported"] += 1
             continue
 
         raw = p.read_text(encoding="utf-8", errors="replace")
@@ -247,27 +265,44 @@ def migrate(src: Path, dst: Path, map_file, dry_run: bool):
         body = transform_body(body, dst_rel, stem_index, report)
         fm_text = yaml.safe_dump(fm, sort_keys=False, allow_unicode=True, default_flow_style=None).strip()
         out.write_text(f"---\n{fm_text}\n---\n{body.lstrip()}", encoding="utf-8")
+        report["imported"] += 1
 
-    if not dry_run:
-        write_report(dst, report)
+    if dry_run:
+        report["imported"] = report["notes"] + report["assets"] + len(report["manual"])
+    elif report_json is not None:
+        report_json.parent.mkdir(parents=True, exist_ok=True)
+        report_json.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
+
     print(f"\nnotes: {report['notes']}  assets: {report['assets']}  "
-          f"manual: {len(report['manual'])}  links rewritten: {report['links_rewritten']}  "
+          f"manual: {len(report['manual'])}  imported: {report['imported']}  "
+          f"renamed: {report.get('renamed', 0)}  rejected: {len(report.get('rejected', []))}  "
+          f"links rewritten: {report['links_rewritten']}  "
           f"unresolved: {len(report['links_unresolved'])}  "
           f"ambiguous: {len(report['links_ambiguous'])}")
     if not dry_run:
-        print(f"report: {dst / '00-inbox' / 'migration-report.md'}")
-        print("next: python3 .scripts/validate_auxmem.py --all")
+        print("candidate ready for validation")
+    return report
+
+
+def _report_domain(dest: Path) -> str:
+    cfg_path = dest / ".scripts" / "auxmem.config.json"
+    cfg = json.loads(cfg_path.read_text(encoding="utf-8"))
+    domains = cfg.get("domains") or {}
+    if not domains:
+        return "projects"
+    return next(iter(domains.values()))
 
 
 def write_report(dst: Path, r: dict):
     today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    domain = _report_domain(dst)
     lines = [
         "---",
         "title: Obsidian vault migration report",
         f"summary: Automated import of the legacy Obsidian vault. {r['notes']} notes, "
         f"{r['links_rewritten']} links rewritten, {len(r['links_unresolved'])} unresolved, "
         f"{len(r['links_ambiguous'])} ambiguous, {len(r['manual'])} files for manual handling.",
-        "type: log", "status: active", f"domain: {REPORT_DOMAIN}",
+        "type: log", "status: active", f"domain: {domain}",
         f"created: {today}", f"updated: {today}", "---", "",
         f"Dataview blocks stripped: {r['dataview_stripped']}. "
         f"Templater tags stripped: {r['templater_stripped']}.", "",
@@ -293,13 +328,17 @@ def main():
     ap.add_argument("--map", dest="map_file")
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--auxmem-config", help="target auxmem .scripts/auxmem.config.json; sets valid domains")
+    ap.add_argument("--report-json", help="write machine-readable report JSON (for orchestrators)")
     args = ap.parse_args()
     if args.auxmem_config:
         load_auxmem_domains(args.auxmem_config)
     src, dst = Path(args.src).expanduser(), Path(args.dst).expanduser()
     if not src.is_dir():
         sys.exit(f"source Obsidian vault not found: {src}")
-    migrate(src, dst, args.map_file, args.dry_run)
+    report = migrate(src, dst, args.map_file, args.dry_run, report_json=Path(args.report_json) if args.report_json else None)
+    if args.dry_run:
+        sys.exit(0)
+    sys.exit(0 if report.get("imported", 0) >= 0 else 1)
 
 
 if __name__ == "__main__":

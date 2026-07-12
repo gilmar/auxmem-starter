@@ -44,12 +44,17 @@ REPORT_DOMAIN = "reference"
 
 
 def load_auxmem_domains(auxmem_config_path):
-    global DOMAIN_BY_PREFIX, REPORT_DOMAIN, VALID_DOMAIN
+    global DOMAIN_BY_PREFIX, REPORT_DOMAIN, VALID_DOMAIN, VALID_TYPES, VALID_STATUS
     cfg = json.loads(Path(auxmem_config_path).read_text(encoding="utf-8"))
     domains = cfg["domains"]
     DOMAIN_BY_PREFIX = {folder[:2]: slug for folder, slug in domains.items()}
     VALID_DOMAIN = set(domains.values())
     REPORT_DOMAIN = next(iter(domains.values()))
+    vocab = cfg.get("vocab") or {}
+    if vocab.get("type"):
+        VALID_TYPES = set(vocab["type"])
+    if vocab.get("status"):
+        VALID_STATUS = set(vocab["status"])
 TYPE_BY_PREFIX = {"60": "adr", "70": "meeting", "80": "moc"}
 VALID_TYPES = {
     "project-doc", "governance-finding", "quality-log", "adr", "meeting",
@@ -86,6 +91,9 @@ def load_map(path):
 
 
 def map_folder(rel_parent: str, folders: dict) -> str:
+    rel_parent = rel_parent.replace("\\", "/").strip("/.")
+    if ".." in PurePosixPath(rel_parent).parts:
+        raise ValueError(f"invalid folder path in export: {rel_parent!r}")
     best, best_len = None, -1
     for old, new in folders.items():
         if (rel_parent == old or rel_parent.startswith(old + "/")) and len(old) > best_len:
@@ -98,10 +106,16 @@ def map_folder(rel_parent: str, folders: dict) -> str:
 # ------------------------------------------------------------------ pass 1 --
 
 
+def _safe_dest_rel(rel: Path) -> bool:
+    parts = PurePosixPath(str(rel).replace("\\", "/")).parts
+    return ".." not in parts and not any(p == "" for p in parts)
+
+
 def plan(src: Path, folders: dict):
     moves = {}  # old auxmem-relative posix path (str) -> new relative Path
     files = []  # (src Path, old_rel str, new_rel Path)
     taken, notes, assets, manual = set(), 0, 0, []
+    rejected, renamed = [], 0
     for p in sorted(src.rglob("*")):
         if not p.is_file() or p.name == ".export-warnings.txt":
             continue
@@ -118,14 +132,18 @@ def plan(src: Path, folders: dict):
             new_dir, new_name = MANUAL_DIR, p.name
             manual.append(old_rel)
         new_rel = Path(new_dir) / new_name
+        if not _safe_dest_rel(new_rel):
+            rejected.append(old_rel)
+            continue
         n = 2
         while new_rel in taken:
             new_rel = Path(new_dir) / f"{Path(new_name).stem}-{n}{Path(new_name).suffix}"
             n += 1
+            renamed += 1
         taken.add(new_rel)
         moves[old_rel.lower()] = new_rel
         files.append((p, old_rel, new_rel))
-    return moves, files, {"notes": notes, "assets": assets, "manual": manual}
+    return moves, files, {"notes": notes, "assets": assets, "manual": manual, "rejected": rejected, "renamed": renamed}
 
 
 # ------------------------------------------------------------------ pass 2 --
@@ -195,13 +213,13 @@ def transform_body(text, old_rel, new_rel, moves, report):
     return remap_links(text, old_rel, new_rel, moves, report)
 
 
-def run(src: Path, dst: Path, map_file, dry_run: bool):
+def run(src: Path, dst: Path, map_file, dry_run: bool, *, report_json: Path | None = None) -> dict:
     folders, default_domain = load_map(map_file)
     moves, files, stats = plan(src, folders)
     report = {
         **stats, "links_remapped": 0, "links_unmapped": [],
         "dataview_stripped": 0, "templater_stripped": 0, "fm_warnings": [],
-        "export_warnings": [],
+        "export_warnings": [], "imported": 0,
     }
     warn_file = src / ".export-warnings.txt"
     if warn_file.exists():
@@ -218,6 +236,7 @@ def run(src: Path, dst: Path, map_file, dry_run: bool):
         out.parent.mkdir(parents=True, exist_ok=True)
         if p.suffix.lower() != ".md":
             shutil.copy2(p, out)
+            report["imported"] += 1
             continue
         raw = p.read_text(encoding="utf-8", errors="replace")
         fm, body = {}, raw
@@ -237,19 +256,35 @@ def run(src: Path, dst: Path, map_file, dry_run: bool):
         body = transform_body(body, old_rel, new_rel, moves, report)
         fm_text = yaml.safe_dump(fm, sort_keys=False, allow_unicode=True, default_flow_style=None).strip()
         out.write_text(f"---\n{fm_text}\n---\n{body.lstrip()}", encoding="utf-8")
+        report["imported"] += 1
 
-    if not dry_run:
-        write_report(dst, report)
+    if dry_run:
+        report["imported"] = report["notes"] + report["assets"] + len(report["manual"])
+    elif report_json is not None:
+        report_json.parent.mkdir(parents=True, exist_ok=True)
+        report_json.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
+
     print(f"\nnotes: {report['notes']}  assets: {report['assets']}  "
-          f"manual: {len(report['manual'])}  links remapped: {report['links_remapped']}  "
+          f"manual: {len(report['manual'])}  imported: {report['imported']}  "
+          f"renamed: {report.get('renamed', 0)}  rejected: {len(report.get('rejected', []))}  "
+          f"links remapped: {report['links_remapped']}  "
           f"unmapped: {len(report['links_unmapped'])}")
     if not dry_run:
-        print(f"report: {dst / '00-inbox' / 'migration-report.md'}")
-        print("next: python3 .scripts/validate_auxmem.py --all")
+        print("candidate ready for validation")
+    return report
+
+
+def _report_domain(dest: Path) -> str:
+    cfg = json.loads((dest / ".scripts" / "auxmem.config.json").read_text(encoding="utf-8"))
+    domains = cfg.get("domains") or {}
+    if not domains:
+        return "projects"
+    return next(iter(domains.values()))
 
 
 def write_report(dst: Path, r: dict):
     today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    domain = _report_domain(dst)
     lines = [
         "---",
         "title: Obsidian export import report",
@@ -257,7 +292,7 @@ def write_report(dst: Path, r: dict):
         f"{r['links_remapped']} links remapped, {len(r['links_unmapped'])} unmapped, "
         f"{len(r['manual'])} files for manual handling, "
         f"{len(r['export_warnings']) // 2} unresolved links reported by obsidian-export.",
-        "type: log", "status: active", f"domain: {REPORT_DOMAIN}",
+        "type: log", "status: active", f"domain: {domain}",
         f"created: {today}", f"updated: {today}", "---", "",
         f"Dataview blocks stripped: {r['dataview_stripped']}. "
         f"Templater tags stripped: {r['templater_stripped']}.", "",
@@ -280,13 +315,14 @@ def main():
     ap.add_argument("--map", dest="map_file")
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--auxmem-config", help="target auxmem .scripts/auxmem.config.json; sets valid domains")
+    ap.add_argument("--report-json", help="write machine-readable report JSON (for orchestrators)")
     args = ap.parse_args()
     if args.auxmem_config:
         load_auxmem_domains(args.auxmem_config)
     src, dst = Path(args.src).expanduser(), Path(args.dst).expanduser()
     if not src.is_dir():
         sys.exit(f"export directory not found: {src}")
-    run(src, dst, args.map_file, args.dry_run)
+    run(src, dst, args.map_file, args.dry_run, report_json=Path(args.report_json) if args.report_json else None)
 
 
 if __name__ == "__main__":
