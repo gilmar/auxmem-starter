@@ -84,7 +84,7 @@ See [docs/USAGE.md](docs/USAGE.md) for the full reference.
 5. **Derived pages cite their sources.** The validator rejects synthesis without provenance.
 6. **Sensitive boundaries are physical.** Keep sensitive material in a separate private corpus on a path no agent reaches.
 7. **No accounts, no telemetry.** Individual use is account-free, forever, and nothing phones home — not opt-out, not anonymised.
-8. **Complete, free, and open-source.** The individual corpus tooling is a complete local-first product, not a trial, a limited edition, or a funnel toward a hosted service.
+8. **Complete, free and open-source.** The individual corpus tooling is a complete local-first product, not a trial, a limited edition, or a funnel toward a hosted service.
 
 ## Where this is going
 
