@@ -1,6 +1,10 @@
 {
   "template_version": "0.0.0",
   "files": {
+    ".github/workflows/auxmem-check.yml": {
+      "policy": "overwrite",
+      "sha256": "d1f18256b8cb2d5c04d2475c92be25ce9df6efb5321008c5b0c6f6d45500c4f6"
+    },
     ".scripts/auxmem-sync.sh": {
       "policy": "overwrite",
       "sha256": "bf9548380193e5fc07b8b235baf045bcb64d13901d4d742d4d2dcc4e38f93d74"
@@ -12,6 +16,10 @@
     ".scripts/auxmem.config.json": {
       "policy": "merge",
       "sha256": "84e6b9dcdf924ccbed905635ae94e18085938fe1e69281f7a6640f86dd2940fd"
+    },
+    ".scripts/check_auxmem.py": {
+      "policy": "overwrite",
+      "sha256": "31a9c41a74cae2eb312f001e9ee7b920249931ed92dd3885ad6eb7498bfa6ce6"
     },
     ".scripts/check_staged_snapshot.py": {
       "policy": "overwrite",
@@ -147,7 +155,7 @@
     },
     "docs/OPERATIONS.md": {
       "policy": "merge3",
-      "sha256": "40da019a7d0e5854d8d55088074117f81470667f0b5fb4d635fca47576c83734"
+      "sha256": "e916ad3a1125ac80443385e9c2eda5f87b06134e5e2139c94de0747cb313f27e"
     },
     "docs/SETUP.md": {
       "policy": "merge3",

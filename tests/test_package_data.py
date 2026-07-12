@@ -9,8 +9,10 @@ from tests.helpers import REPO_ROOT, build_wheel, wheel_members
 REQUIRED_WHEEL_PREFIXES = (
     "auxmem/template/.auxmem-manifest.json",
     "auxmem/template/.scripts/validate_auxmem.py",
+    "auxmem/template/.scripts/check_auxmem.py",
     "auxmem/template/.scripts/auxmem.config.json",
     "auxmem/template/bootstrap.sh",
+    "auxmem/template/.github/workflows/auxmem-check.yml",
     "auxmem/template/.skills/auxmem-init/SKILL.md",
     "auxmem/importers/seed_extract.py",
     "auxmem/importers/migrate_obsidian.py",
@@ -39,6 +41,8 @@ def test_package_data_sources_exist():
         template / "bootstrap.sh",
         template / ".scripts" / "validate_auxmem.py",
         template / ".scripts" / "auxmem.config.json",
+        template / ".scripts" / "check_auxmem.py",
+        template / ".github" / "workflows" / "auxmem-check.yml",
     ]
     missing = [str(p.relative_to(REPO_ROOT)) for p in required_paths if not p.is_file()]
     assert not missing, f"missing source package-data files: {missing}"

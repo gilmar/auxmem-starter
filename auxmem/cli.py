@@ -5,6 +5,7 @@ Subcommands:
   auxmem seed        stage 1 of seeding: normalize a provider export to staging
   auxmem import-obsidian   import an existing Obsidian vault into an auxmem
   auxmem doctor      check an auxmem: validate + MOC freshness
+  auxmem check       read-only conformance check (CI-safe)
 """
 
 import argparse
@@ -26,6 +27,7 @@ where to run commands
                         run the auxmem-init skill inside the folder to finish setup
 
   Existing auxmem (pass the folder path):
+    check PATH          read-only validation + MOC freshness (for CI)
     doctor PATH         validate and refresh navigation maps
     upgrade PATH        migrate auxmem tooling to the current template
     import-obsidian … --dest PATH   import notes into that auxmem
@@ -136,6 +138,18 @@ def cmd_doctor(args):
     return exit_code
 
 
+def cmd_check(args):
+    try:
+        exit_code, message = importers.check_conformance(
+            args.dest, manifest=args.manifest, git=args.git
+        )
+    except importers.ImportError_ as e:
+        print(f"error: {e}", file=sys.stderr)
+        return OPERATION_FAILED
+    print(message)
+    return exit_code
+
+
 def build_parser():
     p = argparse.ArgumentParser(
         prog="auxmem",
@@ -215,6 +229,27 @@ def build_parser():
     )
     d.add_argument("dest", metavar="AUXMEM", help="path to the auxmem folder")
     d.set_defaults(func=cmd_doctor)
+
+    c = sub.add_parser(
+        "check",
+        help="read-only conformance check for an existing auxmem",
+        description=(
+            "Validate an auxmem and verify MOC freshness without modifying any files. "
+            "Appropriate for CI. Use doctor to regenerate stale MOCs."
+        ),
+    )
+    c.add_argument("dest", metavar="AUXMEM", help="path to the auxmem folder")
+    c.add_argument(
+        "--manifest",
+        action="store_true",
+        help="also verify managed tooling files listed in .auxmem/manifest.json",
+    )
+    c.add_argument(
+        "--git",
+        action="store_true",
+        help="also require a clean git working tree",
+    )
+    c.set_defaults(func=cmd_check)
 
     u = sub.add_parser(
         "upgrade",

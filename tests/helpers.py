@@ -107,6 +107,21 @@ def run_staged_snapshot_check(path: Path) -> CommandResult:
     return run_cmd([sys.executable, ".scripts/check_staged_snapshot.py"], cwd=path)
 
 
+def run_conformance_check(path: Path, *extra_args: str) -> CommandResult:
+    return run_cmd([sys.executable, ".scripts/check_auxmem.py", *extra_args], cwd=path)
+
+
+def tree_bytes_snapshot(root: Path) -> dict[str, bytes]:
+    snap: dict[str, bytes] = {}
+    for path in root.rglob("*"):
+        if not path.is_file():
+            continue
+        if ".git" in path.parts:
+            continue
+        snap[str(path.relative_to(root))] = path.read_bytes()
+    return snap
+
+
 def git_add(path: Path, *rel_paths: str) -> CommandResult:
     return run_git(["add", *rel_paths], cwd=path)
 
