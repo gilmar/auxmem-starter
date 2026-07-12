@@ -13,6 +13,7 @@ from pathlib import Path
 
 from . import importers, scaffold, wizard
 from . import upgrade as upgrade_mod
+from .exit_codes import NON_CONFORMANT, OK, OPERATION_FAILED
 
 EPILOG = """
 where to run commands
@@ -55,12 +56,17 @@ def cmd_upgrade(args):
     print(f"report: {Path(args.dest) / '00-inbox'} (upgrade-report-*.md)")
     if result["conflicts"]:
         print(f"\n{len(result['conflicts'])} file(s) need manual review (see report).")
-    if not result["valid"]:
-        print("\nWARNING: validation did not pass after upgrade:")
-        print(result["validation"])
-        return 2
+    post_code = result.get("post_exit_code", OK)
+    if post_code == OPERATION_FAILED:
+        print(f"\n{result['post_phase']} failed after upgrade:")
+        print(result["post_detail"])
+        return OPERATION_FAILED
+    if post_code == NON_CONFORMANT:
+        print("\nValidation did not pass after upgrade:")
+        print(result["post_detail"])
+        return NON_CONFORMANT
     print("\nvalidation clean.")
-    return 0
+    return OK
 
 
 def cmd_new(args):
@@ -100,7 +106,7 @@ def cmd_seed(args):
         print("\nStage 2: distill the staging corpus into notes with an agent.")
         print("Run your CLI agent from the target auxmem and point it at:")
         print(f"  {importers.IMPORTERS / 'distill-seeds.md'}")
-    return rc
+    return rc if rc != 0 else OK
 
 
 def cmd_import_obsidian(args):
@@ -115,19 +121,19 @@ def cmd_import_obsidian(args):
         print(f"error: {e}", file=sys.stderr)
         return 1
     print(out or err)
-    if rc == 0 and not args.dry_run:
+    if rc == OK and not args.dry_run:
         print(f"\nReview {Path(args.dest) / '00-inbox' / 'migration-report.md'} before committing.")
     return rc
 
 
 def cmd_doctor(args):
     try:
-        rc, out, err = importers.validate_and_moc(args.dest)
+        exit_code, message = importers.validate_and_moc(args.dest)
     except importers.ImportError_ as e:
         print(f"error: {e}", file=sys.stderr)
-        return 1
-    print(out or err)
-    return rc
+        return OPERATION_FAILED
+    print(message)
+    return exit_code
 
 
 def build_parser():

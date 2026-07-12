@@ -84,7 +84,16 @@ Each auxmem records the template version it was built from and keeps a pristine 
 - **Guidance** (AGENTS.md, CLAUDE.md, GEMINI.md, README.md, docs, note templates): git 3-way merge against the snapshot. If you never edited a file, it updates cleanly. If you edited it and the template also changed it, you get either a clean merge or, where they truly collide, git conflict markers to resolve. Auxmems created before versioning have no snapshot, so those files are preserved and the new version is written beside them as `<file>.new` for manual merging.
 - **Content** (your notes, `72-tasks/todo.txt`, `72-tasks/done.txt`, decisions, MOCs): never touched. MOCs are regenerated at the end.
 
-Everything replaced or merged is backed up under `.auxmem/backups/<timestamp>/` (git-ignored, local only) before any change. Upgrade then regenerates MOCs, runs the validator, and writes an `upgrade-report-*.md` into `00-inbox/` listing every change and anything needing your review. If validation fails after upgrade, the command warns and exits non-zero so you notice.
+If validation fails after upgrade, the command exits `2` (non-conformant). If MOC generation fails, it exits `1` (operation failure).
+
+### Exit codes
+
+| code | meaning |
+| --- | --- |
+| `0` | success; auxmem is conformant when validation ran |
+| `1` | usage error, subprocess failure, or other operation error |
+| `2` | operation completed but the auxmem failed validation |
+| `3` | conflict or quarantine created (reserved for sync) |
 
 After upgrade, run `./bootstrap.sh` from the auxmem root so `.git/hooks/pre-commit` is refreshed from `.scripts/pre-commit` (upgrade updates the source file but does not reinstall the hook).
 

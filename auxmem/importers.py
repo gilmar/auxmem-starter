@@ -6,12 +6,15 @@ validator and MOC generator.
 """
 
 import subprocess
+import sys
 from pathlib import Path
 
+from .exit_codes import NON_CONFORMANT, OK, OPERATION_FAILED
 from .paths import AuxmemPathError, config_path, resolve_auxmem
 
 _PKG_ROOT = Path(__file__).resolve().parent
 IMPORTERS = _PKG_ROOT / "importers"
+_PYTHON = sys.executable
 
 
 class ImportError_(Exception):
@@ -30,11 +33,31 @@ def _dest(path):
         raise ImportError_(str(e)) from e
 
 
+def _format_phase_failure(phase: str, out: str, err: str) -> str:
+    detail = (out or err or "").strip()
+    if detail:
+        return f"{phase} failed:\n{detail}"
+    return f"{phase} failed (non-zero exit; no output captured)"
+
+
 def validate_and_moc(dest):
-    """Run the target auxmem's own MOC generator and validator."""
+    """Run the target auxmem's MOC generator then validator.
+
+    Returns (exit_code, stdout_message). exit_code is OK, OPERATION_FAILED, or
+    NON_CONFORMANT.
+    """
     dest = _dest(dest)
-    _run(["python3", ".scripts/gen_mocs.py"], cwd=dest)
-    return _run(["python3", ".scripts/validate_auxmem.py", "--all"], cwd=dest)
+    moc_rc, moc_out, moc_err = _run([_PYTHON, ".scripts/gen_mocs.py"], cwd=dest)
+    if moc_rc != 0:
+        return OPERATION_FAILED, _format_phase_failure("MOC generation", moc_out, moc_err)
+
+    val_rc, val_out, val_err = _run(
+        [_PYTHON, ".scripts/validate_auxmem.py", "--all"], cwd=dest
+    )
+    if val_rc != 0:
+        return NON_CONFORMANT, _format_phase_failure("Validation", val_out, val_err)
+
+    return OK, (val_out or val_err or "auxmem validation clean.").strip()
 
 
 def extract_export(export_file, staging, provider=None, since=None, min_messages=None):
@@ -44,7 +67,7 @@ def extract_export(export_file, staging, provider=None, since=None, min_messages
             f"importers not found at {IMPORTERS}. "
             "The installed package is missing importer scripts; reinstall AuxMem."
         )
-    cmd = ["python3", str(IMPORTERS / "seed_extract.py"), str(export_file), "--out", str(staging)]
+    cmd = [_PYTHON, str(IMPORTERS / "seed_extract.py"), str(export_file), "--out", str(staging)]
     if provider:
         cmd += ["--provider", provider]
     if since:
@@ -54,12 +77,24 @@ def extract_export(export_file, staging, provider=None, since=None, min_messages
     return _run(cmd)
 
 
+def _finalize_import(rc, out, err, dest, *, dry_run):
+    if rc != 0:
+        return rc, out, err
+    if dry_run:
+        return OK, out, err
+    exit_code, message = validate_and_moc(dest)
+    if exit_code != OK:
+        combined = "\n".join(p for p in (out, message) if p).strip()
+        return exit_code, combined, err
+    return OK, out, err
+
+
 def migrate_obsidian_single(src, dest, map_file=None, dry_run=False):
     """Single-script Obsidian import (no toolchain). Writes into the auxmem."""
     dest = _dest(dest)
     cfg = config_path(dest)
     cmd = [
-        "python3", str(IMPORTERS / "migrate_obsidian.py"),
+        _PYTHON, str(IMPORTERS / "migrate_obsidian.py"),
         "--src", str(src), "--dst", str(dest),
         "--auxmem-config", str(cfg),
     ]
@@ -68,9 +103,7 @@ def migrate_obsidian_single(src, dest, map_file=None, dry_run=False):
     if dry_run:
         cmd += ["--dry-run"]
     rc, out, err = _run(cmd)
-    if rc == 0 and not dry_run:
-        validate_and_moc(dest)
-    return rc, out, err
+    return _finalize_import(rc, out, err, dest, dry_run=dry_run)
 
 
 def migrate_obsidian_pipeline(src, dest, export_tmp, map_file=None, dry_run=False):
@@ -80,7 +113,7 @@ def migrate_obsidian_pipeline(src, dest, export_tmp, map_file=None, dry_run=Fals
     if rc != 0:
         return rc, out, err
     cmd = [
-        "python3", str(IMPORTERS / "restructure_export.py"),
+        _PYTHON, str(IMPORTERS / "restructure_export.py"),
         "--src", str(export_tmp), "--dst", str(dest),
         "--auxmem-config", str(config_path(dest)),
     ]
@@ -89,6 +122,4 @@ def migrate_obsidian_pipeline(src, dest, export_tmp, map_file=None, dry_run=Fals
     if dry_run:
         cmd += ["--dry-run"]
     rc2, out2, err2 = _run(cmd)
-    if rc2 == 0 and not dry_run:
-        validate_and_moc(dest)
-    return rc2, out + out2, err + err2
+    return _finalize_import(rc2, out + out2, err + err2, dest, dry_run=dry_run)

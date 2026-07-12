@@ -17,15 +17,18 @@ validator is run.
 import json
 import shutil
 import subprocess
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
+from .exit_codes import NON_CONFORMANT, OK, OPERATION_FAILED
 from .paths import CONFIG_NEW, migrate_legacy_layout, remap_manifest_keys, resolve_auxmem
 from .version import TEMPLATE_VERSION
 
 _PKG_ROOT = Path(__file__).resolve().parent
 TEMPLATE_DIR = _PKG_ROOT / "template"
 MANIFEST_SRC = TEMPLATE_DIR / ".auxmem-manifest.json"
+_PYTHON = sys.executable
 
 
 class UpgradeError(Exception):
@@ -211,10 +214,30 @@ def upgrade(dest, force=False):
 
     _write_report(dest, old_version, new_version, report, conflicts, ts)
 
-    subprocess.run(["python3", ".scripts/gen_mocs.py"], cwd=dest, capture_output=True, text=True)
-    val = subprocess.run(
-        ["python3", ".scripts/validate_auxmem.py", "--all"], cwd=dest, capture_output=True, text=True
+    moc = subprocess.run(
+        [_PYTHON, ".scripts/gen_mocs.py"], cwd=dest, capture_output=True, text=True
     )
+    if moc.returncode != 0:
+        detail = (moc.stdout or moc.stderr or "").strip() or "no output captured"
+        return {
+            "status": "upgraded",
+            "from": old_version,
+            "to": new_version,
+            "changes": report,
+            "conflicts": conflicts,
+            "backup": str(backup_dir),
+            "post_exit_code": OPERATION_FAILED,
+            "post_phase": "MOC generation",
+            "post_detail": detail,
+        }
+
+    val = subprocess.run(
+        [_PYTHON, ".scripts/validate_auxmem.py", "--all"],
+        cwd=dest,
+        capture_output=True,
+        text=True,
+    )
+    post_exit_code = OK if val.returncode == 0 else NON_CONFORMANT
 
     return {
         "status": "upgraded",
@@ -223,8 +246,9 @@ def upgrade(dest, force=False):
         "changes": report,
         "conflicts": conflicts,
         "backup": str(backup_dir),
-        "valid": val.returncode == 0,
-        "validation": val.stdout,
+        "post_exit_code": post_exit_code,
+        "post_phase": "validation" if post_exit_code != OK else None,
+        "post_detail": (val.stdout or val.stderr or "").strip(),
     }
 
 
