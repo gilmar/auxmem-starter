@@ -5,7 +5,7 @@ from __future__ import annotations
 from tests.helpers import init_git_repo, read_corpus_config, run_git, run_koinome, validate_corpus
 
 
-def test_scratch_auxmem_has_domains_and_git(tmp_path):
+def test_scratch_corpus_has_domains_and_git(tmp_path):
     dest = tmp_path / "scratch"
     run_koinome(
         [
@@ -30,7 +30,7 @@ def test_scratch_auxmem_has_domains_and_git(tmp_path):
     assert status.returncode == 0
 
 
-def test_scratch_auxmem_validation_clean(tmp_path):
+def test_scratch_corpus_validation_clean(tmp_path):
     dest = tmp_path / "scratch"
     run_koinome(
         [

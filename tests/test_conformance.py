@@ -50,7 +50,7 @@ def test_check_help_lists_read_only():
     assert "without modifying" in (result.stdout + result.stderr).lower()
 
 
-def test_check_passes_on_valid_auxmem(tmp_corpus):
+def test_check_passes_on_valid_corpus(tmp_corpus):
     rc = main(["check", str(tmp_corpus)])
     assert rc == OK
     assert "conformance check passed" in run_conformance_check(tmp_corpus).stdout
@@ -95,7 +95,7 @@ def test_manifest_lists_ci_workflow():
 
 
 def test_upgrade_delivers_workflow(tmp_path):
-    dest = tmp_path / "legacy"
+    dest = tmp_path / "corpus"
     scaffold_corpus(dest)
     workflow = dest / ".github" / "workflows" / "koinome-check.yml"
     if workflow.exists():

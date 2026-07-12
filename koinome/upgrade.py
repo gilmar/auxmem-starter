@@ -27,16 +27,7 @@ from typing import Any
 
 from .exit_codes import NON_CONFORMANT, OK, OPERATION_FAILED
 from .manifest import verify_bundled_template
-from .paths import (
-    config_path,
-    detect_legacy_auxmem,
-    managed_path,
-    migrate_legacy_layout,
-    plan_legacy_migration,
-    remap_manifest_keys,
-    resolve_corpus,
-    scan_user_notes_for_legacy_refs,
-)
+from .paths import config_path, managed_path, resolve_corpus
 from .version import TEMPLATE_VERSION
 
 _PKG_ROOT = Path(__file__).resolve().parent
@@ -81,8 +72,6 @@ class UpgradePlan:
     touched_files: list[str] = field(default_factory=list)
     created_folders: list[str] = field(default_factory=list)
     deprecated: list[str] = field(default_factory=list)
-    legacy_detected: list[str] = field(default_factory=list)
-    legacy_note_refs: list[dict[str, str]] = field(default_factory=list)
     post_check: PostCheckResult | None = None
 
     def to_result(self, *, backup: str | None = None, dry_run: bool = False) -> dict[str, Any]:
@@ -111,8 +100,6 @@ class UpgradePlan:
             "conflicts": self.conflicts,
             "deprecated": self.deprecated,
             "created_folders": self.created_folders,
-            "legacy_detected": self.legacy_detected,
-            "legacy_note_refs": self.legacy_note_refs,
             "post_exit_code": post_exit_code,
             "post_phase": post_phase,
             "post_detail": post_detail,
@@ -267,22 +254,8 @@ def _apply_merge3_no_snapshot_sidecar(
     conflicts.append(rel)
 
 
-def _state_dir(dest: Path) -> Path:
-    koinome = dest / ".koinome"
-    if (koinome / "manifest.json").exists():
-        return koinome
-    legacy = dest / ".corpus"
-    if (legacy / "manifest.json").exists():
-        return legacy
-    return koinome
-
-
 def build_plan(dest: Path, *, force: bool = False) -> UpgradePlan:
-    legacy_detected = detect_legacy_auxmem(dest)
-    legacy_note_refs = scan_user_notes_for_legacy_refs(dest) if legacy_detected else []
-    migration_plan = plan_legacy_migration(dest)
-
-    aux = _state_dir(dest)
+    aux = dest / ".koinome"
     old_manifest_path = aux / "manifest.json"
     has_state = old_manifest_path.exists()
 
@@ -290,9 +263,7 @@ def build_plan(dest: Path, *, force: bool = False) -> UpgradePlan:
     new_version = new_manifest["template_version"]
 
     if has_state:
-        old_manifest = remap_manifest_keys(
-            json.loads(old_manifest_path.read_text(encoding="utf-8"))
-        )
+        old_manifest = json.loads(old_manifest_path.read_text(encoding="utf-8"))
         old_version = old_manifest.get("template_version", "unknown")
     else:
         old_manifest = {"files": {}}
@@ -301,7 +272,7 @@ def build_plan(dest: Path, *, force: bool = False) -> UpgradePlan:
     if old_version == new_version and not force:
         return UpgradePlan("up-to-date", old_version, new_version)
 
-    report: list[str] = list(migration_plan)
+    report: list[str] = []
     conflicts: list[str] = []
     touched: list[str] = []
     snapshot = aux / "snapshot"
@@ -355,8 +326,6 @@ def build_plan(dest: Path, *, force: bool = False) -> UpgradePlan:
         touched_files=touched,
         created_folders=created_folders,
         deprecated=deprecated,
-        legacy_detected=legacy_detected,
-        legacy_note_refs=legacy_note_refs,
     )
 
 
@@ -471,8 +440,6 @@ def _predict_post_check(dest: Path, plan: UpgradePlan) -> PostCheckResult:
     with tempfile.TemporaryDirectory(prefix="koinome-upgrade-") as td:
         workspace = Path(td) / "workspace"
         shutil.copytree(dest, workspace, symlinks=True)
-        scratch: list[str] = []
-        migrate_legacy_layout(workspace, scratch)
         backup_dir = workspace / ".koinome" / "backups" / "dry-run"
         backup_dir.mkdir(parents=True, exist_ok=True)
         _apply_plan(workspace, plan, backup_dir=backup_dir)
@@ -505,13 +472,9 @@ def upgrade(dest, force=False, dry_run=False):
 
     ts = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S")
     backup_dir = dest / ".koinome" / "backups" / ts
-    migration_report: list[str] = []
-    migrate_legacy_layout(dest, migration_report)
-
     journal = _capture_journal(dest, list(json.loads(MANIFEST_SRC.read_text())["files"]))
 
     try:
-        plan.changes = migration_report + [c for c in plan.changes if c not in migration_report]
         _apply_plan(dest, plan, backup_dir=backup_dir)
         plan.post_check = _run_post_checks(dest)
         if plan.post_check.should_rollback:
@@ -533,7 +496,6 @@ def upgrade(dest, force=False, dry_run=False):
             plan.changes,
             plan.conflicts,
             ts,
-            legacy_note_refs=plan.legacy_note_refs,
         )
         plan.status = "upgraded"
         return plan.to_result(backup=str(backup_dir))
@@ -542,7 +504,7 @@ def upgrade(dest, force=False, dry_run=False):
         raise
 
 
-def _write_report(dest, old_v, new_v, report, conflicts, ts, *, legacy_note_refs=None):
+def _write_report(dest, old_v, new_v, report, conflicts, ts):
     today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     lines = [
         "---",
@@ -568,20 +530,10 @@ def _write_report(dest, old_v, new_v, report, conflicts, ts, *, legacy_note_refs
             "next to your unchanged one; merge by hand and delete the .new.",
             "",
         ]
-    if legacy_note_refs:
-        lines += ["## Legacy references in your notes (manual review)", ""]
-        for item in legacy_note_refs:
-            lines.append(f"- {item['path']} (matched {item['pattern']})")
-        lines += [
-            "",
-            "Koinome does not rewrite user-authored notes automatically. "
-            "Update links and commands to Koinome names when convenient.",
-            "",
-        ]
     lines += ["## All changes", ""]
     lines += [f"- {r}" for r in report]
     lines += ["", f"Backups: .koinome/backups/{ts}/ (git-ignored, local only)."]
-    if _is_major_rebrand(old_v, new_v) or legacy_note_refs is not None:
+    if _is_major_rebrand(old_v, new_v):
         lines += [
             "",
             "## After this upgrade",

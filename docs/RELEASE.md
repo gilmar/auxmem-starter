@@ -38,20 +38,13 @@ ALLOW_DIRTY_TREE=1 bash scripts/check_release.sh
 
 ## Package registry
 
-The PyPI package name is **`koinome`** (`pyproject.toml` `name`). Verify availability before the first publish:
+The PyPI package name is **`koinome`** (`pyproject.toml` `name`). Check registry status:
 
 ```bash
 bash scripts/check_pypi_registry.sh
 ```
 
-As of the Koinome rename:
-
-| index | `koinome` | `auxmem` (legacy) |
-| --- | --- | --- |
-| PyPI | available (404) | occupied (`0.1.0`, mistaken `2.0.0`) |
-| TestPyPI | available (404) | available (404) |
-
-Publish **only** `koinome`. Do not ship new Koinome releases under the legacy `auxmem` project name. Because `koinome` is a new PyPI project, the first intentional release can be `0.1.0rc1` or `0.1.0` without competing with `auxmem==2.0.0`.
+Publish **only** under `koinome`. Intentional releases use semver on that project (for example `0.0.0alpha1`, then `0.1.0rc1` or `0.1.0` after hardening).
 
 Recommended first upload (TestPyPI, after `bash scripts/check_release.sh` passes and versions are bumped):
 
@@ -63,29 +56,18 @@ pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://
 
 Production publish uses `uv publish` (see [PyPI Trusted Publishing](https://docs.pypi.org/trusted-publishers/) in `AGENTS.md`).
 
-## Mistaken 2.0.0 publication
+## Mistaken 2.0.0 publication (pre-rename)
 
-The legacy **`auxmem`** project on PyPI (not `koinome`) received a mistaken `2.0.0` release before the repository reset source versions to `0.0.0`.
+Before the repository reset to `0.0.0`, a mistaken `2.0.0` was published on PyPI under an **abandoned project name** from an earlier iteration. That artifact is unsupported. Yank it on the index if PyPI allows. Koinome ships only as **`koinome`** on PyPI.
 
-Before the first intentional public release, choose one strategy and verify it:
-
-### Option A — Yank mistaken release (recommended if index allows)
-
-1. Yank `auxmem==2.0.0` on PyPI (and TestPyPI if applicable).
-2. Publish the first intentional release as `0.1.0rc1` or `0.1.0` after hardening is complete.
-3. Verify resolution:
+Before each publish, verify resolution in a clean environment:
 
 ```bash
 pip index versions koinome
 pip install 'koinome>=0.1.0' --dry-run
 ```
 
-### Option B — Continue above 2.0.0
-
-1. Bump to `2.0.1` or `2.1.0` in `pyproject.toml`, `koinome/__init__.py`, and template/conformance versions together.
-2. Verify `pip install koinome` resolves to the new version, not the mistaken `auxmem==2.0.0` artifact on the legacy project page.
-
-**Never** publish `0.0.0` or any version lower than an existing PyPI release without verifying index resolution in a clean environment.
+**Never** publish `0.0.0` or any version lower than an existing PyPI release without verifying index resolution.
 
 ## Pre-publish checklist
 

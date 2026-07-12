@@ -98,7 +98,7 @@ For CI, prefer [PyPI Trusted Publishing](https://docs.pypi.org/trusted-publisher
 | --- | --- |
 | `koinome/cli.py` | CLI entry and help |
 | `koinome/template/` | versioned Koinome template |
-| `koinome/paths.py` | corpus path resolution and legacy AuxMem migration |
+| `koinome/paths.py` | corpus path resolution |
 | `koinome/upgrade.py` | template upgrade logic |
 | `build_manifest.py` | manifest generator |
 | `docs/RELEASE.md` | release and version policy |

@@ -112,10 +112,6 @@ This creates the corpus, installs the git hook, and sets up shared folders. Poin
 
 See [docs/USAGE.md](docs/USAGE.md) for full reference.
 
-## Migrating from AuxMem
-
-If you have an existing AuxMem folder, run `koinome upgrade` — see [docs/MIGRATION.md](docs/MIGRATION.md).
-
 ## Licence
 
 Apache License 2.0 — see [LICENSE](LICENSE) and [NOTICE](NOTICE). Contributions are accepted under the [Developer Certificate of Origin](https://developercertificate.org/); there is no CLA. See [CONTRIBUTING.md](CONTRIBUTING.md).

@@ -4,7 +4,7 @@
 # Usage:
 #   bash scripts/check_pypi_registry.sh
 #
-# Exit 0 when koinome is available on both indexes and legacy auxmem status is reported.
+# Exit 0 when koinome is available on both indexes (404 = name free).
 
 set -euo pipefail
 
@@ -28,36 +28,14 @@ echo "intended package: koinome (from pyproject.toml)"
 
 koinome_pypi="$(pypi_status https://pypi.org koinome)"
 koinome_test="$(pypi_status https://test.pypi.org koinome)"
-auxmem_pypi="$(pypi_status https://pypi.org auxmem)"
-auxmem_test="$(pypi_status https://test.pypi.org auxmem)"
 
-echo "koinome on PyPI:      ${koinome_pypi} (want 404 — name available)"
-echo "koinome on TestPyPI:  ${koinome_test} (want 404 — name available)"
-echo "auxmem on PyPI:       ${auxmem_pypi} (legacy; occupied if 200)"
-echo "auxmem on TestPyPI:   ${auxmem_test}"
+echo "koinome on PyPI:      ${koinome_pypi} (404 = name available; 200 = project exists)"
+echo "koinome on TestPyPI:  ${koinome_test}"
 
 failed=0
-if [ "$koinome_pypi" != "404" ]; then
-    echo "check_pypi_registry.sh: koinome already exists on PyPI" >&2
+if [ "$koinome_pypi" != "404" ] && [ "$koinome_pypi" != "200" ]; then
+    echo "check_pypi_registry.sh: unexpected PyPI status for koinome: ${koinome_pypi}" >&2
     failed=1
-fi
-if [ "$koinome_test" != "404" ]; then
-    echo "check_pypi_registry.sh: koinome already exists on TestPyPI" >&2
-    failed=1
-fi
-
-if [ "$auxmem_pypi" = "200" ]; then
-    echo ""
-    echo "legacy auxmem on PyPI (do not publish new Koinome releases under this name):"
-    curl -sS "https://pypi.org/pypi/auxmem/json" | python3 -c "
-import json, sys
-data = json.load(sys.stdin)
-info = data['info']
-releases = sorted(data.get('releases', {}))
-print(f'  latest metadata version: {info.get(\"version\")}')
-print(f'  indexed releases: {\", \".join(releases)}')
-"
-    echo "  see docs/RELEASE.md — yank mistaken 2.0.0 before abandoning the auxmem project page"
 fi
 
 if [ "$failed" -ne 0 ]; then
@@ -65,4 +43,4 @@ if [ "$failed" -ne 0 ]; then
 fi
 
 echo ""
-echo "check_pypi_registry.sh: koinome is available on PyPI and TestPyPI"
+echo "check_pypi_registry.sh: registry check complete"

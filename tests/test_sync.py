@@ -35,7 +35,7 @@ VALID_FM = dict(
 
 
 @pytest.fixture
-def synced_auxmem(tmp_path, bare_remote):
+def synced_corpus(tmp_path, bare_remote):
     dest = tmp_path / "corpus"
     scaffold_corpus(dest)
     commit_all_valid(dest)
@@ -63,50 +63,50 @@ def test_sync_script_delegates_to_python():
     assert proc.returncode == 0, proc.stderr
 
 
-def test_sync_pushes_valid_changes(synced_auxmem, bare_remote):
-    _add_valid_note(synced_auxmem, "10-projects/pushed.md")
-    result = run_sync(synced_auxmem)
+def test_sync_pushes_valid_changes(synced_corpus, bare_remote):
+    _add_valid_note(synced_corpus, "10-projects/pushed.md")
+    result = run_sync(synced_corpus)
     assert result.returncode == OK, result.stdout + result.stderr
     remote_log = run_cmd(["git", "-C", str(bare_remote), "log", "-1", "--oneline"])
     assert "pushed.md" in remote_log.stdout or "sync(" in remote_log.stdout
 
 
-def test_sync_quarantines_invalid_pending(synced_auxmem, bare_remote):
-    tip_before = run_git(["rev-parse", "HEAD"], cwd=synced_auxmem).stdout.strip()
+def test_sync_quarantines_invalid_pending(synced_corpus, bare_remote):
+    tip_before = run_git(["rev-parse", "HEAD"], cwd=synced_corpus).stdout.strip()
     write_note(
-        synced_auxmem,
+        synced_corpus,
         "10-projects/invalid.md",
         _note("10-projects/invalid.md", type="bad-type"),
     )
-    result = run_sync(synced_auxmem)
+    result = run_sync(synced_corpus)
     assert result.returncode == CONFLICT, result.stdout + result.stderr
-    tip_after = run_git(["rev-parse", "HEAD"], cwd=synced_auxmem).stdout.strip()
+    tip_after = run_git(["rev-parse", "HEAD"], cwd=synced_corpus).stdout.strip()
     assert tip_before == tip_after
-    assert not (synced_auxmem / "10-projects/invalid.md").exists()
+    assert not (synced_corpus / "10-projects/invalid.md").exists()
     remote_branches = git_branches(bare_remote, all_refs=True)
     assert any("sync-invalid/" in name for name in remote_branches)
-    alerts = list((synced_auxmem / "00-inbox").glob("sync-invalid-*.md"))
+    alerts = list((synced_corpus / "00-inbox").glob("sync-invalid-*.md"))
     assert len(alerts) == 1
 
 
-def test_sync_uses_current_branch(synced_auxmem, bare_remote):
-    branch = run_git(["rev-parse", "--abbrev-ref", "HEAD"], cwd=synced_auxmem).stdout.strip()
+def test_sync_uses_current_branch(synced_corpus, bare_remote):
+    branch = run_git(["rev-parse", "--abbrev-ref", "HEAD"], cwd=synced_corpus).stdout.strip()
     if branch != "master":
-        run_git(["branch", "-m", branch, "master"], cwd=synced_auxmem)
-        run_git(["push", "-u", "origin", "master"], cwd=synced_auxmem)
+        run_git(["branch", "-m", branch, "master"], cwd=synced_corpus)
+        run_git(["push", "-u", "origin", "master"], cwd=synced_corpus)
         if branch != "master":
-            run_git(["push", "origin", "--delete", branch], cwd=synced_auxmem)
-    _add_valid_note(synced_auxmem, "10-projects/on-master.md")
-    result = run_sync(synced_auxmem)
+            run_git(["push", "origin", "--delete", branch], cwd=synced_corpus)
+    _add_valid_note(synced_corpus, "10-projects/on-master.md")
+    result = run_sync(synced_corpus)
     assert result.returncode == OK, result.stdout + result.stderr
-    assert run_git(["rev-parse", "--abbrev-ref", "HEAD"], cwd=synced_auxmem).stdout.strip() == "master"
+    assert run_git(["rev-parse", "--abbrev-ref", "HEAD"], cwd=synced_corpus).stdout.strip() == "master"
 
 
-def test_sync_lock_contention(synced_auxmem):
-    lock = synced_auxmem / ".git" / "koinome-sync.lock"
+def test_sync_lock_contention(synced_corpus):
+    lock = synced_corpus / ".git" / "koinome-sync.lock"
     lock.mkdir()
     try:
-        result = run_sync(synced_auxmem)
+        result = run_sync(synced_corpus)
         assert result.returncode == OPERATION_FAILED
         assert "another sync is running" in result.stdout
     finally:

@@ -9,21 +9,6 @@ from tests.helpers import REPO_ROOT
 
 # Narrow allowlist for intentional legacy or historical references.
 ALLOWLIST_PATHS = {
-    "docs/STRATEGY.md",
-    "docs/plans/open/auxmem-to-koinome-concepts-plan.md",
-    "docs/plans/closed/koinome-transform-plan.md",
-    "docs/plans/closed/rebrand-plan.md",
-    "scripts/apply_rebrand.py",
-    "scripts/apply_koinome_transform.py",
-    "scripts/check_pypi_registry.sh",
-    "tests/test_koinome_migration.py",
-    "docs/MIGRATION.md",
-    "CHANGELOG.md",
-    "README.md",
-    "AGENTS.md",
-    "docs/RELEASE.md",
-    "docs/COMPATIBILITY.md",
-    "koinome/paths.py",
     "tests/test_naming_consistency.py",
 }
 

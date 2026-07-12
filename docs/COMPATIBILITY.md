@@ -75,4 +75,4 @@ Bump conformance when validator rules change what constitutes a valid note. Docu
 
 ## PyPI history
 
-The legacy **`auxmem`** project on PyPI has mistaken releases (`0.1.0`, `2.0.0`) and is **unsupported** for Koinome. The intended package name is **`koinome`** (available on PyPI as of the registry check). See `docs/RELEASE.md` before the first intentional `koinome` publish.
+Publish and install **`koinome`** only. See `docs/RELEASE.md` for version policy and the mistaken pre-rename index release.

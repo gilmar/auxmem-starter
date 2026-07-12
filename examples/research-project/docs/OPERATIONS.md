@@ -63,7 +63,7 @@ Open tasks in `72-tasks/todo.txt`, archive in `72-tasks/done.txt`, todo.txt form
 The sync script (`.scripts/koinome-sync.sh`, implemented by `.scripts/koinome_sync.py`) keeps devices aligned without weakening the validation gate on the canonical branch.
 
 State machine:
-1. Resolve the current git branch and its upstream remote (override with `AUXMEM_SYNC_BRANCH` / `AUXMEM_SYNC_REMOTE`).
+1. Resolve the current git branch and its upstream remote (override with `CORPUS_SYNC_BRANCH` / `CORPUS_SYNC_REMOTE`).
 2. Acquire a per-corpus lock at `.git/koinome-sync.lock/` (not a global `/tmp` lock).
 3. Stage pending changes and validate the git index snapshot before any canonical commit.
 4. **Valid pending corpus changes:** verified `git commit` (pre-commit hook runs), `git pull --rebase --autostash`, read-only `check_corpus.py`, then push.

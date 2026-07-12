@@ -17,12 +17,12 @@ Versioning is **paused at 0.0.0** for template and conformance during the reliab
 ## 0.0.0alpha1 — first PyPI alpha (CLI only; template 0.0.0, conformance 0.0.0)
 
 - First intentional publish to PyPI under the **`koinome`** package name.
-- Product rename from AuxMem; managed folders are **corpora** (see `docs/MIGRATION.md`).
+- Product rename; managed folders are **corpora**.
 - Install: `pip install koinome==0.0.0alpha1` or `uv tool install koinome==0.0.0alpha1`.
 
 ## Accidental / unsupported index releases
 
-### PyPI 2.0.0 on legacy `auxmem` (mistaken — do not use)
+### PyPI 2.0.0 on a mistaken legacy project (do not use)
 
 Published in error before the repository reset source versions to `0.0.0`. Not a supported release. See `docs/RELEASE.md` for yank or supersede strategy.
 
@@ -31,6 +31,7 @@ Published in error before the repository reset source versions to `0.0.0`. Not a
 - Relicensed repository **MIT → Apache-2.0** per [strategy](docs/STRATEGY.md) D6; added DCO via [CONTRIBUTING.md](CONTRIBUTING.md) (no CLA). Published PyPI **`0.0.0alpha1`** remains MIT metadata; the next release carries Apache-2.0.
 - Published [docs/STRATEGY.md](docs/STRATEGY.md); realigned README, comparisons, usage, evaluation, and governance ([SECURITY.md](SECURITY.md)).
 - `koinome init` as an alias for `koinome new` (strategy demo naming).
+- Removed legacy on-disk migration paths, one-off transform scripts, and `docs/MIGRATION.md`.
 
 Reliability and release-hardening work on `master` after the version reset:
 
@@ -41,7 +42,7 @@ Reliability and release-hardening work on `master` after the version reset:
 - Bootstrap/packaging safety (no system Python mutation, skill refresh, wheel coverage)
 - Release and compatibility discipline (AUX-011)
 - Reference corpora and deterministic evaluation harness (AUX-012)
-- Removed `auxmem import-obsidian` and all Obsidian migration tooling
+- Removed `import-obsidian` and all Obsidian migration tooling
 
 Verify with `bash scripts/check_release.sh` before any publish.
 
@@ -69,7 +70,7 @@ The entries below describe early development **before** the `0.0.0` pause. They 
 
 ### 1.2.1 — CLI help clarity (CLI)
 
-- Print usage instead of an error when `auxmem` is invoked with no subcommand.
+- Print usage instead of an error when the CLI is invoked with no subcommand.
 - Clarify in help text which commands run outside a corpus versus which take a corpus path.
 
 ### 1.2.0 — domain bootstrap skill (CLI)
@@ -77,7 +78,7 @@ The entries below describe early development **before** the `0.0.0` pause. They 
 - Simplify `koinome new` wizard to three steps (name, location, review); no preset domains.
 - Add `setup-domains` agent skill for tailoring subject folders after creation.
 
-### 1.1.0 — guided auxmem creation (CLI)
+### 1.1.0 — guided corpus creation (CLI)
 
 - Rework `koinome new` interactive wizard: plain-language steps, domain preset, creation preview, live bootstrap progress, agent-oriented next steps.
 
@@ -91,5 +92,5 @@ The entries below describe early development **before** the `0.0.0` pause. They 
 Early public experiment before governance hardening:
 
 - `koinome new`, `koinome seed`, `koinome doctor`, `koinome upgrade`
-- Governed auxmem: config-driven validator, pre-commit hook, generated MOCs, git sync with conflict quarantine
+- Governed corpus: config-driven validator, pre-commit hook, generated MOCs, git sync with conflict quarantine
 - Synthesis layer with provenance and staleness detection

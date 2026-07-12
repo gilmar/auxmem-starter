@@ -11,21 +11,21 @@ EXAMPLES = REPO_ROOT / "examples"
 
 
 @pytest.mark.parametrize("name", REFERENCE_NAMES)
-def test_reference_auxmem_exists(name: str):
+def test_reference_corpus_exists(name: str):
     path = EXAMPLES / name
     assert path.is_dir(), f"missing {path}; run examples/build_references.py"
     assert (path / ".scripts/koinome.config.json").is_file()
 
 
 @pytest.mark.parametrize("name", REFERENCE_NAMES)
-def test_reference_auxmem_validates(name: str):
+def test_reference_corpus_validates(name: str):
     path = EXAMPLES / name
     result = validate_corpus(path)
     assert result.returncode == 0, result.stdout + result.stderr
 
 
 @pytest.mark.parametrize("name", REFERENCE_NAMES)
-def test_reference_auxmem_conformance(name: str):
+def test_reference_corpus_conformance(name: str):
     path = EXAMPLES / name
     result = run_conformance_check(path)
     assert result.returncode == 0, result.stdout + result.stderr
