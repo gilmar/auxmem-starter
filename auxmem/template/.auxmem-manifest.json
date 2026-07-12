@@ -147,7 +147,7 @@
     },
     "bootstrap.sh": {
       "policy": "overwrite",
-      "sha256": "01d0b68a051c8e096e3f7fdb373cc7922d5653c1394cfa5bbbdb220ab12eea37"
+      "sha256": "6772ef53323f300cd89a9c961c580b6d5f5faf5aefd70ad9e131bede413dbd41"
     },
     "docs/ARCHITECTURE.md": {
       "policy": "merge3",
@@ -167,7 +167,7 @@
     },
     "docs/SETUP.md": {
       "policy": "merge3",
-      "sha256": "7b5f6b9c01ac201bd3e34315dd1c6cda9b0bbd7436f90083b8f2844d4536143f"
+      "sha256": "e2cdab33710a75a7d41624aec0f58c049fed1b7ee0a71e252a927bebf04d4b74"
     },
     "docs/SYNTHESIS.md": {
       "policy": "merge3",

@@ -2,8 +2,11 @@
 # bootstrap.sh: set up an auxmem created from this template.
 # Idempotent. Run from the auxmem root: ./bootstrap.sh
 #
+# Options:
+#   --refresh-skills   re-copy provider skill dirs that were copied (not symlinked)
+#
 # Does:
-#   1. checks python + pyyaml
+#   1. checks python + pyyaml (does not auto-install into system Python)
 #   2. creates domain folders from .scripts/auxmem.config.json
 #   3. initializes git if needed
 #   4. links provider skill dirs to .skills/
@@ -15,14 +18,79 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 CFG=".scripts/auxmem.config.json"
+REFRESH_SKILLS=0
+
+while [ $# -gt 0 ]; do
+    case "$1" in
+        --refresh-skills) REFRESH_SKILLS=1; shift ;;
+        -h|--help)
+            echo "usage: ./bootstrap.sh [--refresh-skills]"
+            exit 0
+            ;;
+        *)
+            echo "unknown option: $1" >&2
+            exit 1
+            ;;
+    esac
+done
 
 echo "== 1. dependencies =="
-command -v python3 >/dev/null || { echo "python3 required"; exit 1; }
-python3 -c "import yaml" 2>/dev/null || {
-    echo "installing pyyaml..."
-    pip install pyyaml --quiet --break-system-packages 2>/dev/null || pip install pyyaml --quiet
-}
+command -v python3 >/dev/null || { echo "python3 required" >&2; exit 1; }
+if ! python3 -c "import yaml" 2>/dev/null; then
+    cat <<'EOF' >&2
+PyYAML is required but not available to this python3.
+
+Bootstrap does not install packages into system Python automatically.
+Use one of these supported paths:
+
+  # Recommended: install AuxMem (includes PyYAML)
+  uv tool install auxmem
+  pipx install auxmem
+
+  # Or a project virtual environment
+  python3 -m venv .venv
+  source .venv/bin/activate   # Windows: .venv\Scripts\activate
+  pip install pyyaml
+  ./bootstrap.sh
+
+  # Or use a venv only for validator/MOC scripts
+  python3 -m venv .venv && source .venv/bin/activate && pip install pyyaml
+
+Then re-run: ./bootstrap.sh
+EOF
+    exit 1
+fi
 echo "ok"
+
+if [ "$REFRESH_SKILLS" = "1" ]; then
+    echo "== refresh copied provider skills =="
+    if [ -f .auxmem/skills-copies ]; then
+        refreshed=0
+        while IFS= read -r provider_dir || [ -n "${provider_dir:-}" ]; do
+            [ -z "$provider_dir" ] && continue
+            if [ -L "$provider_dir" ]; then
+                echo "  $provider_dir is a symlink; nothing to refresh"
+                continue
+            fi
+            if [ ! -d "$provider_dir" ]; then
+                echo "  $provider_dir missing; skipping"
+                continue
+            fi
+            rm -rf "$provider_dir"
+            cp -R .skills "$provider_dir"
+            echo "  refreshed $provider_dir from .skills (copy)"
+            refreshed=1
+        done < .auxmem/skills-copies
+        if [ "$refreshed" = "0" ]; then
+            echo "  no copied skill directories were refreshed"
+        fi
+    else
+        echo "  no .auxmem/skills-copies (provider dirs were symlinked or not yet bootstrapped)"
+    fi
+    echo ""
+    echo "Skill refresh complete. Re-run ./bootstrap.sh without --refresh-skills for a full pass."
+    exit 0
+fi
 
 echo "== 2. domain folders from config =="
 python3 - "$CFG" << 'PY'
@@ -47,6 +115,22 @@ else
 fi
 
 echo "== 4. provider skill symlinks =="
+mkdir -p .auxmem
+SKILLS_COPIES=".auxmem/skills-copies"
+touch "$SKILLS_COPIES"
+record_skill_copy() {
+    local provider_dir="$1"
+    if ! grep -qxF "$provider_dir" "$SKILLS_COPIES" 2>/dev/null; then
+        echo "$provider_dir" >> "$SKILLS_COPIES"
+    fi
+}
+remove_skill_copy_record() {
+    local provider_dir="$1"
+    if [ -f "$SKILLS_COPIES" ]; then
+        grep -vxF "$provider_dir" "$SKILLS_COPIES" > "${SKILLS_COPIES}.tmp" || true
+        mv "${SKILLS_COPIES}.tmp" "$SKILLS_COPIES"
+    fi
+}
 link_skills() {
     local provider_dir="$1"
     local parent
@@ -54,17 +138,20 @@ link_skills() {
     mkdir -p "$parent"
     if [ -L "$provider_dir" ]; then
         echo "  $provider_dir already linked"
+        remove_skill_copy_record "$provider_dir"
         return
     fi
     if [ -e "$provider_dir" ]; then
-        echo "  $provider_dir exists (not a symlink); skipping"
+        echo "  $provider_dir exists (not a symlink); skipping to avoid overwriting user content"
         return
     fi
     if ln -s ../.skills "$provider_dir" 2>/dev/null; then
         echo "  linked $provider_dir -> ../.skills"
+        remove_skill_copy_record "$provider_dir"
     else
         cp -R .skills "$provider_dir"
-        echo "  copied .skills -> $provider_dir (symlink unavailable)"
+        record_skill_copy "$provider_dir"
+        echo "  copied .skills -> $provider_dir (symlink unavailable; run ./bootstrap.sh --refresh-skills after skill updates)"
     fi
 }
 link_skills .claude/skills
