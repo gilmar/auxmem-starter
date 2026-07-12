@@ -1,0 +1,23 @@
+#!/bin/bash
+# Auxmem pre-commit hook. Installed by bootstrap.sh as .git/hooks/pre-commit.
+# Validates the staged git index snapshot (not the working tree).
+# Portable: bash 3.2+ (macOS default /bin/bash).
+
+set -euo pipefail
+
+AUXMEM_ROOT="$(git rev-parse --show-toplevel)"
+CHECKER="$AUXMEM_ROOT/.scripts/check_staged_snapshot.py"
+
+if [ ! -f "$CHECKER" ]; then
+    echo "pre-commit: staged snapshot checker not found at $CHECKER" >&2
+    exit 1
+fi
+
+if ! python3 "$CHECKER"; then
+    echo ""
+    echo "Commit blocked (staged snapshot failed). Try:"
+    echo "  python3 .scripts/gen_mocs.py && python3 .scripts/validate_auxmem.py --fix --all"
+    echo "then ask your agent to handle the rest (see docs/FIXING.md),"
+    echo "or bypass once with: git commit --no-verify"
+    exit 1
+fi

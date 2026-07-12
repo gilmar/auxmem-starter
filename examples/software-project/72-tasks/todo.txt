@@ -1,0 +1,5 @@
+(A) 2026-07-12 Set the git remote and push the first commit +engineering @auxmem
+(B) 2026-07-12 Install the sync timer if you want transparent git sync, see docs/SETUP.md +engineering @auxmem
+(C) 2026-07-12 Replace placeholder summaries in any imported notes +engineering @auxmem
+(A) Reconcile vendor latency contradiction ref:05-sources/latency-benchmark-vendor-a.md
+(B) Schedule failover drill ref:60-decisions/adr-0002-service-boundaries.md

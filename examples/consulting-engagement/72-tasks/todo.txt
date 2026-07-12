@@ -1,0 +1,3 @@
+(A) 2026-07-12 Set the git remote and push the first commit +engagement @auxmem
+(B) 2026-07-12 Install the sync timer if you want transparent git sync, see docs/SETUP.md +engagement @auxmem
+(C) 2026-07-12 Replace placeholder summaries in any imported notes +engagement @auxmem

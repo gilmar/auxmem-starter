@@ -40,4 +40,7 @@ uv run python -m auxmem.release_check "${RELEASE_ARGS[@]}"
 echo "== compatibility smoke =="
 bash scripts/compatibility_smoke.sh
 
+echo "== reference auxmem evaluation =="
+uv run python -m auxmem.evaluation
+
 echo "check_release.sh: all release checks passed"

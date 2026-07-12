@@ -1,0 +1,27 @@
+# Install (WSL2, requires systemd=true in /etc/wsl.conf under [boot]):
+#   mkdir -p ~/.config/systemd/user
+#   Split this file at the === marker into auxmem-sync.service and auxmem-sync.timer
+#   in that directory, then:
+#   systemctl --user daemon-reload
+#   systemctl --user enable --now auxmem-sync.timer
+#   Check: systemctl --user list-timers; journalctl --user -u auxmem-sync -f
+
+# === auxmem-sync.service ===
+[Unit]
+Description=Auxmem git sync
+
+[Service]
+Type=oneshot
+ExecStart=%h/auxmem/.scripts/auxmem-sync.sh %h/auxmem
+
+# === auxmem-sync.timer ===
+[Unit]
+Description=Auxmem git sync every 3 minutes
+
+[Timer]
+OnBootSec=1min
+OnUnitActiveSec=3min
+RandomizedDelaySec=20
+
+[Install]
+WantedBy=timers.target

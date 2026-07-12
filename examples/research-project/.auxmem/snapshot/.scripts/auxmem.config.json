@@ -1,0 +1,68 @@
+{
+  "_comment": "Single source of truth for this auxmem. The validator, folder bootstrap, and MOC generator all read this file. Created from the AuxMem template; edit and re-run bootstrap.sh to adapt. Keep type/status closed; they are the retrieval contract agents rely on.",
+  "name": "my-auxmem",
+  "created": "REPLACED_AT_SCAFFOLD",
+  "domains": {},
+  "structural_folders": [
+    "00-inbox",
+    "60-decisions",
+    "70-meetings",
+    "71-log",
+    "72-tasks",
+    "80-moc",
+    "90-templates",
+    "95-assets",
+    "99-archive",
+    "05-sources",
+    "85-synthesis"
+  ],
+  "required_fields": [
+    "title",
+    "summary",
+    "type",
+    "status",
+    "domain",
+    "created",
+    "updated"
+  ],
+  "vocab": {
+    "type": [
+      "project-doc",
+      "governance-finding",
+      "quality-log",
+      "adr",
+      "meeting",
+      "1on1",
+      "stakeholder",
+      "exec-doc",
+      "moc",
+      "reference",
+      "log",
+      "source",
+      "entity",
+      "concept"
+    ],
+    "status": [
+      "active",
+      "in-review",
+      "done",
+      "superseded",
+      "archived"
+    ]
+  },
+  "min_summary_len": 40,
+  "skip_dirs": [
+    ".git",
+    ".scripts",
+    ".auxmem",
+    ".skills",
+    ".claude",
+    ".codex",
+    ".gemini",
+    ".cursor",
+    "docs",
+    "90-templates",
+    "99-archive"
+  ],
+  "template_version": "REPLACED_AT_SCAFFOLD"
+}

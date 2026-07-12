@@ -52,6 +52,8 @@ uv run python auxmem-cli new --name t --path /tmp/t-test
 | Regenerate template manifest | `uv run python build_manifest.py` |
 | Shell lint | `bash scripts/lint-shell.sh` |
 | Full release gate | `bash scripts/check_release.sh` |
+| Reference auxmem evaluation | `uv run python -m auxmem.evaluation` |
+| Rebuild reference examples | `uv run python examples/build_references.py` |
 | Bump template version | edit `auxmem/version.py` (`TEMPLATE_VERSION`), then `build_manifest.py` |
 | Bump conformance version | edit `auxmem/version.py` (`CONFORMANCE_VERSION`), then `build_manifest.py` |
 | Bump CLI version | edit `pyproject.toml` and `auxmem/__init__.py` (`__version__`) — keep both in sync |
@@ -96,4 +98,5 @@ For CI, prefer [PyPI Trusted Publishing](https://docs.pypi.org/trusted-publisher
 | `build_manifest.py` | manifest generator |
 | `docs/RELEASE.md` | release and version policy |
 | `docs/COMPATIBILITY.md` | supported environments matrix |
+| `docs/EVALUATION.md` | reference auxmem and evaluation methodology |
 | `docs/USAGE.md` | user-facing command reference |

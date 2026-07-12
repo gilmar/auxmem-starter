@@ -63,6 +63,7 @@ pip install 'auxmem>=0.1.0' --dry-run
 ## Pre-publish checklist
 
 - `bash scripts/check_release.sh`
+- `uv run python -m auxmem.evaluation`
 - `docs/COMPATIBILITY.md` updated if support claims change
 - `CHANGELOG.md` entry for the release version
 - Confirm template manifest is fresh (`uv run python build_manifest.py`)

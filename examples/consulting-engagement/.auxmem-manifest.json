@@ -1,0 +1,178 @@
+{
+  "template_version": "0.0.0",
+  "conformance_version": "0.0.0",
+  "files": {
+    ".github/workflows/auxmem-check.yml": {
+      "policy": "overwrite",
+      "sha256": "d1f18256b8cb2d5c04d2475c92be25ce9df6efb5321008c5b0c6f6d45500c4f6"
+    },
+    ".scripts/auxmem-sync.sh": {
+      "policy": "overwrite",
+      "sha256": "98736db71fd03fd8e8d8a655ce1003ccc77307aac0d27e5cf28cd4ba4a7b89a0"
+    },
+    ".scripts/auxmem-sync.systemd": {
+      "policy": "overwrite",
+      "sha256": "003daa12fabc5d14d5c621045801b715cce3efc4de47f02ab97af1fa23130723"
+    },
+    ".scripts/auxmem.config.json": {
+      "policy": "merge",
+      "sha256": "84e6b9dcdf924ccbed905635ae94e18085938fe1e69281f7a6640f86dd2940fd"
+    },
+    ".scripts/auxmem_sync.py": {
+      "policy": "overwrite",
+      "sha256": "3219687ccbf001920ad957652238fe1c821c388268f864f4d232b87e32e0440f"
+    },
+    ".scripts/check_auxmem.py": {
+      "policy": "overwrite",
+      "sha256": "31a9c41a74cae2eb312f001e9ee7b920249931ed92dd3885ad6eb7498bfa6ce6"
+    },
+    ".scripts/check_staged_snapshot.py": {
+      "policy": "overwrite",
+      "sha256": "3bee31e4d1ad3551217b10a745bd02bea6090ebf56197bdc13bd44aa86888df3"
+    },
+    ".scripts/gen_mocs.py": {
+      "policy": "overwrite",
+      "sha256": "a59a64d66af43c0576ae1f9f4941c9973313d29d4186b9bc0e6ae878eba61ba0"
+    },
+    ".scripts/graph_report.py": {
+      "policy": "overwrite",
+      "sha256": "22b676cd97e06628fc35d007247fa5869be48190c7f941e75632a3388d5574dc"
+    },
+    ".scripts/pre-commit": {
+      "policy": "overwrite",
+      "sha256": "aa70def60bb40b45c27e05010d6111a87e0470e2ebe879a44b880e4b86872ee7"
+    },
+    ".scripts/synthesis_status.py": {
+      "policy": "overwrite",
+      "sha256": "aa45d0949c29903cf82911317a54b0df39ae6b45f9d961364572fefdc184a15d"
+    },
+    ".scripts/validate_auxmem.py": {
+      "policy": "overwrite",
+      "sha256": "77ca0629f1f2f2704f43eae6ccbfdd8cb67763a88e6a80714ccbbd017a57c5c6"
+    },
+    ".skills/auxmem-adr/SKILL.md": {
+      "policy": "merge3",
+      "sha256": "a26158e0be2538f2c5a2f7bf4d7f6ce3072993097644f9f267bff240d7e2e35f"
+    },
+    ".skills/auxmem-distill-seeds/SKILL.md": {
+      "policy": "merge3",
+      "sha256": "35df905f8359e67068a13537ace7b6a9412411a7045cd3a023af9eb973ed8ed3"
+    },
+    ".skills/auxmem-fix-validation/SKILL.md": {
+      "policy": "merge3",
+      "sha256": "029b9221e0187bdb760475b4a7bb73a2f709dbe11133c03d8e5fe4b8cf5b6950"
+    },
+    ".skills/auxmem-init/SKILL.md": {
+      "policy": "merge3",
+      "sha256": "33d9ebfe071dc1758504a76e60ebb300be8187f8cf40431486cab6a85fa665ad"
+    },
+    ".skills/auxmem-new-note/SKILL.md": {
+      "policy": "merge3",
+      "sha256": "f091124105b6076dcfb8d63bc02273d67fc65d2e860c55d408182ecc25a59dbc"
+    },
+    ".skills/auxmem-session-close/SKILL.md": {
+      "policy": "merge3",
+      "sha256": "c9a478cf029a28870a4656ebb657bb7e3689b8f59f503632dd3417fbccae6901"
+    },
+    ".skills/auxmem-setup-domains/SKILL.md": {
+      "policy": "merge3",
+      "sha256": "d64aa07976908a69331637623c3450884b80e713fe4f0cec77a01a050c9240e9"
+    },
+    ".skills/auxmem-synthesize/SKILL.md": {
+      "policy": "merge3",
+      "sha256": "0b071e4bfdc47a18d37d66e7c5ff33398973b023f8c865316f2b7bf42ac5c968"
+    },
+    ".skills/auxmem-todo/SKILL.md": {
+      "policy": "merge3",
+      "sha256": "4714cda2dea7e527c9d5a2193331d681da84240793ce4a320ecd35e09d0e3ff6"
+    },
+    ".skills/auxmem-weekly-review/SKILL.md": {
+      "policy": "merge3",
+      "sha256": "13df7fc37cb8718e25fde03a8dc1fd307af97c214b4a21a67e3bf1e5dc116878"
+    },
+    "90-templates/1on1.md": {
+      "policy": "merge3",
+      "sha256": "b9f33b6b7aa50d427827afe9f744c4137acf5947b4d2800d1410d1dfdc5851f7"
+    },
+    "90-templates/adr.md": {
+      "policy": "merge3",
+      "sha256": "ea359916e07c34884844c02ab0e3a91326825b382885fcfa1005f116d7ff952c"
+    },
+    "90-templates/concept.md": {
+      "policy": "merge3",
+      "sha256": "e216eff81de9e0589504583237b4b47ed57414266f33a6a1d7cc55eb167cbdef"
+    },
+    "90-templates/entity.md": {
+      "policy": "merge3",
+      "sha256": "401be8defdda498fab05fd9536e37f583e84d2f78b41435f0b087677e1466c66"
+    },
+    "90-templates/governance-finding.md": {
+      "policy": "merge3",
+      "sha256": "4ba2d839f26caed150ed90c6d52bc2e580aabef81e15687d866d4f7947856dc6"
+    },
+    "90-templates/meeting.md": {
+      "policy": "merge3",
+      "sha256": "f07de12fdeb3f77ffe2da6fa3f7f400049ed1fd00066fb7cf12525115a3a2090"
+    },
+    "90-templates/project-doc.md": {
+      "policy": "merge3",
+      "sha256": "e998a4c99f6148772239217f19e25d36039f8be9a74c4df390c4303df928fcbd"
+    },
+    "90-templates/source.md": {
+      "policy": "merge3",
+      "sha256": "6bf4ee12155fa7cbf79b70d3b4e6de0e9e78d5d73b23c17e1a072f1fab449e1d"
+    },
+    "90-templates/stakeholder.md": {
+      "policy": "merge3",
+      "sha256": "b4dfb478f3682d4eb38dfb90c38a8889c6a3dfda9a0f853bb4f59f9c8b6a469f"
+    },
+    "90-templates/weekly-review.md": {
+      "policy": "merge3",
+      "sha256": "062316b6dbb3fd8bd03d05e8c11354cb75bfd8dd5d0beac7f33cd3dac4ce7267"
+    },
+    "AGENTS.md": {
+      "policy": "merge3",
+      "sha256": "35b62ee3fb445d2cfe95b9127d96e576aa92cee94c4d842b44d164c93bd29d84"
+    },
+    "CLAUDE.md": {
+      "policy": "merge3",
+      "sha256": "336cc4fbf19beaada7ccf9986414fa91851a8d7a07dfb3ccbe800a69eed0ab49"
+    },
+    "GEMINI.md": {
+      "policy": "merge3",
+      "sha256": "581de4304bbf1a3ce0103f6861f28b8b5d5e26a1ffc0a01fede7092f1285e40e"
+    },
+    "README.md": {
+      "policy": "merge3",
+      "sha256": "e95cf2a35b6775c0853a0f3b958f36e26f14d73626ea77e8bdb652bec38d3c1d"
+    },
+    "bootstrap.sh": {
+      "policy": "overwrite",
+      "sha256": "6772ef53323f300cd89a9c961c580b6d5f5faf5aefd70ad9e131bede413dbd41"
+    },
+    "docs/ARCHITECTURE.md": {
+      "policy": "merge3",
+      "sha256": "4a2bfc08d53fe678d9806e834cabb143b0f29b35d23ee850127aaab250332a72"
+    },
+    "docs/CONFLICTS.md": {
+      "policy": "merge3",
+      "sha256": "3f95f9c5a8ed543a4d93877ea4dc6892d73c8ed86a173562438893b4811f0ba2"
+    },
+    "docs/FIXING.md": {
+      "policy": "merge3",
+      "sha256": "0f16c6c7a26794a6e94c4f1a31d8508080c7e7b237390da578fb987944c0928b"
+    },
+    "docs/OPERATIONS.md": {
+      "policy": "merge3",
+      "sha256": "057ab443c545110de3a9aa37db0231f579ca76e2a1d7065ba568b7289bcacf13"
+    },
+    "docs/SETUP.md": {
+      "policy": "merge3",
+      "sha256": "e2cdab33710a75a7d41624aec0f58c049fed1b7ee0a71e252a927bebf04d4b74"
+    },
+    "docs/SYNTHESIS.md": {
+      "policy": "merge3",
+      "sha256": "3e44a0b98431fd20b51ef06a2a602e2dc0deef69043c8f134df2face48cdf255"
+    }
+  }
+}

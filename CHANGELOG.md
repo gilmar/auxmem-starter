@@ -31,6 +31,7 @@ Reliability and release-hardening work on `master` after the version reset:
 - Atomic Obsidian import
 - Bootstrap/packaging safety (no system Python mutation, skill refresh, wheel coverage)
 - Release and compatibility discipline (AUX-011)
+- Reference auxmems and deterministic evaluation harness (AUX-012)
 
 Verify with `bash scripts/check_release.sh` before any publish.
 

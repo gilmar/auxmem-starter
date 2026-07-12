@@ -1,0 +1,19 @@
+# provider exports and seed staging live outside the repo; never commit them
+seed-staging/
+*-export.json
+conversations.json
+MyActivity.json
+# python
+__pycache__/
+*.pyc
+# os
+.DS_Store
+
+# upgrade backups are local only; snapshot + manifest stay tracked
+.auxmem/backups/
+
+# provider skill dirs are symlinks to .skills/ (created by bootstrap.sh)
+.claude/
+.codex/
+.gemini/
+.cursor/
