@@ -1,9 +1,17 @@
 [project]
 name = "koinome"
-version = "0.0.0"
+version = "0.0.0alpha1"
 description = "Koinome CLI: create and maintain provider-independent, agent-readable markdown corpora."
+readme = "README.md"
+license = "MIT"
 requires-python = ">=3.10"
 dependencies = ["pyyaml>=6.0"]
+
+[project.urls]
+Homepage = "https://github.com/gilmar/koinome"
+Repository = "https://github.com/gilmar/koinome"
+Documentation = "https://github.com/gilmar/koinome/blob/master/docs/USAGE.md"
+Changelog = "https://github.com/gilmar/koinome/blob/master/CHANGELOG.md"
 
 [project.scripts]
 koinome = "koinome.cli:main"

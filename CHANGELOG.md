@@ -12,15 +12,21 @@ Koinome tracks **three coordinated versions**:
 
 A template or conformance change that alters what constitutes a valid note is **compatibility-relevant**. See `docs/COMPATIBILITY.md`.
 
-Versioning is **paused at 0.0.0** during the reliability hardening cycle (AUX-001–AUX-011). The first intentional public release will use an explicit **prerelease** designation (for example `0.1.0rc1`), not `1.0`.
+Versioning is **paused at 0.0.0** for template and conformance during the reliability hardening cycle (AUX-001–AUX-011). The CLI published its first PyPI alpha as **`0.0.0alpha1`** under the `koinome` package name.
+
+## 0.0.0alpha1 — first PyPI alpha (CLI only; template 0.0.0, conformance 0.0.0)
+
+- First intentional publish to PyPI under the **`koinome`** package name.
+- Product rename from AuxMem; managed folders are **corpora** (see `docs/MIGRATION.md`).
+- Install: `pip install koinome==0.0.0alpha1` or `uv tool install koinome==0.0.0alpha1`.
 
 ## Accidental / unsupported index releases
 
-### PyPI 2.0.0 (mistaken — do not use)
+### PyPI 2.0.0 on legacy `auxmem` (mistaken — do not use)
 
-Published in error before the repository reset source versions to `0.0.0`. Not a supported release. See `docs/RELEASE.md` for yank or supersede strategy before publishing.
+Published in error before the repository reset source versions to `0.0.0`. Not a supported release. See `docs/RELEASE.md` for yank or supersede strategy.
 
-## Unreleased — hardening cycle (CLI 0.0.0, template 0.0.0, conformance 0.0.0)
+## Unreleased — hardening cycle (template 0.0.0, conformance 0.0.0)
 
 Reliability and release-hardening work on `master` after the version reset:
 

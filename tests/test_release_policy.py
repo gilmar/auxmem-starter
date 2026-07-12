@@ -24,8 +24,10 @@ def _read_pyproject_version() -> str:
     return match.group(1)
 
 
-def _version_tuple(version: str) -> tuple[int, ...]:
-    return tuple(int(part) for part in version.split("."))
+def _release_tuple(version: str) -> tuple[int, ...]:
+    match = re.match(r"^(\d+(?:\.\d+)*)", version)
+    assert match, f"invalid version: {version}"
+    return tuple(int(part) for part in match.group(1).split("."))
 
 
 def test_cli_and_pyproject_versions_match():
@@ -48,4 +50,6 @@ def test_pre_release_version_not_below_mistaken_pypi_release():
     """Before publishing, never ship a version lower than mistaken 2.0.0 on PyPI."""
     if __version__ == "0.0.0":
         pytest.skip("pre-release source version; policy applies at publish time")
-    assert _version_tuple(__version__) > _version_tuple(MISTAKEN_PYPI_VERSION)
+    if __version__.startswith("0."):
+        pytest.skip("0.x releases are intentional for the new koinome PyPI project")
+    assert _release_tuple(__version__) > _release_tuple(MISTAKEN_PYPI_VERSION)

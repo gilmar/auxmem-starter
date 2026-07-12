@@ -80,8 +80,10 @@ def _read_pyproject_version() -> str:
 
 
 def _version_tuple(version: str) -> tuple[int, ...]:
-    base = version.split("rc", 1)[0]
-    return tuple(int(part) for part in base.split("."))
+    match = re.match(r"^(\d+(?:\.\d+)*)", version)
+    if not match:
+        raise ReleaseCheckError(f"invalid version for release check: {version}")
+    return tuple(int(part) for part in match.group(1).split("."))
 
 
 def check_cli_version_consistency() -> CheckResult:
