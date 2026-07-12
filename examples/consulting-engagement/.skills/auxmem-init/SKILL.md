@@ -34,8 +34,7 @@ Check for a staging corpus:
 - If present and non-empty, offer to distill. On acceptance, invoke `auxmem-distill-seeds`
 - If no staging corpus, mention alternatives:
   - `auxmem seed <export.json> --staging ./seed-staging` then re-run init or invoke `auxmem-distill-seeds`
-  - `auxmem import-obsidian <vault> --dest <this-auxmem>` for Obsidian migration
-  - See `docs/IMPORTING.md` (starter docs) for full import guidance
+  - See `docs/IMPORTING.md` (starter docs) for full seeding guidance
 
 Do not run seeding or import unless the user agrees.
 

@@ -81,7 +81,7 @@ For CI, prefer [PyPI Trusted Publishing](https://docs.pypi.org/trusted-publisher
 
 ## Conventions
 
-- Managed folders are **auxmems**; reserve **vault** for Obsidian import sources only.
+- Managed folders are **auxmems**.
 - CLI product name **AuxMem Manager** appears only in `--help`, `pyproject.toml` description, and the README anchor block — elsewhere write “the `auxmem` CLI”.
 - Template, conformance, and CLI versions are tracked separately; see `docs/RELEASE.md` and `docs/COMPATIBILITY.md`.
 - `auxmem upgrade` migrates existing auxmems to newer template versions.

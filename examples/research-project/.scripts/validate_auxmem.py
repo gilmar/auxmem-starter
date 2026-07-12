@@ -38,7 +38,7 @@ SKIP_DIRS = set(CONFIG.get("skip_dirs", [".git", ".scripts", "90-templates", "99
 # Non-standard syntax banned everywhere. Profile: CommonMark + GFM tables
 # + YAML frontmatter + relative markdown links. Nothing else.
 BANNED_PATTERNS = [
-    (re.compile(r"!\[\[[^\]]+\]\]"), "Obsidian embed; use standard image/link syntax"),
+    (re.compile(r"!\[\[[^\]]+\]\]"), "wiki-style embed; use standard image/link syntax"),
     (re.compile(r"\[\[[^\]]+\]\]"), "wikilink; use a relative markdown link [title](path.md)"),
     (re.compile(r"^```\s*dataview(js)?\b", re.M), "dataview block; MOCs are generated, not queried"),
     (re.compile(r"`\$?=\s?[^`]+`"), "inline dataview expression"),

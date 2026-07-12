@@ -48,7 +48,7 @@
     },
     ".scripts/validate_auxmem.py": {
       "policy": "overwrite",
-      "sha256": "77ca0629f1f2f2704f43eae6ccbfdd8cb67763a88e6a80714ccbbd017a57c5c6"
+      "sha256": "d31e638ac3307e2cc9d7d0fa8f2b5bcf46bf2becd49110a583d32fb1bc55b662"
     },
     ".skills/auxmem-adr/SKILL.md": {
       "policy": "merge3",
@@ -64,7 +64,7 @@
     },
     ".skills/auxmem-init/SKILL.md": {
       "policy": "merge3",
-      "sha256": "33d9ebfe071dc1758504a76e60ebb300be8187f8cf40431486cab6a85fa665ad"
+      "sha256": "06644ad09cec06f1a308ba1a8be5728515866200bb092b866a4d60439af9d573"
     },
     ".skills/auxmem-new-note/SKILL.md": {
       "policy": "merge3",
@@ -152,7 +152,7 @@
     },
     "docs/ARCHITECTURE.md": {
       "policy": "merge3",
-      "sha256": "4a2bfc08d53fe678d9806e834cabb143b0f29b35d23ee850127aaab250332a72"
+      "sha256": "4b7d84a1f2d2d092d7d4d5400bc2a0459521370932f6259b215ed5f1bbb89d99"
     },
     "docs/CONFLICTS.md": {
       "policy": "merge3",
@@ -168,7 +168,7 @@
     },
     "docs/SETUP.md": {
       "policy": "merge3",
-      "sha256": "e2cdab33710a75a7d41624aec0f58c049fed1b7ee0a71e252a927bebf04d4b74"
+      "sha256": "ba6ee199e09111fe8cb08ee039fad9dc7447857c5c152b1d1cea07d071733454"
     },
     "docs/SYNTHESIS.md": {
       "policy": "merge3",

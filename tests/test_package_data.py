@@ -25,7 +25,6 @@ REQUIRED_WHEEL_PREFIXES = (
     "auxmem/template/.github/workflows/auxmem-check.yml",
     "auxmem/template/.skills/auxmem-init/SKILL.md",
     "auxmem/importers/seed_extract.py",
-    "auxmem/importers/migrate_obsidian.py",
 )
 
 

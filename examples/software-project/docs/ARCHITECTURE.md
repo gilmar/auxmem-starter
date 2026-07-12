@@ -22,11 +22,11 @@ The central pattern, borrowed from software supply-chain governance. Instruction
 
 This is an enabling-constraint design. The structure is a constraint that makes the compliant path the low-friction path. Templates pre-fill the schema, so filling it correctly is easier than not. MOCs are generated, so the map is always current without hand-maintenance. the auxmem steers behavior so you do not have to.
 
-## Why open standards over Obsidian
-Obsidian is a fine editor, but its power features (wikilinks, `![[embeds]]`, Dataview, Templater, callouts) are non-standard. They tie the auxmem to Obsidian and, in the case of Dataview, embed executable queries that an agent might parse as fact. the auxmem bans all of it in favor of relative markdown links and generated MOCs. The cost is that no tool auto-maintains links on rename; the mitigation is stable filenames plus an optional markdown LSP (Marksman). ADR-0001 records this decision.
+## Why open standards over proprietary note apps
+Some editors add power features (wikilinks, `![[embeds]]`, Dataview, Templater, callouts) that are non-standard. They tie the auxmem to one tool and, in the case of Dataview, embed executable queries that an agent might parse as fact. the auxmem bans all of it in favor of relative markdown links and generated MOCs. The cost is that no tool auto-maintains links on rename; the mitigation is stable filenames plus an optional markdown LSP (Marksman). ADR-0001 records this decision.
 
 ## Why generated MOCs, not dashboards
-Dataview dashboards are convenient but live inside notes as non-standard queries and only render in Obsidian. `gen_mocs.py` reads frontmatter across the auxmem and writes plain-markdown MOCs as derived, committed artifacts. Same information, portable everywhere, and greppable. MOCs are agent entry points first, human navigation second.
+Plugin dashboards are convenient but live inside notes as non-standard queries and only render in one editor. `gen_mocs.py` reads frontmatter across the auxmem and writes plain-markdown MOCs as derived, committed artifacts. Same information, portable everywhere, and greppable. MOCs are agent entry points first, human navigation second.
 
 ## Sync as a separate plane from validation
 Sync must run often enough that devices do not silently diverge. Validation must gate what lands on the canonical branch. Resolution: sync stages pending work, validates the git index snapshot, and only then creates a verified canonical commit. Invalid pending state is quarantined on a side branch while the canonical tip is restored. Real rebase conflicts are preserved on another side branch rather than auto-merged. Automatic resolution of a genuine content conflict is exactly the silent corruption git exists to prevent.

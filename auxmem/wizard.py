@@ -146,7 +146,6 @@ def run():
     print("  3. Optional: set a private git remote and push")
     print("     git remote add origin <url>")
     print("     git add -A && git commit -m 'initial auxmem' && git push -u origin main")
-    print("  4. Optional: seed from AI exports or import Obsidian (see docs/IMPORTING.md)")
+    print("  4. Optional: seed from AI exports (see docs/IMPORTING.md)")
     print("     auxmem seed <export.json> --staging ./seed-staging")
-    print(f"     auxmem import-obsidian <old-vault> --dest {dest} --map map.json")
     return result

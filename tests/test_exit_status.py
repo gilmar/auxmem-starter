@@ -128,23 +128,6 @@ def test_upgrade_returns_operation_failed_when_moc_fails(tmp_path, monkeypatch):
     assert rc == exit_codes.OPERATION_FAILED
 
 
-def test_import_obsidian_propagates_validation_failure(tmp_path, monkeypatch):
-    from auxmem import importers
-
-    dest = tmp_path / "import-target"
-    scaffold_auxmem(dest)
-    failure = (
-        exit_codes.NON_CONFORMANT,
-        "Validation failed:\ninvalid note\n",
-        "",
-    )
-
-    monkeypatch.setattr(importers, "migrate_obsidian_single", lambda *a, **k: failure)
-    monkeypatch.setattr(importers, "migrate_obsidian_pipeline", lambda *a, **k: failure)
-    rc = main(["import-obsidian", str(tmp_path / "vault"), "--dest", str(dest), "--no-pipeline"])
-    assert rc == exit_codes.NON_CONFORMANT
-
-
 def test_seed_does_not_print_success_after_failure(tmp_path, capsys):
     bad_export = tmp_path / "bad.json"
     bad_export.write_text("{not json", encoding="utf-8")

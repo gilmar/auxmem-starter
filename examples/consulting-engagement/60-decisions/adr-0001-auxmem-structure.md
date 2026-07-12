@@ -20,9 +20,9 @@ Business context and memory must outlive any single AI provider. Provider apps h
 - Longevity: formats that predate and will outlive current tools.
 
 ## Considered Options
-### Obsidian-flavored markdown
-Pros: rich plugin ecosystem, link maintenance.
-Cons: wikilinks, Dataview, and callouts are non-standard and tie us to Obsidian.
+### Wikilink-based markdown
+Pros: rich plugin ecosystems, link maintenance in some editors.
+Cons: wikilinks, Dataview, and callouts are non-standard and tie us to one editor.
 
 ### Open-standard markdown (chosen)
 Pros: CommonMark plus GFM tables plus YAML frontmatter reads everywhere and greps cleanly.

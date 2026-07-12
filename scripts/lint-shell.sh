@@ -34,6 +34,5 @@ if /bin/bash --version 2>/dev/null | grep -q 'version 3\.'; then
     /bin/bash -n auxmem/template/.scripts/pre-commit
     /bin/bash -n auxmem/template/.scripts/auxmem-sync.sh
     /bin/bash -n auxmem/template/bootstrap.sh
-    /bin/bash -n auxmem/importers/export_obsidian.sh
     echo "bash -n clean"
 fi

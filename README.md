@@ -4,7 +4,7 @@
 
 **AuxMem (auxiliary memory) — plain-markdown memory for AI agents, with a validation gate. No database, no lock-in: delete the tool and your notes are still just markdown and git.**
 
-> **AuxMem** is the project. The **AuxMem Manager** (`auxmem` command) creates and maintains your memory folders. Each folder is an **auxmem** — what a vault is to Obsidian, an auxmem is to AuxMem, except the folder works without the app: delete the tooling and your notes are still just markdown and git.
+> **AuxMem** is the project. The **AuxMem Manager** (`auxmem` command) creates and maintains your memory folders. Each folder is an **auxmem** — a self-contained governed memory folder that works without the CLI: delete the tooling and your notes are still just markdown and git.
 
 The bet: for governed work memory, **the files are the product, not an index of the product**. An auxmem is a folder of nothing but markdown, YAML frontmatter, git, and todo.txt. No database, no SaaS, no plugins. You and your AI agents (Claude Code, Codex, Gemini CLI, Cursor) both read and write it, and it stays yours across every model and vendor change.
 
@@ -80,11 +80,10 @@ This creates the auxmem, installs the git hook, and sets up shared folders. Poin
 |---|---|
 | `auxmem new` | create an auxmem (interactive wizard, or `--name/--path`; optional `--domain`) |
 | `auxmem seed EXPORT.json` | normalize a Claude, ChatGPT, or Gemini export into a staging corpus |
-| `auxmem import-obsidian SRC --dest PATH` | import an existing Obsidian vault |
 | `auxmem doctor PATH` | validate an auxmem and refresh its navigation |
 | `auxmem upgrade PATH` | migrate an auxmem to the current template version, safely |
 
-See [`docs/USAGE.md`](docs/USAGE.md) for the full reference and [`docs/IMPORTING.md`](docs/IMPORTING.md) for seeding and migration.
+See [`docs/USAGE.md`](docs/USAGE.md) for the full reference and [`docs/IMPORTING.md`](docs/IMPORTING.md) for seeding from AI exports.
 
 ## What an auxmem contains
 
@@ -174,7 +173,7 @@ It is also not a capture firehose. Capture in the tools you already use; let the
 - [`docs/COMPATIBILITY.md`](docs/COMPATIBILITY.md) supported environments and smoke procedures
 - [`docs/EVALUATION.md`](docs/EVALUATION.md) reference auxmems and evaluation harness
 - [`docs/RELEASE.md`](docs/RELEASE.md) version policy and release gate
-- [`docs/IMPORTING.md`](docs/IMPORTING.md) seeding from AI exports and migrating an Obsidian vault
+- [`docs/IMPORTING.md`](docs/IMPORTING.md) seeding from AI exports
 - [`auxmem/template/docs/ARCHITECTURE.md`](auxmem/template/docs/ARCHITECTURE.md) why each design choice is what it is
 - [`auxmem/template/docs/SYNTHESIS.md`](auxmem/template/docs/SYNTHESIS.md) the governed synthesis loop (raw vs derived)
 - [`auxmem/template/docs/FIXING.md`](auxmem/template/docs/FIXING.md) the tiered protocol for fixing validation failures

@@ -25,8 +25,6 @@ MECHANICAL = [
     ("vault-sync.lock.d", "auxmem-sync.lock.d"),
     ("[vault-sync ", "[auxmem-sync "),
     ("adr-0001-vault-structure", "adr-0001-auxmem-structure"),
-    ("migrate_vault.py", "migrate_obsidian.py"),
-    ("export_vault.sh", "export_obsidian.sh"),
     ("--vault-config", "--auxmem-config"),
     ("load_vault_domains", "load_auxmem_domains"),
     ("VAULT_ROOT", "AUXMEM_ROOT"),
@@ -37,12 +35,8 @@ MECHANICAL = [
     ("name = \"AuxMem\"", "name = \"auxmem\""),  # fix pyproject over-replace
 ]
 
-# Prose: replace vault with auxmem when not Obsidian-related
-OBSIDIAN_KEEP = re.compile(
-    r"Obsidian vault|obsidian vault|obsidian-export|import.?obsidian|"
-    r"old-vault|existing Obsidian|Obsidian import|from Obsidian|what a vault is to Obsidian",
-    re.I,
-)
+# Never skip lines during vault→auxmem prose replacement.
+PRESERVE_LINE = re.compile(r"$^")
 
 
 def should_skip(path: Path) -> bool:
@@ -57,10 +51,10 @@ def should_skip(path: Path) -> bool:
 
 
 def prose_vault_to_auxmem(text: str) -> str:
-    """Replace standalone vault terminology; preserve Obsidian vault phrases."""
+    """Replace standalone vault terminology."""
     lines = []
     for line in text.splitlines(keepends=True):
-        if OBSIDIAN_KEEP.search(line):
+        if PRESERVE_LINE.search(line):
             lines.append(line)
             continue
         # common phrases

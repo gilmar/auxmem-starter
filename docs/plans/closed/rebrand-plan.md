@@ -4,6 +4,8 @@ Product, marketing, and implementation plan for renaming **auxmem-starter** to *
 
 Status: implemented on branch `rebrand-auxmem`.
 
+**Update (2026-07):** Obsidian vault import (`auxmem import-obsidian`) and Obsidian analogies in user-facing docs were removed. Sections below that mention Obsidian import or vault analogies are historical.
+
 ---
 
 ## Executive summary

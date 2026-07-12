@@ -87,7 +87,7 @@ journalctl --user -u auxmem-sync -f     # watch it run
 If you do not want the timer, run `bash .scripts/auxmem-sync.sh ~/auxmem` manually or bind it to a shell alias.
 
 ## 7. Optional: editor link support
-For link completion, go-to-definition, and rename-with-link-rewrite on plain markdown, install Marksman (an open-source markdown LSP) in VS Code, Neovim, Zed, or Helix. It replaces most of what Obsidian did for link maintenance, on standard CommonMark links.
+For link completion, go-to-definition, and rename-with-link-rewrite on plain markdown, install Marksman (an open-source markdown LSP) in VS Code, Neovim, Zed, or Helix. It covers most link-maintenance workflows on standard CommonMark links.
 
 ## Reconfiguring domains (after notes exist)
 Changing `domains` in the config changes the valid `domain` vocabulary. Existing notes using an old slug will fail validation. Procedure:

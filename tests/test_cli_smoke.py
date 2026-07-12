@@ -22,7 +22,7 @@ def test_main_without_args_prints_help(capsys):
     "args,needle",
     [
         (["seed", "--help"], "normalize"),
-        (["import-obsidian", "--help"], "Obsidian"),
+        (["check", "--help"], "moc freshness"),
     ],
 )
 def test_help_subcommands(args, needle):

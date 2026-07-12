@@ -3,7 +3,6 @@
 Subcommands:
   auxmem new         create an auxmem (interactive wizard, or flag-driven)
   auxmem seed        stage 1 of seeding: normalize a provider export to staging
-  auxmem import-obsidian   import an existing Obsidian vault into an auxmem
   auxmem doctor      check an auxmem: validate + MOC freshness
   auxmem check       read-only conformance check (CI-safe)
 """
@@ -30,7 +29,6 @@ where to run commands
     check PATH          read-only validation + MOC freshness (for CI)
     doctor PATH         validate and refresh navigation maps
     upgrade PATH        migrate auxmem tooling to the current template
-    import-obsidian … --dest PATH   import notes into that auxmem
 
   Outside any auxmem (import prep):
     seed EXPORT         write a staging corpus (default ./seed-staging); stage 2
@@ -139,23 +137,6 @@ def cmd_seed(args):
     return rc if rc != 0 else OK
 
 
-def cmd_import_obsidian(args):
-    try:
-        if args.no_pipeline:
-            rc, out, err = importers.migrate_obsidian_single(
-                args.src, args.dest, map_file=args.map, dry_run=args.dry_run)
-        else:
-            rc, out, err = importers.migrate_obsidian_pipeline(
-                args.src, args.dest, args.export_tmp, map_file=args.map, dry_run=args.dry_run)
-    except importers.ImportError_ as e:
-        print(f"error: {e}", file=sys.stderr)
-        return 1
-    print(out or err)
-    if rc == OK and not args.dry_run:
-        print(f"\nReview {Path(args.dest) / '00-inbox' / 'migration-report.md'} before committing.")
-    return rc
-
-
 def cmd_doctor(args):
     try:
         exit_code, message = importers.validate_and_moc(args.dest)
@@ -228,24 +209,6 @@ def build_parser():
     s.add_argument("--since")
     s.add_argument("--min-messages", type=int)
     s.set_defaults(func=cmd_seed)
-
-    o = sub.add_parser(
-        "import-obsidian",
-        help="import Obsidian notes into an existing auxmem",
-        description=(
-            "Import an Obsidian vault into an existing auxmem. Run from anywhere; "
-            "pass the auxmem folder path as --dest."
-        ),
-    )
-    o.add_argument("src", help="path to the existing Obsidian vault")
-    o.add_argument("--dest", required=True, metavar="AUXMEM",
-                   help="path to the target auxmem (must already exist)")
-    o.add_argument("--map", help="folder map JSON")
-    o.add_argument("--export-tmp", default="/tmp/auxmem-obsidian-export")
-    o.add_argument("--no-pipeline", action="store_true",
-                   help="use the single-script fallback instead of obsidian-export")
-    o.add_argument("--dry-run", action="store_true")
-    o.set_defaults(func=cmd_import_obsidian)
 
     d = sub.add_parser(
         "doctor",

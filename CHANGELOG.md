@@ -28,10 +28,10 @@ Reliability and release-hardening work on `master` after the version reset:
 - Sync integrity (quarantine branches, per-repo lock)
 - Config as canonical authority in agent guidance
 - Transactional upgrade with manifest verification
-- Atomic Obsidian import
 - Bootstrap/packaging safety (no system Python mutation, skill refresh, wheel coverage)
 - Release and compatibility discipline (AUX-011)
 - Reference auxmems and deterministic evaluation harness (AUX-012)
+- Removed `auxmem import-obsidian` and all Obsidian migration tooling
 
 Verify with `bash scripts/check_release.sh` before any publish.
 
@@ -80,6 +80,6 @@ The entries below describe early development **before** the `0.0.0` pause. They 
 
 Early public experiment before governance hardening:
 
-- `auxmem new`, `auxmem seed`, `auxmem import-obsidian`, `auxmem doctor`, `auxmem upgrade`
+- `auxmem new`, `auxmem seed`, `auxmem doctor`, `auxmem upgrade`
 - Governed auxmem: config-driven validator, pre-commit hook, generated MOCs, git sync with conflict quarantine
 - Synthesis layer with provenance and staleness detection

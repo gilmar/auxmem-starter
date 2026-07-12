@@ -66,22 +66,6 @@ auxmem seed MyActivity.json --provider gemini --staging ./seed-staging --min-mes
 
 Stage 2 (distillation into notes) is an agent step. Point your CLI agent at `importers/distill-seeds.md` and run it from the target auxmem. See `docs/IMPORTING.md`.
 
-## auxmem import-obsidian
-
-Import an existing Obsidian vault into an auxmem. Uses the obsidian-export pipeline by default, with a single-script fallback.
-```bash
-# rehearse first
-auxmem import-obsidian ~/old-vault --dest ~/my-work --map map.json --dry-run
-# real run
-auxmem import-obsidian ~/old-vault --dest ~/my-work --map map.json
-```
-- `--dest` target auxmem (must already exist).
-- `--map` folder-map JSON (old folder to new folder, plus optional exclude and default_domain).
-- `--no-pipeline` use the single-script fallback instead of obsidian-export (no Rust toolchain needed).
-- `--dry-run` show the move plan without writing.
-
-The importer reads the target auxmem's config, so imported notes are validated against that auxmem's domains. It writes a migration report to the auxmem's `00-inbox/migration-report.md`; read it before committing. Unresolved links degrade to plain text, never broken links.
-
 ## auxmem doctor
 
 Validate an auxmem and refresh its MOCs. Useful after manual edits or an import.
