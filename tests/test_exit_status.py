@@ -86,7 +86,7 @@ def test_upgrade_returns_non_conformant_when_validation_fails(tmp_path, monkeypa
         note_with_fm("Body.", **{**VALID_FM, "domain": "not-in-vocab"}),
     )
 
-    def fake_upgrade(path, force=False):
+    def fake_upgrade(path, force=False, dry_run=False):
         return {
             "status": "upgraded",
             "from": "0.0.0",
@@ -110,7 +110,7 @@ def test_upgrade_returns_operation_failed_when_moc_fails(tmp_path, monkeypatch):
     dest = tmp_path / "upgrade-target"
     scaffold_auxmem(dest)
 
-    def fake_upgrade(path, force=False):
+    def fake_upgrade(path, force=False, dry_run=False):
         return {
             "status": "upgraded",
             "from": "0.0.0",

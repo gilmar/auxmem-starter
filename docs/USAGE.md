@@ -86,6 +86,7 @@ Migrate an existing auxmem to the current template version. Safe to run anytime;
 ```bash
 auxmem upgrade ~/my-work
 auxmem upgrade ~/my-work --force   # re-apply even if already current
+auxmem upgrade ~/my-work --dry-run # preview changes without modifying files
 ```
 
 Each auxmem records the template version it was built from and keeps a pristine snapshot of managed files under `.auxmem/`. Upgrade compares that to the current template and applies a per-file policy:
@@ -95,7 +96,7 @@ Each auxmem records the template version it was built from and keeps a pristine 
 - **Guidance** (AGENTS.md, CLAUDE.md, GEMINI.md, README.md, docs, note templates): git 3-way merge against the snapshot. If you never edited a file, it updates cleanly. If you edited it and the template also changed it, you get either a clean merge or, where they truly collide, git conflict markers to resolve. Auxmems created before versioning have no snapshot, so those files are preserved and the new version is written beside them as `<file>.new` for manual merging.
 - **Content** (your notes, `72-tasks/todo.txt`, `72-tasks/done.txt`, decisions, MOCs): never touched. MOCs are regenerated at the end.
 
-If validation fails after upgrade, the command exits `2` (non-conformant). If MOC generation fails, it exits `1` (operation failure).
+If MOC generation or validation fails after upgrade, managed files are rolled back to their pre-upgrade state and a log is written under `.auxmem/upgrade-failures/`. Merge conflicts are left for manual resolution and exit `2` (non-conformant). MOC generation failures exit `1` (operation failure).
 
 ### Exit codes
 

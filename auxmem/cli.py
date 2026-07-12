@@ -44,13 +44,41 @@ where to run commands
 
 def cmd_upgrade(args):
     try:
-        result = upgrade_mod.upgrade(args.dest, force=args.force)
+        result = upgrade_mod.upgrade(args.dest, force=args.force, dry_run=args.dry_run)
     except upgrade_mod.UpgradeError as e:
         print(f"error: {e}", file=sys.stderr)
         return 1
     if result["status"] == "up-to-date":
         print(f"already at template version {result['version']}. Use --force to re-apply.")
         return 0
+    if result["status"] == "dry-run":
+        print(f"dry-run: {result['from']} -> {result['to']}")
+        if result.get("deprecated"):
+            print("\nDeprecated (left in place):")
+            for item in result["deprecated"]:
+                print(f"  {item}")
+        print("\nPlanned changes:")
+        for change in result["changes"]:
+            print(f"  {change}")
+        if result["conflicts"]:
+            print(f"\nLikely conflicts ({len(result['conflicts'])}):")
+            for rel in result["conflicts"]:
+                print(f"  {rel}")
+        expected = result.get("post_validation_expected")
+        if expected is True:
+            print("\nPost-upgrade validation: expected to pass")
+        elif expected is False:
+            print("\nPost-upgrade validation: expected to FAIL")
+            if result.get("post_detail"):
+                print(result["post_detail"])
+        print("\n(dry-run made no changes)")
+        return OK
+    if result["status"] == "failed":
+        print(f"upgrade failed and was rolled back: {args.dest}")
+        if result.get("post_phase"):
+            print(f"{result['post_phase']} failed:")
+            print(result.get("post_detail", ""))
+        return result.get("post_exit_code", OPERATION_FAILED)
     print(f"upgraded {args.dest}: {result['from']} -> {result['to']}")
     for c in result["changes"]:
         print(f"  {c}")
@@ -261,6 +289,11 @@ def build_parser():
     )
     u.add_argument("dest", metavar="AUXMEM", help="path to the auxmem to upgrade")
     u.add_argument("--force", action="store_true", help="re-apply even if already current")
+    u.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="report planned changes without modifying the auxmem",
+    )
     u.set_defaults(func=cmd_upgrade)
 
     return p

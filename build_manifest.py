@@ -12,7 +12,6 @@ Policies:
   merge3     git 3-way merge against the auxmem's snapshot (guidance, docs, templates)
 """
 
-import hashlib
 import json
 import sys
 from pathlib import Path
@@ -20,29 +19,8 @@ from pathlib import Path
 STARTER_ROOT = Path(__file__).resolve().parent
 TEMPLATE = STARTER_ROOT / "auxmem" / "template"
 sys.path.insert(0, str(STARTER_ROOT))
+from auxmem.manifest import policy_for, sha256_file
 from auxmem.version import TEMPLATE_VERSION
-
-
-def policy_for(rel: str):
-    if rel == ".scripts/auxmem.config.json":
-        return "merge"
-    if rel.startswith(".github/workflows/") and rel.endswith((".yml", ".yaml")):
-        return "overwrite"
-    if rel.startswith(".scripts/") or rel == "bootstrap.sh":
-        return "overwrite"
-    if rel.startswith(".skills/"):
-        return "merge3"
-    if rel in ("AGENTS.md", "CLAUDE.md", "GEMINI.md", "README.md"):
-        return "merge3"
-    if rel.startswith("docs/") and rel.endswith(".md"):
-        return "merge3"
-    if rel.startswith("90-templates/") and rel.endswith(".md"):
-        return "merge3"
-    return None  # user content: not managed
-
-
-def sha256(path: Path):
-    return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
 def build():
@@ -55,7 +33,7 @@ def build():
             continue
         pol = policy_for(rel)
         if pol:
-            files[rel] = {"policy": pol, "sha256": sha256(p)}
+            files[rel] = {"policy": pol, "sha256": sha256_file(p)}
     manifest = {"template_version": TEMPLATE_VERSION, "files": files}
     out = TEMPLATE / ".auxmem-manifest.json"
     out.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
