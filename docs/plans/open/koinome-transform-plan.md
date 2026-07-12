@@ -2,7 +2,7 @@
 
 You are working in the repository:
 
-`https://github.com/gilmar/auxmem`
+`https://github.com/gilmar/koinome`
 
 Transform the existing AuxMem project into **Koinome**.
 
