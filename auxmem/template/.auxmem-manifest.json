@@ -7,7 +7,7 @@
     },
     ".scripts/auxmem-sync.sh": {
       "policy": "overwrite",
-      "sha256": "bf9548380193e5fc07b8b235baf045bcb64d13901d4d742d4d2dcc4e38f93d74"
+      "sha256": "98736db71fd03fd8e8d8a655ce1003ccc77307aac0d27e5cf28cd4ba4a7b89a0"
     },
     ".scripts/auxmem-sync.systemd": {
       "policy": "overwrite",
@@ -16,6 +16,10 @@
     ".scripts/auxmem.config.json": {
       "policy": "merge",
       "sha256": "84e6b9dcdf924ccbed905635ae94e18085938fe1e69281f7a6640f86dd2940fd"
+    },
+    ".scripts/auxmem_sync.py": {
+      "policy": "overwrite",
+      "sha256": "3219687ccbf001920ad957652238fe1c821c388268f864f4d232b87e32e0440f"
     },
     ".scripts/check_auxmem.py": {
       "policy": "overwrite",
@@ -35,7 +39,7 @@
     },
     ".scripts/pre-commit": {
       "policy": "overwrite",
-      "sha256": "424b953873450382b9c9b65e6d4f8bdcf47412dc8cc6499e22cdc7cd72cdb8d8"
+      "sha256": "aa70def60bb40b45c27e05010d6111a87e0470e2ebe879a44b880e4b86872ee7"
     },
     ".scripts/synthesis_status.py": {
       "policy": "overwrite",
@@ -147,7 +151,7 @@
     },
     "docs/ARCHITECTURE.md": {
       "policy": "merge3",
-      "sha256": "6a510a68a79e008f764db237599a27827b1ddc4305d005a8c052801e9eb710f1"
+      "sha256": "4a2bfc08d53fe678d9806e834cabb143b0f29b35d23ee850127aaab250332a72"
     },
     "docs/FIXING.md": {
       "policy": "merge3",
@@ -155,7 +159,7 @@
     },
     "docs/OPERATIONS.md": {
       "policy": "merge3",
-      "sha256": "e916ad3a1125ac80443385e9c2eda5f87b06134e5e2139c94de0747cb313f27e"
+      "sha256": "057ab443c545110de3a9aa37db0231f579ca76e2a1d7065ba568b7289bcacf13"
     },
     "docs/SETUP.md": {
       "policy": "merge3",

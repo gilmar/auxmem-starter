@@ -5,9 +5,6 @@
 
 set -euo pipefail
 
-# transparent sync commits bypass validation; CI is their gate
-if [ "${AUXMEM_AUTOSYNC:-${VAULT_AUTOSYNC:-0}}" = "1" ]; then exit 0; fi
-
 AUXMEM_ROOT="$(git rev-parse --show-toplevel)"
 CHECKER="$AUXMEM_ROOT/.scripts/check_staged_snapshot.py"
 

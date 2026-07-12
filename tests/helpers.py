@@ -111,6 +111,54 @@ def run_conformance_check(path: Path, *extra_args: str) -> CommandResult:
     return run_cmd([sys.executable, ".scripts/check_auxmem.py", *extra_args], cwd=path)
 
 
+def run_sync(path: Path, *, env: dict[str, str] | None = None) -> CommandResult:
+    return run_cmd([sys.executable, ".scripts/auxmem_sync.py", str(path)], cwd=path, env=env)
+
+
+def gen_mocs(path: Path) -> CommandResult:
+    return run_cmd([sys.executable, ".scripts/gen_mocs.py"], cwd=path)
+
+
+def commit_all_valid(path: Path, message: str = "initial") -> None:
+    init_git_repo(path)
+    gen_mocs(path)
+    run_git(["add", "-A"], cwd=path)
+    result = run_git(["commit", "-m", message], cwd=path)
+    if result.returncode != 0:
+        raise RuntimeError(
+            f"commit failed ({result.returncode}):\n"
+            f"stdout:\n{result.stdout}\nstderr:\n{result.stderr}"
+        )
+
+
+def attach_bare_remote(auxmem: Path, remote: Path, *, remote_name: str = "origin") -> str:
+    branch = run_git(["rev-parse", "--abbrev-ref", "HEAD"], cwd=auxmem).stdout.strip()
+    if run_git(["remote", "get-url", remote_name], cwd=auxmem).returncode != 0:
+        run_git(["remote", "add", remote_name, str(remote)], cwd=auxmem)
+    push = run_git(["push", "-u", remote_name, branch], cwd=auxmem)
+    if push.returncode != 0:
+        raise RuntimeError(f"push failed:\n{push.stdout}\n{push.stderr}")
+    return branch
+
+
+def clone_from_bare(bare: Path, dest: Path) -> Path:
+    if dest.exists():
+        shutil.rmtree(dest)
+    result = run_cmd(["git", "clone", "-q", str(bare), str(dest)])
+    if result.returncode != 0:
+        raise RuntimeError(f"clone failed:\n{result.stdout}\n{result.stderr}")
+    init_git_repo(dest)
+    return dest.resolve()
+
+
+def git_branches(repo: Path, *, all_refs: bool = False) -> list[str]:
+    args = ["branch", "--format=%(refname:short)"]
+    if all_refs:
+        args.insert(1, "-a")
+    proc = run_git(args, cwd=repo)
+    return [line.strip() for line in proc.stdout.splitlines() if line.strip()]
+
+
 def tree_bytes_snapshot(root: Path) -> dict[str, bytes]:
     snap: dict[str, bytes] = {}
     for path in root.rglob("*"):

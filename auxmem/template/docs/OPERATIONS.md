@@ -60,22 +60,38 @@ This keeps an honest, time-ordered decision history and prevents an accepted dec
 Open tasks in `72-tasks/todo.txt`, archive in `72-tasks/done.txt`, todo.txt format. See AGENTS.md for the grammar and write rules. The validator enforces the grammar. Complete tasks in place, then move `x` lines to done.txt at session close. Never delete an open task; to drop one, complete it with `+cancelled`.
 
 ## Sync behavior
-The sync script (`.scripts/auxmem-sync.sh`) is transparent and unconditional. It commits local changes (bypassing validation, since sync must never block), pulls with rebase and autostash, and pushes. Validation is enforced by agent and human commits (via the hook) and by CI, not by sync. The script uses bash 3.2–compatible syntax and a portable directory lock (no Linux-only `flock`).
+The sync script (`.scripts/auxmem-sync.sh`, implemented by `.scripts/auxmem_sync.py`) keeps devices aligned without weakening the validation gate on the canonical branch.
 
-Append-only files (`71-log/`, `00-inbox/`, `72-tasks/done.txt`) use `merge=union` so two devices appending never conflict.
+State machine:
+1. Resolve the current git branch and its upstream remote (override with `AUXMEM_SYNC_BRANCH` / `AUXMEM_SYNC_REMOTE`).
+2. Acquire a per-auxmem lock at `.git/auxmem-sync.lock/` (not a global `/tmp` lock).
+3. Stage pending changes and validate the git index snapshot before any canonical commit.
+4. **Valid pending auxmem changes:** verified `git commit` (pre-commit hook runs), `git pull --rebase --autostash`, read-only `check_auxmem.py`, then push.
+5. **Invalid pending auxmem changes:** quarantine commit on `sync-invalid/<host>/<timestamp>`, push that branch when a remote exists, reset the canonical branch to its prior tip, write an alert (`00-inbox/sync-invalid-*.md` when a domain exists, else `.auxmem/alerts/`), exit `3`.
+6. **Rebase conflict:** abort the rebase, preserve local commits on `sync-conflict/<host>/<timestamp>`, push that branch, reset canonical to the remote tip, write a conflict alert, exit `3`.
+
+Sync never uses `git commit --no-verify` on the canonical branch. Quarantine commits are the only exception, and they live on side branches.
+
+Append-only files (`71-log/`, `00-inbox/`, `72-tasks/done.txt`) use `merge=union` so two devices appending rarely conflict.
+
+### Invalid-state recovery
+When validation fails on pending changes:
+- Inspect `00-inbox/sync-invalid-*.md` (or `.auxmem/alerts/sync-invalid-*.md`).
+- Fetch and check out the named `sync-invalid/...` branch.
+- Fix validation issues, regenerate MOCs, validate, then merge or cherry-pick onto your canonical branch.
 
 ### Conflict recovery
-On a real content conflict (same line of the same non-append file edited on two devices), the sync script does NOT merge automatically. Instead:
-- Your local divergence is pushed to a branch `sync-conflict/<host>-<timestamp>`.
-- Local main is reset to match the remote.
-- An alert note appears in `00-inbox/sync-conflict-*.md`.
+On a real content conflict (same line of the same non-append file edited on two devices), sync does NOT merge automatically. Instead:
+- Your local divergence is pushed to `sync-conflict/<host>/<timestamp>`.
+- The canonical branch is reset to match the remote.
+- An alert appears in `00-inbox/sync-conflict-*.md` (or `.auxmem/alerts/`).
 
 To recover, from the auxmem:
 ```bash
-git merge sync-conflict/<host>-<timestamp>   # or cherry-pick the commits you want
+git merge sync-conflict/<host>/<timestamp>   # or cherry-pick the commits you want
 # resolve, verify, then:
-git branch -d sync-conflict/<host>-<timestamp>
-git push origin --delete sync-conflict/<host>-<timestamp>
+git branch -d sync-conflict/<host>/<timestamp>
+git push origin --delete sync-conflict/<host>/<timestamp>
 ```
 This is deliberate. Automatic resolution of a genuine conflict is the kind of silent corruption git exists to prevent.
 
