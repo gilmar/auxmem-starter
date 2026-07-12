@@ -1,0 +1,21 @@
+[
+  {
+    "title": "Multimodal",
+    "create_time": 1719859200.0,
+    "update_time": 1719859300.0,
+    "current_node": "m1",
+    "mapping": {
+      "m1": {
+        "id": "m1",
+        "message": {
+          "author": {"role": "user"},
+          "content": {
+            "content_type": "multimodal_text",
+            "parts": ["see diagram", {"content_type": "image_asset_pointer"}]
+          }
+        },
+        "parent": null
+      }
+    }
+  }
+]

@@ -35,7 +35,11 @@ claude "Follow the instructions in /path/to/AuxMem/auxmem/importers/distill-seed
 ```
 The agent reads the manual dumps and triage index, selects conversations, and writes 15 to 30 current-state seed notes plus ADRs, MOCs, a bootstrap log, and open tasks. It synthesizes current state (not history), never copies transcripts verbatim, marks uncertainty, and flags any sensitive personnel content to a review list outside the auxmem rather than importing it.
 
-### Finish
+### Idempotency contract
+
+**Seed extract (`auxmem seed`):** Re-running the extractor on the same export with the same `--out` directory overwrites the same conversation filenames deterministically (duplicate titles receive numbered suffixes). The staging corpus is outside the auxmem; re-import does not touch the auxmem until stage 2 distillation.
+
+**Obsidian import (`auxmem import-obsidian`):** Re-importing the same source vault with the same folder map overwrites the same destination paths. It is idempotent for unchanged source content, not a merge of divergent histories. To keep both versions, import into a scratch auxmem first or rename conflicting notes before re-importing.
 ```bash
 cd ~/my-work
 python3 .scripts/gen_mocs.py

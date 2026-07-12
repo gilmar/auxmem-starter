@@ -1,0 +1,11 @@
+[
+  {
+    "name": "Claude: plan review",
+    "created_at": "2026-07-01T10:00:00Z",
+    "updated_at": "2026-07-02T11:00:00Z",
+    "chat_messages": [
+      {"sender": "human", "text": "Summarize the β-release plan."},
+      {"sender": "assistant", "text": "The β-release focuses on integrity gates."}
+    ]
+  }
+]
