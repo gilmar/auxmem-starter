@@ -27,4 +27,8 @@ python -m pip install --quiet "$WHEEL"
 auxmem new --name smoke --path "$DEST" --domain 10-projects=projects
 python "$DEST/.scripts/validate_auxmem.py" --all
 
+DEST_SPACE="$WORKDIR/my auxmem"
+auxmem new --name smoke-space --path "$DEST_SPACE" --domain 10-projects=projects
+python "$DEST_SPACE/.scripts/validate_auxmem.py" --all
+
 echo "smoke_install.sh: wheel install and auxmem new succeeded"

@@ -3,11 +3,32 @@
 One-time setup for an auxmem created from this template. Assumes Linux or WSL2. Commands use `~/auxmem` as the auxmem path; adjust as needed.
 
 ## 1. Prerequisites
-- Python 3.10+ with pip.
+- Python 3.10+ with PyYAML available to that interpreter.
 - git.
 - A POSIX shell or bash 3.2+. Auxmem scripts use `#!/bin/bash` and are written for macOS default `/bin/bash` (3.2) and Linux bash; they do not require bash 4+, GNU coreutils, or `flock`.
 - One or more CLI agents: Claude Code, Codex CLI, or Gemini CLI.
 - Importing existing notes or seeding from AI exports is done from AuxMem before or after creation, not from the auxmem. See the starter docs/IMPORTING.md.
+
+### Installing AuxMem (includes PyYAML)
+
+Supported paths:
+
+```bash
+# Editable dev install (this repository)
+uv sync && uv run auxmem --help
+
+# End-user tool install
+uv tool install auxmem
+pipx install auxmem
+
+# Wheel in a virtual environment
+python3 -m venv .venv && source .venv/bin/activate
+pip install auxmem-*.whl
+```
+
+`./bootstrap.sh` checks for PyYAML but does **not** run `pip install` against system Python. If bootstrap reports a missing dependency, activate a venv or install AuxMem via one of the paths above, then re-run bootstrap.
+
+Paths containing spaces are supported (`auxmem new --path "/path/with spaces/my-auxmem"`).
 
 On WSL2, keep the auxmem on the Linux filesystem (`~/auxmem`), not `/mnt/c`, for speed. You no longer need a Windows app to hold the files.
 
@@ -22,6 +43,8 @@ Edit `.scripts/auxmem.config.json` if this auxmem needs different domains. This 
 ./bootstrap.sh
 ```
 This checks dependencies, creates domain and structural folders from the config, links provider skill directories to `.skills/`, initializes git, installs the pre-commit hook, generates MOCs, and runs the validator. It is idempotent; re-run it any time. After `auxmem upgrade`, re-run `./bootstrap.sh` so the installed pre-commit hook picks up template fixes.
+
+When symlinks are unavailable, bootstrap copies `.skills/` into provider directories and records them in `.auxmem/skills-copies`. Copies do not update automatically when skills change — run `./bootstrap.sh --refresh-skills` after upgrading skills or the template.
 
 ## 4. Git remote
 Use a private repository. This remote will hold your entire work context, so its access controls are part of your governance surface.

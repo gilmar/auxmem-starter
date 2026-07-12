@@ -2,6 +2,27 @@
 
 Full reference for the `auxmem` command. Run in place with `./auxmem-cli <cmd>` or install to get `auxmem <cmd>`.
 
+## Installing AuxMem
+
+Supported install paths (all include PyYAML):
+
+```bash
+# Development (this repository)
+uv sync && uv run auxmem --help
+
+# End-user tool install
+uv tool install auxmem
+pipx install auxmem
+
+# Wheel in a virtual environment
+python3 -m venv .venv && source .venv/bin/activate
+pip install auxmem   # or: pip install dist/auxmem-*.whl
+```
+
+`bootstrap.sh` inside an auxmem checks for PyYAML but does not run `pip install` against system Python. If bootstrap reports a missing dependency, use one of the paths above, then re-run `./bootstrap.sh`. Paths containing spaces are supported (`auxmem new --path "/path/with spaces/my-auxmem"`).
+
+When provider skill directories cannot be symlinked, bootstrap copies `.skills/` and records them in `.auxmem/skills-copies`. Refresh copies after skill updates with `./bootstrap.sh --refresh-skills`. See `docs/RELEASE.md` for PyPI version policy before publishing.
+
 ## auxmem new
 
 Creates an auxmem. Interactive when run bare; flag-driven when `--name` and `--path` are given.
