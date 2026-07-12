@@ -67,7 +67,18 @@ Validate an auxmem and refresh its MOCs. Useful after manual edits or an import.
 ```bash
 auxmem doctor ~/my-work
 ```
-Runs the target auxmem's own `gen_mocs.py` then `validate_auxmem.py --all`.
+Runs the target auxmem's own `gen_mocs.py` then `validate_auxmem.py --all`. Regenerates MOCs when stale.
+
+## auxmem check
+
+Read-only conformance check: validation plus MOC freshness. Never modifies files. Use in CI.
+```bash
+auxmem check ~/my-work
+auxmem check ~/my-work --manifest   # also verify managed tooling hashes
+auxmem check ~/my-work --git        # also require a clean git working tree
+```
+
+New auxmems ship `.github/workflows/auxmem-check.yml`, which runs `python3 .scripts/check_auxmem.py` on each push and pull request.
 
 ## auxmem upgrade
 

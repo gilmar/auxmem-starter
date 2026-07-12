@@ -40,6 +40,38 @@ def _format_phase_failure(phase: str, out: str, err: str) -> str:
     return f"{phase} failed (non-zero exit; no output captured)"
 
 
+def check_conformance(dest, *, manifest=False, git=False):
+    """Read-only conformance check: validation and MOC freshness only.
+
+    Returns (exit_code, message). Never mutates the auxmem.
+    """
+    dest = _dest(dest)
+    checker = dest / ".scripts" / "check_auxmem.py"
+    if checker.is_file():
+        cmd = [_PYTHON, str(checker)]
+        if manifest:
+            cmd.append("--manifest")
+        if git:
+            cmd.append("--git")
+        rc, out, err = _run(cmd, cwd=dest)
+        message = (out or err).strip() or "conformance check failed"
+        if rc == 0:
+            return OK, message
+        return NON_CONFORMANT, message
+
+    val_rc, val_out, val_err = _run(
+        [_PYTHON, ".scripts/validate_auxmem.py", "--all"], cwd=dest
+    )
+    if val_rc != 0:
+        return NON_CONFORMANT, _format_phase_failure("Validation", val_out, val_err)
+
+    moc_rc, moc_out, moc_err = _run([_PYTHON, ".scripts/gen_mocs.py", "--check"], cwd=dest)
+    if moc_rc != 0:
+        return NON_CONFORMANT, _format_phase_failure("MOC freshness", moc_out, moc_err)
+
+    return OK, (val_out or moc_out or "auxmem conformance check passed.").strip()
+
+
 def validate_and_moc(dest):
     """Run the target auxmem's MOC generator then validator.
 

@@ -23,6 +23,7 @@ auxmem = [
   "template/.gitattributes",
   "template/.scripts/*",
   "template/.skills/*/SKILL.md",
+  "template/.github/workflows/*",
   "importers/**",
 ]
 

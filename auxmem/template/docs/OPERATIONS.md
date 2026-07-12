@@ -21,11 +21,25 @@ The `summary` field is the most important line. Front-load it with the concrete 
 
 ## Validation
 The validator is the enforcement plane. It checks the frontmatter schema, controlled vocabularies, ISO dates, open-standard markdown only (no wikilinks, embeds, Dataview, Templater, or callouts), internal link resolution, and todo.txt grammar.
+
+Read-only conformance check (for humans and CI; never modifies files):
 ```bash
-python3 .scripts/validate_auxmem.py --all         # whole auxmem (CI)
+python3 .scripts/check_auxmem.py              # validation + MOC freshness
+auxmem check PATH                             # same, from outside the auxmem
+python3 .scripts/check_auxmem.py --manifest   # also verify managed tooling hashes
+python3 .scripts/check_auxmem.py --git        # also require a clean working tree
+```
+
+To regenerate stale MOCs before committing, use `python3 .scripts/gen_mocs.py` or `auxmem doctor PATH` (doctor may write files; check does not).
+
+```bash
+python3 .scripts/validate_auxmem.py --all         # validation only
 python3 .scripts/validate_auxmem.py path/to/note.md 72-tasks/todo.txt   # specific files
 ```
-The pre-commit hook runs it on staged files automatically. To bypass once (rare): `git commit --no-verify`.
+The pre-commit hook validates the staged git index snapshot automatically. To bypass once (rare): `git commit --no-verify`.
+
+## Continuous integration
+New auxmems include `.github/workflows/auxmem-check.yml`. On each push or pull request it installs PyYAML and runs `python3 .scripts/check_auxmem.py`. Enable GitHub Actions on your remote to activate it.
 
 ## Maps of Content
 MOCs in `80-moc/` are generated from frontmatter, not hand-written. They are your and the agent's fast map of each domain.
@@ -70,10 +84,13 @@ Git is the safety system, especially with agents writing. Commit frequently. If 
 
 ## Health checks
 ```bash
-python3 .scripts/validate_auxmem.py --all     # schema and format
-python3 .scripts/gen_mocs.py --check         # MOC freshness
-git status                                    # uncommitted state
-systemctl --user list-timers                  # sync scheduled (if using systemd)
+python3 .scripts/check_auxmem.py           # read-only conformance (CI)
+auxmem check PATH                          # same, from the AuxMem CLI
+auxmem doctor PATH                         # regenerate MOCs, then validate
+python3 .scripts/validate_auxmem.py --all  # validation only
+python3 .scripts/gen_mocs.py --check       # MOC freshness only
+git status                                 # uncommitted state
+systemctl --user list-timers               # sync scheduled (if using systemd)
 ```
 
 ## Graph and gap report
