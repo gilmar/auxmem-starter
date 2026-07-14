@@ -4,9 +4,11 @@ Pure stdlib. Flag-driven and fully testable; the wizard calls into this.
 """
 
 import json
+import os
 import re
 import shutil
 import subprocess
+import sys
 from datetime import date
 from pathlib import Path
 
@@ -129,7 +131,9 @@ def scaffold(name, dest, domains, run_bootstrap=True, stream_bootstrap=False):
     result = {"dest": dest, "domains": domains, "bootstrapped": False}
     if run_bootstrap:
         bash = resolve_bash()
-        kwargs = {"cwd": dest, "text": True}
+        # Prefer this interpreter: PATH's python3 often lacks PyYAML after tool install.
+        env = {**os.environ, "KOINOME_PYTHON": sys.executable}
+        kwargs = {"cwd": dest, "text": True, "env": env}
         if stream_bootstrap:
             proc = subprocess.run([bash, "bootstrap.sh"], **kwargs)
             result["bootstrap_stdout"] = ""

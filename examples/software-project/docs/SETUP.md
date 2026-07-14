@@ -26,7 +26,7 @@ python3 -m venv .venv && source .venv/bin/activate
 pip install koinome-*.whl
 ```
 
-`./bootstrap.sh` checks for PyYAML but does **not** run `pip install` against system Python. If bootstrap reports a missing dependency, activate a venv or install Koinome via one of the paths above, then re-run bootstrap.
+`./bootstrap.sh` checks for PyYAML but does **not** run `pip install` against system Python. `koinome new` / `koinome init` pass `KOINOME_PYTHON` so bootstrap uses the tool/environment interpreter (needed when PATH's `python3` lacks PyYAML, common on Windows after `uv tool install`). If you run `./bootstrap.sh` yourself and it reports a missing dependency, set `KOINOME_PYTHON` to an interpreter that has PyYAML, activate a venv, or install Koinome via one of the paths above, then re-run bootstrap.
 
 Paths containing spaces are supported (`koinome new --path "/path/with spaces/my-corpus"`).
 

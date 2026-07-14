@@ -5,6 +5,9 @@
 # Options:
 #   --refresh-skills   re-copy provider skill dirs that were copied (not symlinked)
 #
+# Environment:
+#   KOINOME_PYTHON  Interpreter with PyYAML (set automatically by `koinome new`).
+#
 # Does:
 #   1. checks python + pyyaml (does not auto-install into system Python)
 #   2. creates domain folders from .scripts/koinome.config.json
@@ -34,33 +37,98 @@ while [ $# -gt 0 ]; do
     esac
 done
 
+# Prefer an interpreter that already has PyYAML. PATH's python3 often does not,
+# especially after `uv tool install koinome` on Windows/Git Bash (issue #38).
+python_has_yaml() {
+    local py="$1"
+    [ -n "$py" ] || return 1
+    if [ -f "$py" ] || command -v "$py" >/dev/null 2>&1; then
+        "$py" -c "import yaml" 2>/dev/null
+    else
+        return 1
+    fi
+}
+
+append_tool_python_candidates() {
+    # uv / pipx tool environments ship PyYAML with the koinome install.
+    local root d
+    for root in \
+        "${UV_TOOL_DIR:-}" \
+        "${HOME}/.local/share/uv/tools" \
+        "${HOME}/AppData/Roaming/uv/tools" \
+        "${HOME}/.local/pipx/venvs" \
+        "${HOME}/.local/share/pipx/venvs"
+    do
+        [ -n "$root" ] || continue
+        [ -d "$root" ] || continue
+        for d in "$root"/koinome "$root"/Koinome; do
+            [ -d "$d" ] || continue
+            printf '%s\n' \
+                "$d/bin/python" \
+                "$d/bin/python3" \
+                "$d/Scripts/python.exe" \
+                "$d/Scripts/python3.exe"
+        done
+    done
+}
+
+resolve_python() {
+    local cand
+    for cand in \
+        "${KOINOME_PYTHON:-}" \
+        ".venv/bin/python" \
+        ".venv/bin/python3" \
+        ".venv/Scripts/python.exe" \
+        "python3" \
+        "python"
+    do
+        if python_has_yaml "$cand"; then
+            printf '%s\n' "$cand"
+            return 0
+        fi
+    done
+    while IFS= read -r cand; do
+        [ -n "$cand" ] || continue
+        if python_has_yaml "$cand"; then
+            printf '%s\n' "$cand"
+            return 0
+        fi
+    done < <(append_tool_python_candidates)
+    return 1
+}
+
 echo "== 1. dependencies =="
-command -v python3 >/dev/null || { echo "python3 required" >&2; exit 1; }
-if ! python3 -c "import yaml" 2>/dev/null; then
+PYTHON="$(resolve_python || true)"
+if [ -z "${PYTHON}" ]; then
     cat <<'EOF' >&2
-PyYAML is required but not available to this python3.
+PyYAML is required but no suitable Python interpreter was found.
+
+`koinome new` / `koinome init` should pass KOINOME_PYTHON automatically.
+If you ran ./bootstrap.sh yourself (e.g. from PowerShell/Git Bash), PATH's
+python3 often lacks PyYAML even when `uv tool install koinome` succeeded.
 
 Bootstrap does not install packages into system Python automatically.
 Use one of these supported paths:
 
-  # Recommended: install Koinome (includes PyYAML)
-  uv tool install koinome
-  pipx install koinome
+  # Recommended: re-run from the CLI (uses the tool's interpreter)
+  koinome new --name my-corpus --path ./my-corpus
 
-  # Or a project virtual environment
+  # Or point bootstrap at the tool/env interpreter (PowerShell):
+  #   $env:KOINOME_PYTHON = (python -c "import sys; print(sys.executable)")
+  # after activating a venv that has PyYAML, then:
+  ./bootstrap.sh
+
+  # Or a corpus-local virtual environment
   python3 -m venv .venv
   source .venv/bin/activate   # Windows: .venv\Scripts\activate
   pip install pyyaml
   ./bootstrap.sh
 
-  # Or use a venv only for validator/MOC scripts
-  python3 -m venv .venv && source .venv/bin/activate && pip install pyyaml
-
 Then re-run: ./bootstrap.sh
 EOF
     exit 1
 fi
-echo "ok"
+echo "ok (python: $PYTHON)"
 
 if [ "$REFRESH_SKILLS" = "1" ]; then
     echo "== refresh copied provider skills =="
@@ -93,7 +161,7 @@ if [ "$REFRESH_SKILLS" = "1" ]; then
 fi
 
 echo "== 2. domain folders from config =="
-python3 - "$CFG" << 'PY'
+"$PYTHON" - "$CFG" << 'PY'
 import json, sys, pathlib
 cfg = json.load(open(sys.argv[1]))
 folders = list(cfg["domains"].keys()) + cfg.get("structural_folders", [])
@@ -160,31 +228,33 @@ link_skills .gemini/skills
 link_skills .cursor/skills
 
 echo "== 5. pre-commit hook =="
+# Remember the interpreter bootstrap used so the hook does not depend on PATH.
+printf '%s\n' "$PYTHON" > .koinome/python
 # Strip CR so Git for Windows autocrlf never leaves a broken hook (issue #36).
 sed 's/\r$//' .scripts/pre-commit > .git/hooks/pre-commit
 chmod +x .git/hooks/pre-commit
 echo "  installed (re-run ./bootstrap.sh after koinome upgrade to refresh the hook)"
 
 echo "== 6. generate MOCs =="
-if python3 - "$CFG" << 'PY'
+if "$PYTHON" - "$CFG" << 'PY'
 import json, sys
 cfg = json.load(open(sys.argv[1]))
 sys.exit(0 if cfg.get("domains") else 1)
 PY
 then
-  python3 .scripts/gen_mocs.py
+  "$PYTHON" .scripts/gen_mocs.py
 else
   echo "  skipped (no domains yet; run the koinome-init skill first)"
 fi
 
 echo "== 7. validate =="
-if python3 - "$CFG" << 'PY'
+if "$PYTHON" - "$CFG" << 'PY'
 import json, sys
 cfg = json.load(open(sys.argv[1]))
 sys.exit(0 if cfg.get("domains") else 1)
 PY
 then
-  if python3 .scripts/validate_corpus.py --all; then
+  if "$PYTHON" .scripts/validate_corpus.py --all; then
     echo ""
     echo "Bootstrap complete. Next steps (see docs/SETUP.md):"
     echo "  - set your git remote and push"

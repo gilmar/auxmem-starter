@@ -7,16 +7,47 @@ set -euo pipefail
 
 CORPUS_ROOT="$(git rev-parse --show-toplevel)"
 CHECKER="$CORPUS_ROOT/.scripts/check_staged_snapshot.py"
+PYTHON_FILE="$CORPUS_ROOT/.koinome/python"
 
 if [ ! -f "$CHECKER" ]; then
     echo "pre-commit: staged snapshot checker not found at $CHECKER" >&2
     exit 1
 fi
 
-if ! python3 "$CHECKER"; then
+resolve_hook_python() {
+    local cand
+    if [ -f "$PYTHON_FILE" ]; then
+        cand="$(tr -d '\r\n' < "$PYTHON_FILE")"
+        if [ -n "$cand" ] && { [ -f "$cand" ] || command -v "$cand" >/dev/null 2>&1; }; then
+            if "$cand" -c "import yaml" 2>/dev/null; then
+                printf '%s\n' "$cand"
+                return 0
+            fi
+        fi
+    fi
+    if [ -n "${KOINOME_PYTHON:-}" ] && "$KOINOME_PYTHON" -c "import yaml" 2>/dev/null; then
+        printf '%s\n' "$KOINOME_PYTHON"
+        return 0
+    fi
+    for cand in python3 python; do
+        if command -v "$cand" >/dev/null 2>&1 && "$cand" -c "import yaml" 2>/dev/null; then
+            printf '%s\n' "$cand"
+            return 0
+        fi
+    done
+    return 1
+}
+
+PYTHON="$(resolve_hook_python || true)"
+if [ -z "${PYTHON}" ]; then
+    echo "pre-commit: no Python with PyYAML found (set KOINOME_PYTHON or re-run ./bootstrap.sh)" >&2
+    exit 1
+fi
+
+if ! "$PYTHON" "$CHECKER"; then
     echo ""
     echo "Commit blocked (staged snapshot failed). Try:"
-    echo "  python3 .scripts/gen_mocs.py && python3 .scripts/validate_corpus.py --fix --all"
+    echo "  $PYTHON .scripts/gen_mocs.py && $PYTHON .scripts/validate_corpus.py --fix --all"
     echo "then ask your agent to handle the rest (see docs/FIXING.md),"
     echo "or bypass once with: git commit --no-verify"
     exit 1

@@ -76,7 +76,7 @@
     },
     ".scripts/pre-commit": {
       "policy": "overwrite",
-      "sha256": "2067534b6da72b2bce71c8f4cbfd8787c517131ebcd8763f955313614decc41f"
+      "sha256": "8daf1d120ff48a0823cb641f15b6dea3aa784e11b7cfe35f170695bea4740ac2"
     },
     ".scripts/schema_validate.py": {
       "policy": "overwrite",
@@ -208,7 +208,7 @@
     },
     "bootstrap.sh": {
       "policy": "overwrite",
-      "sha256": "57db87a7cdc02bf8fa9a7b282ccf68b6e4bee069484060658240d3756680bc92"
+      "sha256": "ae42ecea432b343aaaf7e4d5907426ea2ebca2db4bbf18ba5da2acf7fa8500f9"
     },
     "docs/ARCHITECTURE.md": {
       "policy": "merge3",
@@ -228,7 +228,7 @@
     },
     "docs/SETUP.md": {
       "policy": "merge3",
-      "sha256": "135527e4166bab87b1743bb123d278f2502f621e4f87527c82fc20019bdbce0e"
+      "sha256": "bb2734f622679d262e7f75c49e05d5aba5cf2c470dfb56496b83eadc57d21e96"
     },
     "docs/SYNTHESIS.md": {
       "policy": "merge3",

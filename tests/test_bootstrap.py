@@ -16,10 +16,14 @@ TEMPLATE_BOOTSTRAP = REPO_ROOT / "koinome" / "template" / "bootstrap.sh"
 
 
 def run_bootstrap(dest, *extra_args: str, env: dict[str, str] | None = None) -> subprocess.CompletedProcess:
+    merged = os.environ.copy()
+    merged.setdefault("KOINOME_PYTHON", sys.executable)
+    if env:
+        merged.update(env)
     return subprocess.run(
         [resolve_bash(), "bootstrap.sh", *extra_args],
         cwd=dest,
-        env=env,
+        env=merged,
         capture_output=True,
         text=True,
     )
@@ -51,13 +55,60 @@ def test_bootstrap_fails_without_pyyaml(tmp_path):
     subprocess.run([sys.executable, "-m", "venv", str(venv)], check=True)
     dest = tmp_path / "corpus"
     scaffold_corpus(dest, no_bootstrap=True)
-    env = os.environ.copy()
-    env["PATH"] = f"{venv / 'bin'}{os.pathsep}{env['PATH']}"
+    env = {
+        "PATH": f"{venv / 'bin'}{os.pathsep}/usr/bin{os.pathsep}/bin",
+        "KOINOME_PYTHON": str(venv / "bin" / "python"),
+        "HOME": str(tmp_path / "empty-home"),
+        "UV_TOOL_DIR": str(tmp_path / "empty-uv-tools"),
+    }
+    (tmp_path / "empty-home").mkdir()
+    (tmp_path / "empty-uv-tools").mkdir()
     result = run_bootstrap(dest, env=env)
     assert result.returncode != 0
     combined = result.stdout + result.stderr
     assert "PyYAML" in combined or "pyyaml" in combined.lower()
-    assert "uv tool install" in combined or "pipx install" in combined
+    assert "KOINOME_PYTHON" in combined or "uv tool install" in combined or "pip install pyyaml" in combined
+
+
+def test_bootstrap_uses_koinome_python_env(tmp_path):
+    """PATH python3 may lack PyYAML; KOINOME_PYTHON (tool/env) must win (issue #38)."""
+    dest = tmp_path / "corpus"
+    scaffold_corpus(dest, no_bootstrap=True)
+    broken = tmp_path / "broken-bin"
+    broken.mkdir()
+    fake = broken / "python3"
+    fake.write_text("#!/bin/sh\necho 'no yaml here' >&2\nexit 1\n", encoding="utf-8")
+    fake.chmod(0o755)
+    env = {
+        "PATH": f"{broken}{os.pathsep}{os.environ.get('PATH', '')}",
+        "KOINOME_PYTHON": sys.executable,
+    }
+    result = run_bootstrap(dest, env=env)
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert (dest / ".koinome" / "python").is_file()
+    recorded = (dest / ".koinome" / "python").read_text(encoding="utf-8").strip()
+    assert recorded == sys.executable
+
+
+def test_scaffold_passes_koinome_python(tmp_path, monkeypatch):
+    """koinome new must set KOINOME_PYTHON so bootstrap does not rely on PATH."""
+    import koinome.scaffold as scaffold_mod
+
+    seen: dict[str, str] = {}
+
+    def fake_run(cmd, **kwargs):
+        env = kwargs.get("env") or {}
+        seen["KOINOME_PYTHON"] = env.get("KOINOME_PYTHON", "")
+        class Result:
+            returncode = 0
+            stdout = ""
+            stderr = ""
+        return Result()
+
+    monkeypatch.setattr(scaffold_mod.subprocess, "run", fake_run)
+    dest = tmp_path / "corpus"
+    scaffold_mod.scaffold("t", dest, {"10-projects": "projects"}, run_bootstrap=True)
+    assert seen["KOINOME_PYTHON"] == sys.executable
 
 
 def test_bootstrap_is_idempotent(tmp_path):
