@@ -2,6 +2,10 @@
   "template_version": "0.0.0",
   "conformance_version": "0.0.0",
   "files": {
+    ".gitattributes": {
+      "policy": "merge3",
+      "sha256": "d7314851d56c942f483da8fa3c2705c4a3626204ea5b82bd564f83ca05596a8d"
+    },
     ".github/workflows/koinome-check.yml": {
       "policy": "overwrite",
       "sha256": "a97d14f9e3e4c6c54bc61aec7bdf73e7b6d608c0875ad87e7fe570ff1781de9e"

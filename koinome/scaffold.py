@@ -11,6 +11,7 @@ from datetime import date
 from pathlib import Path
 
 from .corpus_identity import write_identity_manifest
+from .line_endings import normalize_corpus_shell_scripts
 from .version import TEMPLATE_VERSION
 
 _PKG_ROOT = Path(__file__).resolve().parent
@@ -89,6 +90,8 @@ def scaffold(name, dest, domains, run_bootstrap=True, stream_bootstrap=False):
 
     # copy template tree (dotfiles included)
     shutil.copytree(TEMPLATE_DIR, dest, dirs_exist_ok=True)
+    # Git for Windows / some installs ship CRLF; bash then fails on pipefail/$'\r'.
+    normalize_corpus_shell_scripts(dest)
 
     # write config from inputs
     base = (TEMPLATE_DIR / ".scripts" / "koinome.config.json").read_text(encoding="utf-8")

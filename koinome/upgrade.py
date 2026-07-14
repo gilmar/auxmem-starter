@@ -28,6 +28,7 @@ from typing import Any
 from .corpus_identity import ensure_identity_manifest
 from .corpus_migrate import migrate_record_types, write_migration_report
 from .exit_codes import NON_CONFORMANT, OK, OPERATION_FAILED
+from .line_endings import normalize_script_file
 from .manifest import verify_bundled_template
 from .paths import config_path, managed_path, resolve_corpus
 from .version import TEMPLATE_VERSION
@@ -236,6 +237,7 @@ def _apply_overwrite(
         report.append(f"added: {rel}")
     cur_file.parent.mkdir(parents=True, exist_ok=True)
     shutil.copy2(new_file, cur_file)
+    normalize_script_file(cur_file)
     _chmod_managed(cur_file)
 
 

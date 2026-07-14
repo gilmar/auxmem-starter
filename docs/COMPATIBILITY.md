@@ -53,6 +53,7 @@ Record the provider CLI version and date in this table when re-verifying.
 | macOS | tested | macOS 14+ (CI: macos-latest) | 3.10, 3.12, 3.13 | n/a (deterministic) | 2026-07-12 | `bash scripts/check_repo.sh` on macOS | None for core CLI/template |
 | Linux | tested | Ubuntu (CI: ubuntu-latest) | 3.10, 3.12, 3.13 | n/a | 2026-07-12 | `bash scripts/check_repo.sh` on Linux | None for core CLI/template |
 | WSL2 | expected | Ubuntu on WSL2 | 3.10+ | n/a | 2026-07-12 | Keep corpus on Linux filesystem (`~/my-corpus`); run `compatibility_smoke.sh` | `/mnt/c/` paths are slow; see template `docs/SETUP.md` |
+| Windows (Git Bash / PowerShell) | expected | Windows 10+ with Git Bash or WSL bash on `PATH` | 3.10+ | n/a | 2026-07-14 | `koinome new` then `bash bootstrap.sh`; `compatibility_smoke.sh` under Git Bash | Native cmd.exe without bash is unsupported; shell scripts are forced LF (`eol=lf` + scaffold normalization) so Git `autocrlf` does not break `bootstrap.sh` (issue #36) |
 
 ## Package install paths
 

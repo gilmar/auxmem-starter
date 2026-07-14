@@ -12,6 +12,8 @@ ALLOWED_POLICIES = frozenset({"overwrite", "merge", "merge3"})
 def policy_for(rel: str) -> str | None:
     if rel == ".scripts/koinome.config.json":
         return "merge"
+    if rel == ".gitattributes":
+        return "merge3"
     if rel.startswith(".github/workflows/") and rel.endswith((".yml", ".yaml")):
         return "overwrite"
     if rel.startswith(".schemas/"):

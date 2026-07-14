@@ -1,0 +1,4 @@
+# Keep shell scripts LF so Git for Windows does not convert them to CRLF.
+*.sh text eol=lf
+**/bootstrap.sh text eol=lf
+**/pre-commit text eol=lf

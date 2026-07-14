@@ -1,3 +1,9 @@
+# Line endings for scripts that bash must run (Git for Windows autocrlf otherwise
+# turns LF into CRLF and breaks `set -o pipefail` / blank lines as $'\r').
+*.sh text eol=lf
+bootstrap.sh text eol=lf
+.scripts/pre-commit text eol=lf
+
 # append-only files never conflict across devices
 71-log/*.md merge=union
 00-inbox/*.md merge=union
