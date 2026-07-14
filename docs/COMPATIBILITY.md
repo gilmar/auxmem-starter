@@ -21,6 +21,12 @@ bash scripts/compatibility_smoke.sh
 
 This runs fresh scaffold validation, conformance check, upgrade dry-run, and wheel install smoke (including a path with spaces).
 
+Windows Git Bash coverage (CI job `windows-bootstrap`, issue #36):
+
+```bash
+bash scripts/windows_ci_smoke.sh
+```
+
 Full release gate (maintainers, pre-publish):
 
 ```bash
@@ -53,7 +59,7 @@ Record the provider CLI version and date in this table when re-verifying.
 | macOS | tested | macOS 14+ (CI: macos-latest) | 3.10, 3.12, 3.13 | n/a (deterministic) | 2026-07-12 | `bash scripts/check_repo.sh` on macOS | None for core CLI/template |
 | Linux | tested | Ubuntu (CI: ubuntu-latest) | 3.10, 3.12, 3.13 | n/a | 2026-07-12 | `bash scripts/check_repo.sh` on Linux | None for core CLI/template |
 | WSL2 | expected | Ubuntu on WSL2 | 3.10+ | n/a | 2026-07-12 | Keep corpus on Linux filesystem (`~/my-corpus`); run `compatibility_smoke.sh` | `/mnt/c/` paths are slow; see template `docs/SETUP.md` |
-| Windows (Git Bash / PowerShell) | expected | Windows 10+ with Git Bash or WSL bash on `PATH` | 3.10+ | n/a | 2026-07-14 | `koinome new` then `bash bootstrap.sh`; `compatibility_smoke.sh` under Git Bash | Native cmd.exe without bash is unsupported; shell scripts are forced LF (`eol=lf` + scaffold normalization) so Git `autocrlf` does not break `bootstrap.sh` (issue #36) |
+| Windows (Git Bash / PowerShell) | tested | Windows 10+ (CI: windows-latest) | 3.12 | n/a | 2026-07-14 | `bash scripts/windows_ci_smoke.sh` (CI job `windows-bootstrap`) | Native cmd.exe without bash is unsupported; shell scripts are forced LF (`eol=lf` + scaffold normalization) so Git `autocrlf` does not break `bootstrap.sh` (issue #36) |
 
 ## Package install paths
 
